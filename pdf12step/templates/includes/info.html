@@ -34,8 +34,9 @@
         {% endif %}
         {% if meeting.zipcode %}
             {% block meeting_address %}
+            {% set latlon = meeting.latitude|string + ',' + meeting.longitude|string %}
             <br/>
-            {{ link('https://www.google.com/maps/search/?api=1&query={meeting.latitude},{meeting.longitude}', meeting.formatted_address) }}
+            {{ link('https://www.google.com/maps/search/?api=1&query=' + latlon, meeting.formatted_address) }}
             {% endblock %}
         {% endif %}
 
