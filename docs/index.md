@@ -1,11 +1,13 @@
-
 # pdf12step documentation
 
-```{include} ../README.md
+```{include} README.md
 ```
 
 ```{toctree}
-README
+quickstart
+install
+config
+usage
 commands
 examples
 pdf12step
