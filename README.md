@@ -12,4 +12,6 @@ The CSS and HTML templates are extensible so you can customize the PDF output an
 
 The app also contains a [Flask](https://flask.palletsprojects.com/) webapp that can render the live HTML and PDF content in your browser.
 
+To see what it can do, check out [this generated directory](https://justquick.io/pdf12step/_static/December%202021%20Directory.pdf)
+
 For full documentation, visit https://justquick.io/pdf12step/

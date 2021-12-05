@@ -8,6 +8,7 @@ quickstart
 install
 config
 usage
+features
 commands
 examples
 pdf12step
