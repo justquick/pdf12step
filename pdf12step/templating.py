@@ -1,5 +1,5 @@
 import re
-from os import path
+from os import path, makedirs
 from datetime import datetime
 from collections import defaultdict
 from functools import reduce
@@ -181,6 +181,9 @@ class Context(dict):
         Prerenders the assets ahead of page render to ensure proper values in assets are set
         """
         for template, dest in ASSET_TEMPLATES.items():
+            dest_dir = path.dirname(dest)
+            if not path.isdir(dest_dir):
+                makedirs(dest_dir)
             with open(dest, 'w') as destfile:
                 destfile.write(self.render(template))
 

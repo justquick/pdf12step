@@ -24,7 +24,7 @@ setup(
     },
     classifiers=[
         'Development Status :: 4 - Beta',
-        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Framework :: Flask',
