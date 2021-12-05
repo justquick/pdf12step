@@ -1,0 +1,43 @@
+<tr class="f12">
+    <td style="width: 8ch;">{{ meeting.time_formatted }}</td>
+    <td style="width: 40%;">
+        {% block meeting_title %}<b>{{  link(meeting.url, meeting.name, meeting.id) }}</b>{% endblock %}
+        {% set codes = codify(meeting.types)|join(' ') %}
+        {% block meeting_codes %}
+        {% if codes %}
+            <br/>{{ codes }}
+        {% endif %}
+        {% if meeting.location %}
+            <br/>{{ link(meeting.location_url, meeting.location) }}
+        {% endif %}
+        {% endblock %}
+    </td>
+    <td style="width: 100%;">
+        {% set is_conference = meeting.attendance_option in ('online', 'hybrid') %}
+        {% if is_conference %}
+            {% if config.show_links %}
+                {% if meeting.conference_url %}
+                    {% block zoom_link %}{{ link(meeting.conference_url, 'Join on Zoom') }}{% endblock %}
+                {% endif %}
+                {% if meeting.conference_phone %}
+                    {% if meeting.conference_url and meeting.conference_phone %}|{% endif %}
+                    {% block phone_link %}{{ link('tel:' + meeting.conference_phone, 'Join on Phone') }}{% endblock %}
+                {% endif %}
+            {% endif %}
+            {% if meeting.conference_notes %}
+                {% if meeting.conference_url or meeting.conference_phone %}<br/>{% endif %}
+                {{ meeting.conference_notes }}
+            {% endif %}
+        {% endif %}
+        {% if meeting.notes %}
+            {% if is_conference %}<br/>{% endif %}{{ meeting.notes_list|join('|') }}
+        {% endif %}
+        {% if meeting.zipcode %}
+            {% block meeting_address %}
+            <br/>
+            {{ link('https://www.google.com/maps/search/?api=1&query={meeting.latitude},{meeting.longitude}', meeting.formatted_address) }}
+            {% endblock %}
+        {% endif %}
+
+    </td>
+</tr>

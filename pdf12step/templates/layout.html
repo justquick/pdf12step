@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% block head %}
+    <meta charset="utf-8" />
+    <title>{{ now.strftime('%B %Y') }} Directory</title>
+{% for sheet in stylesheets %}
+    <link href="{{ sheet }}" rel="stylesheet">
+{% endfor %}
+    <meta name="author" content="{{ config.author }}" />
+    <meta name="generator" content="Python pdf12step" />
+    <meta name="created" content="{{ now.strftime('%Y-%m-%d')}}" />
+    <meta name="description" content="{{ config.description }}" />
+    {% endblock %}
+</head>
+
+<body>
+    {% block cover %}
+    <article id="cover" class="mid">
+        {% include 'includes/sections/cover.html' %}
+    </article>
+    {% endblock %}
+
+    {% block contact %}
+    <article class="columns" id="contact">
+        {% include 'includes/sections/contact.html' %}
+    </article>
+    {% endblock %}
+
+    {% block codes %}
+    {% if config.meetingcodes %}
+    <article id="codes" class="columns f14">
+        {% include 'includes/sections/codes.html' %}
+    </article>
+    {% endif %}
+    {% endblock %}
+
+    {% block misc %}
+    <article id="misc" class="f14">
+        {% include 'includes/sections/misc.html' %}
+    </article>
+    {% endblock %}
+
+    {% block regions %}
+    {% if config.zipcodes %}
+    <article id="regions" class="f14">
+        {% include 'includes/sections/regions.html' %}
+    </article>
+    {% endif %}
+    {% endblock %}
+
+    {% block index %}
+    <article id="index">
+        {% include 'includes/sections/index.html' %}
+    </article>
+    {% endblock %}
+
+    {% block list %}
+    {% include 'includes/sections/list.html' %}
+    {% endblock %}
+
+    {% block readings %}
+    <article id="readings" class="f14">
+        {% include 'includes/sections/readings.html' %}
+    </article>
+    {% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,24 @@
+{% for day, meets in meetings.by_value('day_display').items() %}
+<article class="list">
+    <h2>{{ day }}</h2>
+    {% for region, rmeets in meets.by_value('region', sort=True) %}
+        {% set zbr = zipcodes_by_region[region] %}
+        {% if zbr %}
+            {% set zips = zbr|join('/') %}
+        {% else %}
+            {% set zips = rmeets[0].zipcode %}
+        {% endif %}
+        <h3>{{ day }} - {{ region }}    <span style="float:right;">{{ zips }}</span></h3>
+
+            <article class="meeting">
+            <table class="mtable">
+            {% for meeting in rmeets.sort('time') %}
+                {% include 'includes/info.html' %}
+            {% endfor %}
+            </table>
+            </article>
+            <br/>
+
+    {% endfor %}
+</article>
+{% endfor %}

@@ -1,0 +1,22 @@
+dl:not(.docutils) dt {
+	background: rgb(51 240 66 / 10%);
+}
+.mi {
+    color: black !important;
+}
+pre {
+	background: rgb(51 240 66 / 10%);
+}
+a {
+    color: #01a049;
+}
+a:hover {
+    color: darkgreen;
+}
+div.sphinxsidebar a {
+    color: #01a049;
+}
+a.reference:hover {
+    border-bottom: 1px solid darkgreen;
+    color: darkgreen;
+}

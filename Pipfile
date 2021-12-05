@@ -1,0 +1,25 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+requests = "*"
+flask = "*"
+flask-weasyprint = "*"
+weasyprint = "*"
+attrdict = "*"
+pyyaml = "*"
+
+[dev-packages]
+ipython = "*"
+ipdb = "*"
+pytest = "*"
+pytest-cov = "*"
+Sphinx = "*"
+myst-parser = "*"
+sphinxcontrib-autoprogram = "*"
+karma-sphinx-theme = "*"
+
+[requires]
+python_version = "3.7"

@@ -1,0 +1,89 @@
+# Site URL where 12 Step WP Plugin is installed
+site_url: {{ site_url }}
+
+# Page size of the output PDF.
+# If not doing Letter, prepare to use custom template_dirs and stylesheets
+size: {{ size }}
+
+# Background css color of the cover and page headers
+color: {{ color }}
+
+# Metadata info about who makes this PDF
+author: {{ author }}
+description: {{ description }}
+address: {{ address }}
+phone: {{ phone }}
+fax: {{ fax }}
+email: {{ email }}
+website: {{ website }}
+
+# Template directories.
+# Create your own directory and add it here to override default emplates
+{% if template_dirs %}
+template_dirs:
+    {% for tdir in template_dirs %}
+    - {{ tdir }}
+    {% endfor %}
+{% else %}
+# template_dirs:
+#     - my/custom/templates
+{% endif %}
+
+# CSS stylesheets to add when rendering PDF
+# Add your own to modify styles
+{% if stylesheets %}
+stylesheets:
+    {% for css in stylesheets %}
+    - {{ css }}
+    {% endfor %}
+{% else %}
+# stylesheets:
+#     - my/path/to/custom.css
+{% endif %}
+
+# Show links or not when rendering
+show_links: {{ show_links }}
+
+# Codes to filter out from displaying
+# Removes them from PDF entirely
+{% if filtercodes %}
+filtercodes:
+    {% for code in filtercodes %}
+    - {{ code }}
+    {% endfor %}
+{% else %}
+filtercodes:
+    - TC # Temporarily closed
+{% endif %}
+
+
+# Set this to display only these attendance_options in the PDF
+# Normal options are in_person, inactive, online, andhybrid
+# Used to only print hybrid/in_person for print PDF
+{% if attendance_options %}
+attendance_options:
+    {% for option in attendance_options %}
+    - {{ option }}
+    {% endfor %}
+{% else %}
+# attendance_options:
+#     - in_person
+#     - hybrid
+#     - online
+#     - inactive
+{% endif %}
+
+
+# Maps a system code to a new code to display in the directory
+# codemap:
+#     X: H
+
+# System meeting codes and their descriptions.
+# Do not modify the keys on this mapping, this is from the plugin
+# Feel free to change descriptions or add your own
+# meetingcodes:
+#     X: Handicap Access
+
+# Locztions by zipcode with their neighborhood name
+# zipcodes:
+#     21201: Downtown Baltimore

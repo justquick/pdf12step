@@ -1,0 +1,198 @@
+# Site URL where 12 Step WP Plugin is installed
+site_url: https://baltimoreaa.org/
+
+# Page size of the output PDF.
+# If not doing Letter, prepare to use custom template_dirs and stylesheets
+size: Letter #  5.5in 8.5in
+
+# Background css color of the cover and page headers
+color: lightblue
+
+# Metadata info about who makes this PDF
+author: Baltimore Intergroup Council
+description: Baltimore Area A.A. Group meeting Directory
+address: 8635 Loch Raven Boulevard, Suite 4 • Baltimore, Maryland 21286
+phone: 410-663-1922
+fax: 410-663-7465
+email: intergroup@baltimoreaa.org
+website: www.baltimoreaa.org
+
+# Template directories.
+# Create your own directory and add it here to override default emplates
+# template_dirs:
+#     - my/custom/templates
+
+# CSS stylesheets to add when rendering PDF
+# Add your own to modify styles
+# stylesheets:
+#     - my/path/to/custom.css
+
+# Show links or not when rendering
+show_links: true
+
+# Codes to filter out from displaying
+# Removes them from PDF entirely
+filtercodes:
+    - TC # Temporarily closed
+
+# Set this to display only these attendance_options in the PDF
+# Normal options are in_person, inactive, online, andhybrid
+# Used to only print hybrid/in_person for print PDF
+# attendance_options:
+#     - in_person
+#     - hybrid
+#     - online
+#     - inactive
+
+# Maps a system code to a new code to display in the directory
+codemap:
+    B: BB
+    BE: BEG
+    S: SPK
+    ST: STEP
+    TR: TRAD
+    X: H
+
+# System meeting codes and their descriptions.
+# Do not modify the keys on this mapping, this is from the plugin
+# Feel free to change descriptions or add your own
+meetingcodes:
+    11: 11th Step Meditation
+    12x12: 12 Steps & 12 Traditions
+    ABSI: As Bill Sees It
+    B: Big Book
+    BE: Beginner/Newcomer
+    C: Closed Meeting for Alcoholics Only
+    CAN: Candlelight
+    CF: Child-Friendly
+    CPTS: Concepts
+    D: Discussion
+    DB: Digital Basket
+    DR: Daily Reflections
+    GR: Grapevine
+    HYB: Hybrid
+    LGBTQ: LGBTQ
+    LIT: Literature
+    LS: Living Sober
+    M: Men's
+    MED: Meditation
+    NB: Non-Binary
+    O: Open
+    ONL: Online
+    OUT: Outdoor Meeting
+    POC: People of Color
+    S: Spanish Speaking
+    SEN: Seniors
+    SP: Speaker
+    ST: Step Meeting
+    T: Transgender
+    TC: Temporarily Closed
+    TR: Tradition Study
+    W: Women's
+    X: Handicap Access
+    Y: Young People's
+
+# Locztions by zipcode with their neighborhood name
+zipcodes:
+    20705: College Park
+    20707: Laurel
+    20715: Bowie
+    20723: Laurel
+    20794: Jessup
+    20910: Silver Spring
+    21014: Bel Air, Forest Hill
+    21023: Butler
+    21029: Clarksville
+    21030: Cockeysville, Hunt Valley
+    21031: Cockeysville, Hunt Valley
+    21032: Crownsville
+    21037: Edgewater
+    21040: Edgewood
+    21041: Ellicott City
+    21042: Ellicott City
+    21043: Ellicott City
+    21044: Columbia
+    21045: Columbia
+    21046: Columbia
+    21047: Fallston
+    21048: Finksburg
+    21050: Forest Hill
+    21053: Freeland
+    21057: Glen Arm
+    21060: Glen Burnie
+    21061: Glen Burnie
+    21071: Gyndon
+    21074: Hampstead
+    21075: Elkridge
+    21076: Hanover
+    21077: Dorsey
+    21082: Hydes, Long Green
+    21085: Edgewood
+    21087: Kingsville
+    21090: Linthicum
+    21093: Lutherville, Timonium
+    21102: Manchester
+    21104: Marriottsville
+    21108: Millersville
+    21111: Monkton
+    21117: Owings Mills
+    21120: Parkton
+    21122: Pasadena
+    21128: Perry Hall
+    21131: Jacksonville, Phoenix
+    21133: Randallstown
+    21136: Reisterstown
+    21144: Severn
+    21146: Severna Park
+    21152: Sparks
+    21155: Arcadia, Upperco
+    21157: Westminster
+    21158: Westminster
+    21162: White Marsh
+    21163: Woodstock
+    21201: Downtown Baltimore
+    21202: Downtown Baltimore
+    21204: Towson
+    21205: Middle East, Clifton
+    21206: Overlea
+    21207: Woodlawn
+    21208: Pikesville
+    21209: Pikesville
+    21210: Roland Park
+    21211: Hampden
+    21212: Rodgers Forge, Govans, Homeland
+    21213: Belair-Edison
+    21214: Hamilton
+    21215: Park Heights
+    21217: Bolton Hill
+    21218: Charles Village
+    21219: Sparrows Point, Edgemere
+    21220: Middle River, Bowleys Quarters
+    21221: Essex, Middle River
+    21222: Dundalk
+    21223: Southwest Baltimore
+    21224: Canton, Highlandtown
+    21225: Brooklyn
+    21226: Curtis Bay
+    21227: Arbutus, Halethorpe
+    21228: Catonsville
+    21229: West Baltimore
+    21230: Federal Hill, South Baltimore
+    21231: Fells Point
+    21234: Parkville
+    21236: Nottingham
+    21237: Rosedale
+    21239: Towson
+    21244: Windsor Mill
+    21286: Towson
+    21401: Annapolis
+    21704: Frederick
+    21737: Glenelg
+    21738: Glenwood
+    21771: Mount Airy
+    21776: New Windsor
+    21784: Eldersburg, Sykesville
+    21787: Taneytown
+    21791: Union Bridge
+    21794: West Friendship
+    21921: Elkton

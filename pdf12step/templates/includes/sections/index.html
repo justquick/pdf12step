@@ -1,0 +1,23 @@
+<h2>Meeting Index</h2>
+<table>
+    <tr>
+        <th>Meeting</th>
+        <th>Days</th>
+        <th>Zipcode</th>
+    </tr>
+    {% for name, info in meetings.index %}
+    <tr>
+        <td>{{ name }}</td>
+        <td style="width: 20ch">
+            {% for day, name in DAYS.items() %}
+                {% if day in info['days'] %}
+                {{ link('#' + info['days'][day]|string, DAYS[day][:2]) }}
+                {% else %}
+                &nbsp;&nbsp;
+                &nbsp;&nbsp;
+                {% endif %}
+            {% endfor %}</td>
+        <td>{{ info['zip'] }}</td>
+    </tr>
+    {% endfor %}
+</table>

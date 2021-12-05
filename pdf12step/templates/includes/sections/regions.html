@@ -1,0 +1,14 @@
+<h2>Regions</h2>
+<section>
+    <table>
+        <tr>
+            {% for zip, region in config.zipcodes.items() %}
+            <td><b>{{ zip }}</b> {{ region }}</td>
+            {% if loop.cycle('odd', 'even') == 'even' %}
+        </tr>
+        <tr>
+            {% endif %}
+            {% endfor %}
+        </tr>
+    </table>
+</section>
