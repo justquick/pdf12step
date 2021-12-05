@@ -1,0 +1,7 @@
+site_url: https://example.com/
+author: Test Author Intergroup
+show_links: true
+filtercodes:
+    - C
+codemap:
+    B: BB

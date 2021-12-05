@@ -9,11 +9,11 @@ from weasyprint import HTML
 from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache, select_autoescape
 from markupsafe import Markup
 
-from pdf12step.client import DATA_DIR, Client
+from pdf12step.client import Client
 from pdf12step.meetings import MeetingSet, DAYS
 from pdf12step.cached import cached_property
 from pdf12step.log import logger
-from pdf12step.config import Config
+from pdf12step.config import Config, DATA_DIR
 
 
 FSBC = FileSystemBytecodeCache()
@@ -110,7 +110,10 @@ class Context(dict):
 
         :rtype: MeetingSet
         """
-        meetings = MeetingSet(path.join(DATA_DIR, 'meetings.json'))
+        meetings_file = path.join(DATA_DIR, 'meetings.json')
+        if not path.isfile(meetings_file):
+            raise OSError(f'Meeting data file {meetings_file} not found! Please download first')
+        meetings = MeetingSet(meetings_file)
         if getattr(self.config, 'attendance_options', []):
             meetings = meetings.by_value('attendance_option').items()
             options = [meeting_set for attendance_option, meeting_set in meetings

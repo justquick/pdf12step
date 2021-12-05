@@ -34,7 +34,15 @@ setup(
         'Topic :: Text Processing :: Markup :: HTML'
     ],
     package_data={
-        'pdf12step': ['assets/css/*.css', 'assets/fonts/*.otf', 'assets/img/*.svg']
+        'pdf12step': [
+            'templates/*',
+            'templates/assets/css/*',
+            'templates/assets/img/*',
+            'templates/includes/*',
+            'templates/includes/sections/*',
+            'tests/data/*',
+            'tests/templates/*',
+        ]
     },
     packages=find_packages(),
     install_requires=[

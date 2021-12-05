@@ -4,11 +4,12 @@
 weasyprint-samples/
 .envrc
 access.txt
-pdf12step/assets/css/style.css
-pdf12step/assets/img/cover_background.svg
+pdf12step/assets/*
 dist/
 *.egg-info
 .coverage
 /data
 /build
 /docs/build
+/*.pdf
+.tox/

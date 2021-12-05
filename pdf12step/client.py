@@ -1,13 +1,14 @@
 import re
 import requests
 import json
+import os
 from csv import DictWriter
-from os.path import abspath, join
 
 from attrdict import AttrDefault
 
 from pdf12step.cached import cached_property
 from pdf12step.log import logger
+from pdf12step.config import DATA_DIR
 
 
 DEFAULTS = {
@@ -17,7 +18,6 @@ DEFAULTS = {
     'distance_units': 'm',
 }
 NONCE_RE = re.compile('nonce":"([0-9a-fA-F]+)"')
-DATA_DIR = abspath('data')
 
 
 def csv_dump(data, outfile):
@@ -137,12 +137,15 @@ class Client(object):
         :param tuple sections: Specific sections to download (eg meetings)
         :param str format: Which format to load the data in (eg json/csv)
         """
+        if not os.path.exists(DATA_DIR):
+            logger.warn(f'DATA_DIR not found, creating: {DATA_DIR}')
+            os.makedirs(DATA_DIR)
         sections = self.sections if not sections else sections
         for section in sections:
             if not hasattr(self, section):
                 raise ValueError(f'Section {section} not known')
             data = getattr(self, section)()
-            fn = join(DATA_DIR, f'{section}.{format}')
+            fn = os.path.join(DATA_DIR, f'{section}.{format}')
             with open(fn, 'w') as outfile:
                 json.dump(data, outfile, indent=2) if format == 'json' else csv_dump(data, outfile)
             logger.info(f'Downloaded {fn}')

@@ -1,0 +1,4 @@
+{{ slugify(config.title) }}
+{{ config.template_dirs }}
+{{ codify(config.mycodes)|join(' ')  }}
+{{ config.author }}

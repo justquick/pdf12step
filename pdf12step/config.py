@@ -11,7 +11,9 @@ except ImportError:
 from pdf12step.log import logger
 
 
-CONFIG_FILE = os.getenv('12STEP_CONFIG', 'config.yaml')
+DATA_DIR = os.path.abspath(os.getenv('PDF12STEP_DATA_DIR', 'data'))
+CONFIG_FILE = os.getenv('PDF12STEP_CONFIG', 'config.yaml')
+
 LEVEL_MAP = {
     0: logging.WARN,
     1: logging.INFO,
