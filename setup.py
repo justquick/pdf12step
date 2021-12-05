@@ -41,7 +41,6 @@ setup(
             'templates/includes/*',
             'templates/includes/sections/*',
             'tests/data/*',
-            'tests/templates/*',
         ]
     },
     packages=find_packages(),
