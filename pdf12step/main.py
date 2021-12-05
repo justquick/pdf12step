@@ -41,9 +41,7 @@ client_parser.add_argument('-f', '--format', default='json', choices=('json', 'c
 client_parser.add_argument('-s', '--sections',  default=','.join(Client.sections), help='Comma separated list of sections to download')
 
 init_parser = argparse.ArgumentParser(description='Iniitialize your custom configuration interactively by answering a few questions')
-init_parser = add_arguments(init_parser)
-init_parser.add_argument('config_file',  default='config.yaml', help='Filename to output your config to')
-[init_parser._handle_conflict_resolve(None, [(opt, init_parser._actions[1])]) for opt in ('-c', '--config')]
+init_parser.add_argument('-o', '--output',  default='config.yaml', help='Filename to output your config to')
 
 
 def lister(value):
@@ -110,13 +108,13 @@ def init_main():
         autoescape=select_autoescape(),
     )
     content = env.get_template('default.config.yaml').render(ctx)
-    with open(args.config_file, 'w') as conf:
+    with open(args.output, 'w') as conf:
         conf.write(content)
-    logger.debug(f'Wrote init config to {args.config_file}')
+    logger.debug(f'Wrote init config to {args.output}')
     print()
-    print(f'Your custom config has been rendered to {args.config_file}')
+    print(f'Your custom config has been rendered to {args.output}')
     print('You can now render documents using')
-    print(f'12step-pdf -c {args.config_file}')
+    print(f'12step-pdf -c {args.output}')
 
 
 def client_main():

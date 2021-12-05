@@ -2,12 +2,12 @@ import os
 import logging
 
 from weasyprint import LOGGER as wlogger
-from attrdict import AttrDict
 try:
     from yaml import CLoader as Loader
 except ImportError:
     from yaml import Loader
 
+from pdf12step.adict import AttrDict
 from pdf12step.log import logger
 
 

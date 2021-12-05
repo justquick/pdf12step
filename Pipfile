@@ -8,7 +8,6 @@ requests = "*"
 flask = "*"
 flask-weasyprint = "*"
 weasyprint = "*"
-attrdict = "*"
 pyyaml = "*"
 
 [dev-packages]

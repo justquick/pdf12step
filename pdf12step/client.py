@@ -4,8 +4,7 @@ import json
 import os
 from csv import DictWriter
 
-from attrdict import AttrDefault
-
+from pdf12step.adict import AttrDict
 from pdf12step.cached import cached_property
 from pdf12step.log import logger
 from pdf12step.config import DATA_DIR
@@ -31,10 +30,10 @@ def csv_dump(data, outfile):
     [keys.update(item.keys()) for item in data]
     if 'id' in keys:
         keys = ['id'] + list(keys.difference({'id'}))
-    writer = DictWriter(outfile, keys)
+    writer = DictWriter(outfile, keys,  extrasaction='ignore')
     writer.writeheader()
-    writer.writerows([AttrDefault(None, {key: '|'.join(value) if isinstance(value, list) else value
-                                         for key, value in item.items()})
+    writer.writerows([AttrDict({key: '|'.join(value) if isinstance(value, list) else value
+                                for key, value in item.items()})
                       for item in data])
 
 

@@ -3,9 +3,9 @@ import re
 from collections import defaultdict
 from urllib.parse import unquote
 
-from attrdict import AttrDefault
-
+from pdf12step.adict import AttrDict
 from pdf12step.cached import cached_property
+
 
 DAYS = {
     0: 'Sunday',
@@ -32,7 +32,7 @@ def clean_url(url):
     return unquote(url).strip()
 
 
-class Meeting(AttrDefault):
+class Meeting(AttrDict):
 
     @cached_property
     def day_display(self):
@@ -90,7 +90,7 @@ class MeetingSet(object):
     @cached_property
     def items(self):
         itms = json.load(open(self.fn_or_obj)) if isinstance(self.fn_or_obj, str) else self.fn_or_obj
-        return [Meeting(str, item) for item in itms]
+        return [Meeting(item, default='') for item in itms]
 
     def copy(self):
         return MeetingSet(self.items.copy())

@@ -6,7 +6,7 @@ from pdf12step.meetings import MeetingSet, Meeting
 
 class MeetingTest(TestCase):
     def item(self, **kwargs):
-        return Meeting(str, kwargs)
+        return Meeting(kwargs, default='')
 
     def test_day_display(self):
         assert self.item(day=4).day_display == 'Thursday'
