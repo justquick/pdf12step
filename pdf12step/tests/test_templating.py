@@ -1,12 +1,12 @@
-from os import path
+from unittest import mock
+from os import environ
 
-from pdf12step.templating import slugify, Context
-
-DATA_DIR = path.join(path.dirname(__file__), 'data')
-CONFIG_FILE = path.join(DATA_DIR, 'test.config.yml')
+from .base import ENV, CONFIG_FILE, DATA_DIR
 
 
+@mock.patch.dict(environ, ENV, clear=True)
 def test_slugify():
+    from pdf12step.templating import slugify
     for text, slug in (
         ('concurrently.\n-Zoom Mee', 'concurrently-zoom-mee'),
         ('23,,5131', '235131'),
@@ -15,8 +15,11 @@ def test_slugify():
         assert slugify(text) == slug
 
 
+@mock.patch.dict(environ, ENV, clear=True)
 def test_template():
+    from pdf12step.templating import Context
     ctx = Context({
+        'data_dir': DATA_DIR,
         'config': [CONFIG_FILE],
         'template_dirs': [DATA_DIR],
         'title': 'My Test Title',
@@ -32,8 +35,11 @@ def test_template():
         assert part in content
 
 
+@mock.patch.dict(environ, ENV, clear=True)
 def test_pdftemplate():
+    from pdf12step.templating import Context
     ctx = Context({
+        'data_dir': DATA_DIR,
         'config': [CONFIG_FILE],
     })
     content = ctx.render('layout.html')

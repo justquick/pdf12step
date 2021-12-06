@@ -30,11 +30,17 @@ def csv_dump(data, outfile):
     [keys.update(item.keys()) for item in data]
     if 'id' in keys:
         keys = ['id'] + list(keys.difference({'id'}))
-    writer = DictWriter(outfile, keys,  extrasaction='ignore')
-    writer.writeheader()
-    writer.writerows([AttrDict({key: '|'.join(value) if isinstance(value, list) else value
-                                for key, value in item.items()})
-                      for item in data])
+    with open(outfile, 'w') as csvfile:
+        writer = DictWriter(csvfile, keys,  extrasaction='ignore')
+        writer.writeheader()
+        writer.writerows([AttrDict({key: '|'.join(value) if isinstance(value, list) else value
+                                    for key, value in item.items()})
+                          for item in data])
+
+
+def json_dump(data, outfile):
+    with open(outfile, 'w') as jsonfile:
+        json.dump(data, jsonfile, indent=2)
 
 
 class Client(object):
@@ -144,7 +150,6 @@ class Client(object):
             if not hasattr(self, section):
                 raise ValueError(f'Section {section} not known')
             data = getattr(self, section)()
-            fn = os.path.join(DATA_DIR, f'{section}.{format}')
-            with open(fn, 'w') as outfile:
-                json.dump(data, outfile, indent=2) if format == 'json' else csv_dump(data, outfile)
-            logger.info(f'Downloaded {fn}')
+            outfile = os.path.join(DATA_DIR, f'{section}.{format}')
+            json_dump(data, outfile) if format == 'json' else csv_dump(data, outfile)
+            logger.info(f'Downloaded {outfile}')

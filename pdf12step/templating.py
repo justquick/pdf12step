@@ -74,6 +74,7 @@ class Context(dict):
     def __init__(self, args):
         dict.__init__(self)
         self.args = args = args if isinstance(args, dict) else args.__dict__
+        self.data_dir = args.get('data_dir', DATA_DIR)
         self.is_flask = args.get('flask', False)
         self.config = config = Config().load(args)
         if args.get('download', False):
@@ -110,7 +111,7 @@ class Context(dict):
 
         :rtype: MeetingSet
         """
-        meetings_file = path.join(DATA_DIR, 'meetings.json')
+        meetings_file = path.join(self.data_dir, 'meetings.json')
         if not path.isfile(meetings_file):
             raise OSError(f'Meeting data file {meetings_file} not found! Please download first')
         meetings = MeetingSet(meetings_file)
