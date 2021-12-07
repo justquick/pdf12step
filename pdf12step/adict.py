@@ -28,7 +28,9 @@ class AttrDict(dict):
             raise
 
     def __setattr__(self, name, value):
-        if not name.startswith('_'):
+        if name in dir(self):
+            super().__setattr__(name, value)
+        else:
             self[name] = self.fromdict(value)
 
     @classmethod
