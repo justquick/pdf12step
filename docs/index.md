@@ -12,4 +12,5 @@ features
 commands
 examples
 pdf12step
+CHANGELOG
 ```
