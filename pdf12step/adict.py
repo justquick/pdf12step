@@ -1,7 +1,10 @@
 class AttrDict(dict):
+    _has_default = False
+    _default = None
+
     def __init__(self, arg=(), **kwargs):
-        self.has_default = 'default' in kwargs
-        self.default = kwargs.pop('default', None)
+        self._has_default = 'default' in kwargs
+        self._default = kwargs.pop('default', None)
         items = arg.items() if isinstance(arg, dict) else arg
         for key, value in items:
             self[key] = self.fromdict(value)
@@ -20,13 +23,14 @@ class AttrDict(dict):
         try:
             return super().__getitem__(name)
         except KeyError:
-            if self.has_default:
-                return self.default
+            if self._has_default:
+                return self._default
             raise
 
     def __setattr__(self, name, value):
-        self[name] = self.fromdict(value)
+        if not name.startswith('_'):
+            self[name] = self.fromdict(value)
 
     @classmethod
     def fromdict(cls, value):
-        return cls(value) if isinstance(value, (dict, )) else value
+        return cls(value) if isinstance(value, dict) else value
