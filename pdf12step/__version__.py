@@ -1,6 +1,6 @@
 __name__ = 'pdf12step'
 __title__ = '12 Step Meeting PDF Generator'
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 __author__ = 'Justin Quick'
 __author_email__ = 'justquick@gmail.com'
 __url__ = 'https://github.com/justquick/pdf12step'

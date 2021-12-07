@@ -1,4 +1,4 @@
-# pdf12step 1.1.0 documentation
+# pdf12step 1.1.1 documentation
 
 ```{include} README.md
 ```
