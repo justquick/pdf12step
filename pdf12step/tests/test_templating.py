@@ -1,7 +1,7 @@
 from unittest import mock
 from os import environ
 
-from .base import ENV, CONFIG_FILE, DATA_DIR
+from .base import ENV, CONFIG_FILE, DATA_DIR, contains_parts
 
 
 @mock.patch.dict(environ, ENV, clear=True)
@@ -16,6 +16,28 @@ def test_slugify():
 
 
 @mock.patch.dict(environ, ENV, clear=True)
+def test_codify():
+    from pdf12step.templating import Context, codify
+    ctx = Context({
+        'data_dir': DATA_DIR,
+        'config': [CONFIG_FILE],
+        'template_dirs': [DATA_DIR],
+        'title': 'My Test Title',
+        'mycodes': ['A', 'B', 'C'],
+    })
+    coded = codify(ctx.config.codemap, ctx.config.filtercodes)(['C', 'B'])
+    assert list(coded) == ['BB']
+
+
+@mock.patch.dict(environ, ENV, clear=True)
+def test_link():
+    from pdf12step.templating import link
+    url, name, gid = 'http://google.com', 'Google', 'goo'
+    assert link(True)(url, name, gid) == f'<a id="{gid}" href="{url}">{name}</a>'
+    assert link(False)(url, name, gid) == name
+
+
+@mock.patch.dict(environ, ENV, clear=True)
 def test_template():
     from pdf12step.templating import Context
     ctx = Context({
@@ -25,14 +47,12 @@ def test_template():
         'title': 'My Test Title',
         'mycodes': ['A', 'B', 'C'],
     })
-    content = ctx.render('test.txt')
-    for part in [
+    contains_parts(ctx.render('test.txt'), [
         'my-test-title',
         DATA_DIR,
         'A BB',
         'Test Author Intergroup'
-    ]:
-        assert part in content
+    ])
 
 
 @mock.patch.dict(environ, ENV, clear=True)
@@ -42,4 +62,23 @@ def test_pdftemplate():
         'data_dir': DATA_DIR,
         'config': [CONFIG_FILE],
     })
-    content = ctx.render('layout.html')
+    contains_parts(ctx.render('layout.html'), [
+        'Tuesday - Parkton',
+        '<link href="assets/css/style.css" rel="stylesheet">',
+        '39.2912855,-76.5629126">100 S Haven St, Baltimore, MD 21224, USA',
+        '<meta name="author" content="Test Author Intergroup" />',
+        'D O ONL',
+        '<a href="https://zoom.us/j/1234189178">Join on Zoom</a>'
+    ])
+
+
+@mock.patch.dict(environ, ENV, clear=True)
+def test_methods():
+    from pdf12step.templating import Context
+    ctx = Context({
+        'data_dir': DATA_DIR,
+        'config': [CONFIG_FILE],
+    })
+    assert ctx.stylesheets == ['assets/css/style.css', 'test/css']
+    assert len(ctx.template_dirs) == 2
+    assert ctx.template_dirs[1] == 'test/templates'

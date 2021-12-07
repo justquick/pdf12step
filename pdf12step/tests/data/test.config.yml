@@ -5,3 +5,14 @@ filtercodes:
     - C
 codemap:
     B: BB
+meetingcodes:
+    B: Big Book
+    C: Closed
+attendance_options:
+    - hybrid
+    - in_person
+    - online
+template_dirs:
+    - test/templates
+stylesheets:
+    - test/css

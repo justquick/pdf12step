@@ -50,7 +50,7 @@ def lister(value):
 
 def booler(value):
     if isinstance(value, str):
-        value = value.lower in ('y', 'yes', 'true')
+        value = value.lower() in ('y', 'yes', 'true')
     return str(value).lower()
 
 

@@ -6,3 +6,8 @@ ENV = {
     'PDF12STEP_DATA_DIR': DATA_DIR,
     'PDF12STEP_CONFIG': CONFIG_FILE
 }
+
+
+def contains_parts(content, parts):
+    for part in parts:
+        assert part in content
