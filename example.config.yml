@@ -48,7 +48,7 @@ filtercodes:
 codemap:
     B: BB
     BE: BEG
-    S: SPK
+    S: SPAN
     ST: STEP
     TR: TRAD
     X: H
