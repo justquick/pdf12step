@@ -128,6 +128,9 @@ def pdf_main():
     args = pdf_parser.parse_args()
     context = Context(args)
     context.prerender()
+    content = context.pdf()
+    logger.info(f'Generated {len(content)//1000}KB of PDF content')
+    logger.info(f'Total meetings renderd: {len(context["meetings"])}')
     outfile = args.output
     if outfile is None:
         outfile = open(context['now'].strftime('%B %Y Directory.pdf'), 'wb')
@@ -135,9 +138,6 @@ def pdf_main():
         outfile = sys.stdout.buffer
     else:
         outfile = open(outfile, 'wb')
-    content = context.pdf()
-    logger.info(f'Generated {len(content)//1000}KB of PDF content')
-    logger.info(f'Total meetings renderd: {len(context["meetings"])}')
     outfile.write(content)
     outfile.close()
     logger.info(f'Wrote to {outfile.name}')
