@@ -180,6 +180,14 @@ class MeetingSet(object):
         return MeetingSet(sorted(self.items, key=keyfunc, reverse=reverse))
 
     @cached_property
+    def by_id(self):
+        return [meeting[0] for meeting in self.by_value('id')]
+
+    @cached_property
+    def zipcodes(self):
+        return set([meeting.zipcode for meeting in self.items if meeting.zipcode])
+
+    @cached_property
     def index(self):
         """
         Returns sorted list of meeting index section information
