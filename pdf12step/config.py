@@ -98,4 +98,7 @@ class Config(AttrDict):
             self.update(yaml_load(config_file))
         self.update(args)  # runtime
         logger.debug(f'Loaded runtime options {args}')
+        for key, value in self.items():
+            if value and isinstance(value, dict):
+                self[key] = {str(k): str(v) for k, v in value.items()}
         return self
