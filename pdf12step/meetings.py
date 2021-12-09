@@ -117,7 +117,7 @@ class MeetingSet(object):
         """
         return MeetingSet(self.items[:num])
 
-    def value_set(self, *attrs):
+    def value_set(self, *attrs, sort=False):
         """
         Returns a set of unique values for the passed atribute names
 
@@ -131,9 +131,8 @@ class MeetingSet(object):
                 val = getattr(item, attr)
                 ts[attr].extend(val if isinstance(val, (tuple, list)) else [val])
         ts = [tuple(ts[attr][i] for attr in attrs) for i in range(c)]
-        if len(attrs) > 1:
-            return set(ts)
-        return set(i[0] for i in ts)
+        ts = set(ts) if len(attrs) > 1 else set(i[0] for i in ts)
+        return sorted(ts) if sort else ts
 
     def value_count(self, attr):
         """
@@ -181,7 +180,7 @@ class MeetingSet(object):
 
     @cached_property
     def by_id(self):
-        return [meeting[0] for meeting in self.by_value('id')]
+        return {meeting[0].id: meeting[0] for meeting in self.by_value('id')}
 
     @cached_property
     def zipcodes(self):
