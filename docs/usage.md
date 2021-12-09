@@ -24,6 +24,8 @@ The PDF will be generated in the project directory in the format `<month> <year>
 
 ### From the Web App
 
+**You must install the Flask package before running this
+
 Run the Flask server to start the local web app running.
 
 ```

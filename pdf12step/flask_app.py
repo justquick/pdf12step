@@ -1,6 +1,12 @@
 from os.path import join
 
-from flask import Flask, render_template, request
+try:
+    from flask import Flask
+except ModuleNotFoundError:
+    print('You must install Flask to use the pdf12step Flask app')
+    exit(1)
+
+from flask import render_template, request
 from flask_weasyprint import HTML as FHTML, render_pdf
 
 from pdf12step.templating import DIR, Context, FSBC, LAYOUT_TEMPLATE

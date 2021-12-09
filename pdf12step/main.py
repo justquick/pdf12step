@@ -8,7 +8,6 @@ from pdf12step.templating import Context, DIR
 from pdf12step.log import logger
 from pdf12step.config import Config
 from pdf12step.client import Client
-from pdf12step.flask_app import app
 
 
 def add_arguments(parser):
@@ -144,6 +143,23 @@ def pdf_main():
 
 
 def flask_main():
+    from pdf12step.flask_app import app
+
     args = flask_parser.parse_args()
     os.environ['FLASK_APP'] = __name__
     app.run(args.address, args.port)
+
+
+def main():
+    context = Context({})
+    config = context.config
+    meetings = context.get_meetings()
+    ctx = sys.modules['__main__'].__dict__
+    # ctx.update(globals())
+    ctx.update(locals())
+    from IPython import embed
+    embed(colors='linux', module=sys.modules['__main__'], user_ns=ctx)
+
+
+if __name__ == '__main__':
+    main()

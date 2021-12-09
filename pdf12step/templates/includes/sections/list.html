@@ -4,11 +4,11 @@
     {% for region, rmeets in meets.by_value('region', sort=True) %}
         {% set zbr = zipcodes_by_region[region] %}
         {% if zbr %}
-            {% set zips = zbr %}
+            {% set zips = zbr|join('/') %}
         {% else %}
-            {% set zips = rmeets.zipcodes %}
+            {% set zips = rmeets[0].zipcode %}
         {% endif %}
-        <h3>{{ day }} - {{ region }}    <span style="float:right;">{{ zips|join('/') }}</span></h3>
+        <h3>{{ day }} - {{ region }}    <span style="float:right;">{{ zips }}</span></h3>
 
             <article class="meeting">
             <table class="mtable">
