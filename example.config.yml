@@ -130,7 +130,7 @@ zipcodes:
     21085: Edgewood
     21087: Kingsville
     21090: Linthicum
-    21093: Lutherville, Timonium
+    21093: Lutherville/Timonium
     21102: Manchester
     21104: Marriottsville
     21108: Millersville
@@ -138,7 +138,7 @@ zipcodes:
     21117: Owings Mills
     21120: Parkton
     21122: Pasadena
-    21128: Perry Hall
+    21128: Fullerton/Perry Hall
     21131: Jacksonville, Phoenix
     21133: Randallstown
     21136: Reisterstown
@@ -160,21 +160,21 @@ zipcodes:
     21209: Pikesville
     21210: Roland Park
     21211: Hampden
-    21212: Rodgers Forge, Govans, Homeland
+    21212: Govans/Rogers Forge
     21213: Belair-Edison
     21214: Hamilton
     21215: Park Heights
     21217: Bolton Hill
-    21218: Charles Village
+    21218: Waverly/Charles Village
     21219: Sparrows Point, Edgemere
     21220: Middle River, Bowleys Quarters
     21221: Essex, Middle River
     21222: Dundalk
     21223: Southwest Baltimore
-    21224: Canton, Highlandtown
+    21224: Canton/Highlandtown
     21225: Brooklyn
     21226: Curtis Bay
-    21227: Arbutus, Halethorpe
+    21227: Arbutus/Halethorpe
     21228: Catonsville
     21229: West Baltimore
     21230: Federal Hill, South Baltimore
@@ -182,7 +182,7 @@ zipcodes:
     21234: Parkville
     21236: Nottingham
     21237: Rosedale
-    21239: Towson
+    21239: Northwood/Idlewylde
     21244: Windsor Mill
     21286: Towson
     21401: Annapolis
@@ -191,7 +191,7 @@ zipcodes:
     21738: Glenwood
     21771: Mount Airy
     21776: New Windsor
-    21784: Eldersburg, Sykesville
+    21784: Sykesville/Eldersburg
     21787: Taneytown
     21791: Union Bridge
     21794: West Friendship
