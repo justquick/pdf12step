@@ -197,3 +197,11 @@ article {
 #index tr:nth-child(odd) {
     background: #fff
 }
+
+#ntable {
+    width: 100%;
+}
+
+#ntable td {
+    border-bottom: 1px solid black;
+}
