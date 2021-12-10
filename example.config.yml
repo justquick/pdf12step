@@ -94,105 +94,115 @@ meetingcodes:
 
 # Locztions by zipcode with their neighborhood name
 zipcodes:
-    20705: College Park
-    20707: Laurel
-    20715: Bowie
-    20723: Laurel
-    20794: Jessup
-    20910: Silver Spring
-    21014: Bel Air, Forest Hill
-    21023: Butler
-    21029: Clarksville
-    21030: Cockeysville, Hunt Valley
-    21031: Cockeysville, Hunt Valley
-    21032: Crownsville
-    21037: Edgewater
-    21040: Edgewood
-    21041: Ellicott City
-    21042: Ellicott City
-    21043: Ellicott City
-    21044: Columbia
-    21045: Columbia
-    21046: Columbia
-    21047: Fallston
-    21048: Finksburg
-    21050: Forest Hill
-    21053: Freeland
-    21057: Glen Arm
-    21060: Glen Burnie
-    21061: Glen Burnie
-    21071: Gyndon
-    21074: Hampstead
-    21075: Elkridge
-    21076: Hanover
-    21077: Dorsey
-    21082: Hydes, Long Green
-    21085: Edgewood
-    21087: Kingsville
-    21090: Linthicum
-    21093: Lutherville/Timonium
-    21102: Manchester
-    21104: Marriottsville
-    21108: Millersville
-    21111: Monkton
-    21117: Owings Mills
-    21120: Parkton
-    21122: Pasadena
-    21128: Fullerton/Perry Hall
-    21131: Jacksonville, Phoenix
-    21133: Randallstown
-    21136: Reisterstown
-    21144: Severn
-    21146: Severna Park
-    21152: Sparks
-    21155: Arcadia, Upperco
-    21157: Westminster
-    21158: Westminster
-    21162: White Marsh
-    21163: Woodstock
-    21201: Downtown Baltimore
-    21202: Downtown Baltimore
-    21204: Towson
-    21205: Middle East, Clifton
-    21206: Overlea
-    21207: Woodlawn
-    21208: Pikesville
-    21209: Pikesville
-    21210: Roland Park
-    21211: Hampden
-    21212: Govans/Rogers Forge
-    21213: Belair-Edison
-    21214: Hamilton
-    21215: Park Heights
-    21217: Bolton Hill
-    21218: Waverly/Charles Village
-    21219: Sparrows Point, Edgemere
-    21220: Middle River, Bowleys Quarters
-    21221: Essex, Middle River
-    21222: Dundalk
-    21223: Southwest Baltimore
-    21224: Canton/Highlandtown
-    21225: Brooklyn
-    21226: Curtis Bay
-    21227: Arbutus/Halethorpe
-    21228: Catonsville
-    21229: West Baltimore
-    21230: Federal Hill, South Baltimore
-    21231: Fells Point
-    21234: Parkville
-    21236: Nottingham
-    21237: Rosedale
-    21239: Northwood/Idlewylde
-    21244: Windsor Mill
-    21286: Towson
-    21401: Annapolis
-    21704: Frederick
-    21737: Glenelg
-    21738: Glenwood
-    21771: Mount Airy
-    21776: New Windsor
-    21784: Sykesville/Eldersburg
-    21787: Taneytown
-    21791: Union Bridge
-    21794: West Friendship
-    21921: Elkton
+    Annapolis: 21401
+    Arbutus/Halethorpe: 21227
+    Arcadia, Upperco: 21155
+    Bel Air, Forest Hill: 21014
+    Belair-Edison: 21213
+    Bolton Hill: 21217
+    Bowie: 20715
+    Brooklyn: 21225
+    Butler: 21023
+    Canton/Highlandtown: 21224
+    Catonsville: 21228
+    Clarksville: 21029
+    Cockeysville, Hunt Valley:
+    - 21030
+    - 21031
+    College Park: 20705
+    Columbia:
+    - 21044
+    - 21045
+    - 21046
+    Crownsville: 21032
+    Curtis Bay: 21226
+    Dorsey: 21077
+    Downtown Baltimore:
+    - 21202
+    - 21201
+    Dundalk: 21222
+    Edgewater: 21037
+    Edgewood:
+    - 21085
+    - 21040
+    Elkridge: 21075
+    Elkton: 21921
+    Ellicott City:
+    - 21041
+    - 21043
+    - 21042
+    Essex, Middle River: 21221
+    Fallston: 21047
+    Federal Hill, South Baltimore: 21230
+    Fells Point: 21231
+    Finksburg: 21048
+    Forest Hill: 21050
+    Frederick: 21704
+    Freeland: 21053
+    Fullerton/Perry Hall: 21128
+    Glen Arm: 21057
+    Glen Burnie:
+    - 21061
+    - 21060
+    Glenelg: 21737
+    Glenwood: 21738
+    Govans/Rogers Forge: 21212
+    Gyndon: 21071
+    Hamilton: 21214
+    Hampden: 21211
+    Hampstead: 21074
+    Hanover: 21076
+    Hydes, Long Green: 21082
+    Jacksonville, Phoenix: 21131
+    Jessup: 20794
+    Kingsville: 21087
+    Laurel:
+    - 20723
+    - 20707
+    Linthicum: 21090
+    Lutherville/Timonium: 21093
+    Manchester: 21102
+    Marriottsville: 21104
+    Middle East, Clifton: 21205
+    Middle River, Bowleys Quarters: 21220
+    Millersville: 21108
+    Monkton: 21111
+    Mount Airy: 21771
+    New Windsor: 21776
+    Northwood/Idlewylde: 21239
+    Nottingham: 21236
+    Overlea: 21206
+    Owings Mills: 21117
+    Park Heights: 21215
+    Parkton: 21120
+    Parkville: 21234
+    Pasadena: 21122
+    Pikesville:
+    - 21208
+    - 21209
+    Randallstown: 21133
+    Reisterstown: 21136
+    Roland Park: 21210
+    Rosedale: 21237
+    Severn: 21144
+    Severna Park: 21146
+    Silver Spring: 20910
+    Southwest Baltimore: 21223
+    Sparks: 21152
+    Sparrows Point, Edgemere: 21219
+    Sykesville/Eldersburg: 21784
+    Taneytown: 21787
+    Towson:
+    - 21286
+    - 21204
+    Union Bridge: 21791
+    Waverly/Charles Village: 21218
+    West Baltimore: 21229
+    West Friendship: 21794
+    Westminster:
+    - 21158
+    - 21157
+    White Marsh: 21162
+    Windsor Mill: 21244
+    Woodlawn: 21207
+    Woodstock: 21163
