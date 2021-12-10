@@ -142,6 +142,11 @@ article {
     padding-bottom: 3px;
 }
 
+#itable {
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .b {
     font-weight: bold;
 }
