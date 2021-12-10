@@ -151,13 +151,13 @@ def flask_main():
 
 
 def main():
+    from IPython import embed
+
     context = Context({})
     config = context.config
     meetings = context.get_meetings()
     ctx = sys.modules['__main__'].__dict__
-    # ctx.update(globals())
     ctx.update(locals())
-    from IPython import embed
     embed(colors='linux', module=sys.modules['__main__'], user_ns=ctx)
 
 
