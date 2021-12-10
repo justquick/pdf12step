@@ -117,22 +117,21 @@ class MeetingSet(object):
         """
         return MeetingSet(self.items[:num])
 
-    def value_set(self, *attrs, sort=False):
+    def value_set(self, attr, sort=False):
         """
-        Returns a set of unique values for the passed atribute names
+        Returns a set of unique values for the passed atribute name
 
+        :param str attr: Attribute name of a Meeting
         :rtype: set
         """
-        ts = defaultdict(list)
-        c = 0
+        vset = set()
         for item in self.items:
-            c += 1
-            for attr in attrs:
-                val = getattr(item, attr)
-                ts[attr].extend(val if isinstance(val, (tuple, list)) else [val])
-        ts = [tuple(ts[attr][i] for attr in attrs) for i in range(c)]
-        ts = set(ts) if len(attrs) > 1 else set(i[0] for i in ts)
-        return sorted(ts) if sort else ts
+            value = item[attr]
+            if isinstance(value, list):
+                vset |= set(value)
+            else:
+                vset.add(value)
+        return sorted(vset) if sort else vset
 
     def value_count(self, attr):
         """
