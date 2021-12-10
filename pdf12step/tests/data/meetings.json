@@ -215,7 +215,9 @@
     "conference_phone_notes": "For password, go to https://baltimoreaa.org/meeting-passwords/ or call 410-663-1922.",
     "types": [
       "B",
-      "ONL"
+      "ONL",
+      "M",
+      "CF"
     ],
     "location_url": "https://baltimoreaa.org/locations/325509/",
     "formatted_address": "Baltimore, MD, USA",

@@ -16,3 +16,7 @@ template_dirs:
     - test/templates
 stylesheets:
     - test/css
+zipcodes:
+    20705: College Park
+    20707: Laurel
+    20723: Laurel
