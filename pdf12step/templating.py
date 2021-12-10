@@ -135,7 +135,7 @@ class Context(dict):
         """
         sheets = ['assets/css/style.css']
         if self.config.stylesheets:
-            sheets.extend([path.expandvars(sheet) for sheet in self.config.stylesheets])
+            sheets.extend([path.abspath(path.expandvars(sheet)) for sheet in self.config.stylesheets])
         return sheets
 
     @cached_property
@@ -148,7 +148,7 @@ class Context(dict):
         """
         dirs = [path.join(DIR, 'templates')]
         if self.config.template_dirs:
-            dirs.extend([path.expandvars(tdir) for tdir in self.config.template_dirs])
+            dirs.extend([path.abspath(path.expandvars(tdir)) for tdir in self.config.template_dirs])
         return dirs
 
     @cached_property

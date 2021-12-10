@@ -1,7 +1,16 @@
 from unittest import mock
-from os import environ
+from os import environ, getcwd, path
 
 from .base import ENV, CONFIG_FILE, DATA_DIR, contains_parts
+
+
+def get_context(**kwargs):
+    from pdf12step.templating import Context
+
+    kwargs.update(data_dir=DATA_DIR,
+                  config=[CONFIG_FILE],
+                  template_dirs=[DATA_DIR])
+    return Context(kwargs)
 
 
 @mock.patch.dict(environ, ENV, clear=True)
@@ -17,14 +26,8 @@ def test_slugify():
 
 @mock.patch.dict(environ, ENV, clear=True)
 def test_codify():
-    from pdf12step.templating import Context, codify
-    ctx = Context({
-        'data_dir': DATA_DIR,
-        'config': [CONFIG_FILE],
-        'template_dirs': [DATA_DIR],
-        'title': 'My Test Title',
-        'mycodes': ['A', 'B', 'C'],
-    })
+    from pdf12step.templating import codify
+    ctx = get_context(title='My Test Title', mycodes=['A', 'B', 'C'])
     coded = codify(ctx.config.codemap, ctx.config.filtercodes)(['C', 'B'])
     assert list(coded) == ['BB']
 
@@ -39,14 +42,7 @@ def test_link():
 
 @mock.patch.dict(environ, ENV, clear=True)
 def test_template():
-    from pdf12step.templating import Context
-    ctx = Context({
-        'data_dir': DATA_DIR,
-        'config': [CONFIG_FILE],
-        'template_dirs': [DATA_DIR],
-        'title': 'My Test Title',
-        'mycodes': ['A', 'B', 'C'],
-    })
+    ctx = get_context(title='My Test Title', mycodes=['A', 'B', 'C'])
     contains_parts(ctx.render('test.txt'), [
         'my-test-title',
         DATA_DIR,
@@ -57,11 +53,7 @@ def test_template():
 
 @mock.patch.dict(environ, ENV, clear=True)
 def test_pdftemplate():
-    from pdf12step.templating import Context
-    ctx = Context({
-        'data_dir': DATA_DIR,
-        'config': [CONFIG_FILE],
-    })
+    ctx = get_context()
     contains_parts(ctx.render('layout.html'), [
         'Tuesday - Parkton',
         '<link href="assets/css/style.css" rel="stylesheet">',
@@ -74,11 +66,15 @@ def test_pdftemplate():
 
 @mock.patch.dict(environ, ENV, clear=True)
 def test_methods():
-    from pdf12step.templating import Context
-    ctx = Context({
-        'data_dir': DATA_DIR,
-        'config': [CONFIG_FILE],
-    })
-    assert ctx.stylesheets == ['assets/css/style.css', 'test/css']
+    ctx = get_context()
+    assert ctx.stylesheets == ['assets/css/style.css', path.join(getcwd(), 'test/css')]
     assert len(ctx.template_dirs) == 2
-    assert ctx.template_dirs[1] == 'test/templates'
+    assert ctx.template_dirs[1] == DATA_DIR
+
+
+@mock.patch.dict(environ, ENV, clear=True)
+def test_zips():
+    ctx = get_context()
+    zbr = ctx.zipcodes_by_region
+    assert zbr['College Park'] == {'20705'}
+    assert zbr['Laurel'] == {'20707', '20723'}
