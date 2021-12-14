@@ -49,6 +49,8 @@ setup(
         'requests',
         'weasyprint',
         'pyyaml',
+        'Flask',
+        'Flask-WeasyPrint'
     ],
     entry_points={
         'console_scripts': [
