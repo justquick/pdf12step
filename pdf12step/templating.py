@@ -84,6 +84,7 @@ class Context(dict):
             DAYS=DAYS,
             now=datetime.now(),
             zipcodes_by_region=self.zipcodes_by_region,
+            filtered_codes=self.filtered_codes,
             stylesheets=self.stylesheets,
             slugify=slugify,
             codify=codify(config.codemap, config.filtercodes),
@@ -104,6 +105,21 @@ class Context(dict):
         for zipcode, region in self.config.zipcodes.items():
             zbr[region].add(zipcode)
         return zbr
+
+    @cached_property
+    def filtered_codes(self):
+        """
+        Returns a list of meeting (code, name) after the codes have been filtered and remapped
+
+        :rtype: list
+        """
+        codes = []
+        for code, name in self.config.meetingcodes.items():
+            if code in self.config.filtercodes:
+                continue
+            code = self.config.codemap.get(code, code)
+            codes.append((code, name))
+        return codes
 
     def get_meetings(self):
         """

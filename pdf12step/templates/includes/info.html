@@ -4,17 +4,16 @@
         {% block meeting_title %}<b>{{  link(meeting.url, meeting.name, meeting.id) }}</b>{% endblock %}
         {% set codes = codify(meeting.types)|join(' ') %}
         {% block meeting_codes %}
-        {% if codes %}
-            <br/>{{ codes }}
-        {% endif %}
-        {% if meeting.location %}
-            <br/>{{ link(meeting.location_url, meeting.location) }}
-        {% endif %}
+            {% if codes %}
+                <br/>{{ codes }}
+            {% endif %}
+            {% if meeting.location %}
+                <br/>{{ link(meeting.location_url, meeting.location) }}
+            {% endif %}
         {% endblock %}
     </td>
     <td style="width: 100%;">
-        {% set is_conference = meeting.attendance_option in ('online', 'hybrid') %}
-        {% if is_conference %}
+        {% if meeting.is_conference %}
             {% if config.show_links %}
                 {% if meeting.conference_url %}
                     {% block zoom_link %}{{ link(meeting.conference_url, 'Join on Zoom') }}{% endblock %}
@@ -30,13 +29,12 @@
             {% endif %}
         {% endif %}
         {% if meeting.notes %}
-            {% if is_conference %}<br/>{% endif %}{{ meeting.notes_list|join('|') }}
+            {% if meeting.is_conference %}<br/>{% endif %}{{ meeting.notes_list|join('|') }}
         {% endif %}
         {% if meeting.zipcode %}
             {% block meeting_address %}
-            {% set latlon = meeting.latitude|string + ',' + meeting.longitude|string %}
             <br/>
-            {{ link('https://www.google.com/maps/search/?api=1&query=' + latlon, meeting.formatted_address) }}
+            {{ link('https://www.google.com/maps/search/?api=1&query=' + meeting.latlon, meeting.formatted_address) }}
             {% endblock %}
         {% endif %}
 

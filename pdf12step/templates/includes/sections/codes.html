@@ -5,11 +5,8 @@ to aid you in finding particular information
 about a group’s meeting:
 </p>
 <section>
-    {% for code, name in config.meetingcodes.items() %}
-        {% if code not in config.filtercodes %}
-        {% set mapped = config.codemap.get(code, code) %}
-        <b>{% if mapped %}{{ mapped }}{% else %}{{ code }}{% endif %}</b> {{ name }}<br/>
-        {% endif %}
+    {% for code, name in filtered_codes %}
+        <b>{{ code }}</b> {{ name }}<br/>
     {% endfor %}
 </section>
 

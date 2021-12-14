@@ -82,6 +82,20 @@ class Meeting(AttrDict):
         """
         return [line.lstrip('-').strip() for line in self.notes.splitlines()]
 
+    @cached_property
+    def latlon(self):
+        """
+        Returns the latitude,longitude tuple for usage in map locations
+        """
+        return f'{self.latitude},{self.longitude}'
+
+    @cached_property
+    def is_conference(self):
+        """
+        Returns True if the attendance_option is either online or hybrid.
+        """
+        return self.attendance_option in ('online', 'hybrid')
+
 
 class MeetingSet(object):
     def __init__(self, fn_or_obj):
@@ -117,7 +131,7 @@ class MeetingSet(object):
         """
         return MeetingSet(self.items[:num])
 
-    def value_set(self, attr, sort=False):
+    def value_set(self, attr, sort=False, filter_none=False):
         """
         Returns a set of unique values for the passed atribute name
 
@@ -126,7 +140,9 @@ class MeetingSet(object):
         """
         vset = set()
         for item in self.items:
-            value = item[attr]
+            value = item[attr] if attr in item else getattr(item, attr)
+            if filter_none and not value:
+                continue
             if isinstance(value, list):
                 vset |= set(value)
             else:
@@ -179,11 +195,10 @@ class MeetingSet(object):
 
     @cached_property
     def by_id(self):
+        """
+        Returns a dictionary mapping between the Meeting's ID and the Meeting object itself
+        """
         return {meeting[0].id: meeting[0] for meeting in self.by_value('id')}
-
-    @cached_property
-    def zipcodes(self):
-        return set([meeting.zipcode for meeting in self.items if meeting.zipcode])
 
     @cached_property
     def index(self):
@@ -222,3 +237,10 @@ class MeetingSet(object):
         Returns a value_set of types
         """
         return self.value_set('types')
+
+    @cached_property
+    def zipcodes(self):
+        """
+        Returns a set of all zipcodes for meetings in the MeetingSet
+        """
+        return self.value_set('zipcode', filter_none=True)
