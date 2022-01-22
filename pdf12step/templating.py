@@ -89,10 +89,20 @@ class Context(dict):
             slugify=slugify,
             codify=codify(config.codemap, config.filtercodes),
             link=link(config.show_links),
+            qrcode=self.qrcode,
             config=config
         )
         logger.info('Loaded context config')
         logger.debug(pformat(dict(self)))
+
+    @cached_property
+    def qrcode(self):
+        if self.config.qrcode:
+            import qrcode
+            img = qrcode.make(self.config.qrcode, border=0)
+            img_file = 'assets/img/qrcode.png'
+            img.save(path.join(path.dirname(__file__), img_file))
+            return img_file
 
     @cached_property
     def zipcodes_by_region(self):
