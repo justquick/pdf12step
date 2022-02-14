@@ -9,6 +9,7 @@ flask = "*"
 flask-weasyprint = "*"
 weasyprint = "*"
 pyyaml = "*"
+qrcode = "*"
 
 [dev-packages]
 ipython = "*"

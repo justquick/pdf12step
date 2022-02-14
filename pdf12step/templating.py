@@ -8,6 +8,7 @@ from pprint import pformat
 from weasyprint import HTML
 from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache, select_autoescape
 from markupsafe import Markup
+from qrcode import QRCode
 
 from pdf12step.client import Client
 from pdf12step.meetings import MeetingSet, DAYS
@@ -97,9 +98,11 @@ class Context(dict):
 
     @cached_property
     def qrcode(self):
-        if self.config.qrcode:
-            import qrcode
-            img = qrcode.make(self.config.qrcode, border=0)
+        if self.config.qrcode_url:
+            qr = QRCode(box_size=5)
+            qr.add_data(self.config.qrcode_url)
+            qr.make(fit=True)
+            img = qr.make_image(back_color=self.config.color)
             img_file = 'assets/img/qrcode.png'
             img.save(path.join(path.dirname(__file__), img_file))
             return img_file
