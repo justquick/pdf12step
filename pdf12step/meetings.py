@@ -171,7 +171,12 @@ class MeetingSet(object):
             if limit and count >= limit:
                 break
             count += 1
-            result[getattr(item, attr)].append(item)
+            key = getattr(item, attr)
+            if isinstance(key, list):
+                for value in key:
+                    result[value].append(item)
+            else:
+                result[key].append(item)
         if sort:
             return sorted([(key, MeetingSet(items)) for key, items in result.items()])
         return {key: MeetingSet(items) for key, items in result.items()}
