@@ -5,8 +5,11 @@ site_url: https://baltimoreaa.org/
 # If not doing Letter, prepare to use custom template_dirs and stylesheets
 size: Letter #  5.5in 8.5in
 
-# Background css color of the cover and page headers
+# Background css color of the cover
 color: "#42f56f"
+
+# Background css color of page headers
+header_color: "#42f56f"
 
 # URL to add to QR code image. Scanning the code takes you to this URL
 qrcode_url: https://baltimoreaa.org/meetings/
@@ -47,6 +50,10 @@ filtercodes:
 #     - online
 #     - inactive
 
+# Number of notes pages to add to the end of the PDF
+# Helpful to padd the total pages to a fixed amount
+notes_pages: 4
+
 # Maps a system code to a new code to display in the directory
 codemap:
     B: BB
@@ -62,6 +69,7 @@ codemap:
 meetingcodes:
     11: 11th Step Meditation
     12x12: 12 Steps & 12 Traditions
+    A: Agnostic/Secular
     B: Big Book
     BE: Beginner/Newcomer
     C: Closed Meeting for Alcoholics Only

@@ -27,7 +27,7 @@
     size: {{ config.size }};
     margin: 1.5cm .5cm .5cm .5cm;
     @top-right {
-        background: {{ config.color }};
+        background: {{ config.header_color }};
         content: counter(page);
         font-size: 15pt;
         height: 1cm;
@@ -36,7 +36,7 @@
     }
 
     @top-center {
-        background: {{ config.color }};
+        background: {{ config.header_color }};
         content: '';
         display: block;
         height: .05cm;
@@ -209,11 +209,11 @@ article {
     background: #fff
 }
 
-#ntable {
+.ntable {
     width: 100%;
 }
 
-#ntable td {
+.ntable td {
     border-bottom: 1px solid black;
 }
 

@@ -35,7 +35,7 @@
     </article>
     {% endif %}
     {% endblock %}
-  
+
     {% block misc %}
     <article id="misc" class="f14">
         {% include 'includes/sections/misc.html' %}
@@ -68,9 +68,11 @@
     {% endblock %}
 
     {% block notes %}
-    <article id="notes" class="f14">
+    {% for x in range(config.notes_pages) %}
+    <article id="notes-{{ x }}" class="f14">
         {% include 'includes/sections/notes.html' %}
     </article>
+    {% endfor %}
     {% endblock %}
 
     {% block backcover %}
