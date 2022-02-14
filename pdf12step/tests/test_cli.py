@@ -3,7 +3,7 @@ from unittest import mock
 
 @mock.patch('builtins.input')
 def test_utils(mocked_input):
-    from pdf12step.main import booler, lister, prompt
+    from pdf12step.cli import booler, lister, prompt
 
     assert booler('YES') == 'true'
     assert booler('nope') == 'false'

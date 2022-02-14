@@ -148,18 +148,3 @@ def flask_main():
     args = flask_parser.parse_args()
     os.environ['FLASK_APP'] = __name__
     app.run(args.address, args.port)
-
-
-def main():
-    from IPython import embed
-
-    context = Context({})
-    config = context.config
-    meetings = context.get_meetings()
-    ctx = sys.modules['__main__'].__dict__
-    ctx.update(locals())
-    embed(colors='linux', module=sys.modules['__main__'], user_ns=ctx)
-
-
-if __name__ == '__main__':
-    main()
