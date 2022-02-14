@@ -73,6 +73,12 @@
     margin: 0;
 }
 
+@page cover {
+  background-size: cover;
+  margin: 0;
+  background-color: {{ config.color }};
+}
+
 @page narrow {
     margin: 1.5cm 2cm .5cm 2cm;
 }
@@ -209,4 +215,15 @@ article {
 
 #ntable td {
     border-bottom: 1px solid black;
+}
+
+#backcover {
+  text-align: center;
+  align-content: space-between;
+  page: cover;
+}
+
+#backcover div {
+  margin-left: 2cm;
+  margin-right: 2cm;
 }

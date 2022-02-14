@@ -50,7 +50,8 @@ setup(
         'weasyprint',
         'pyyaml',
         'Flask',
-        'Flask-WeasyPrint'
+        'Flask-WeasyPrint',
+        'qrcode'
     ],
     entry_points={
         'console_scripts': [

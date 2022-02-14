@@ -1,36 +1,39 @@
 <div>
-    <p>
-        <span class="f36 b" style="color: white">
-        {{ config.author.split()|join('<br/>')|safe }}
-        <span class="f18">of</span> <br />
-        Alcoholics <br />Anonymous,
-        <span class="f18">inc.</span></span>
-    </p>
-    <br/><br/>
-    <br/><br/>
-    <br/><br/>
-    <p>
-        <span class="f40 b">{{ now.strftime('%B %Y') }}</span><br/>
-        <span class="f36 b">Directory</span>
-    </p>
-    <p>
-        <span class="f16"> An A.A. Group<br /><br />
-            Traditionally, two or more alcoholics meeting together for
-            sobriety may consider themselves an A.A. group, provided that as
-            a group, they are self supporting and have no outside affiliation.
-            Groups listed in the directory are listed at their own request.<br /><br />
-            A directory listing does not constitute or imply approval or
-            endorsement of any group's approach to or practice of the
-            traditional A.A. Program</span>
-    </p>
-    <br/><br/>
+  <p>
+    <span class="f36 b" style="color: white">
+      {{ config.author.split()|join('<br/>')|safe }}
+      <span class="f18">of</span> <br />
+      Alcoholics <br />Anonymous,
+      <span class="f18">inc.</span></span>
+  </p>
+  <br /><br />
+  <br /><br />
+  <br /><br />
+  <p style="text-align: center;">
+    <span class="f40 b">{{ now.strftime('%B %Y') }}</span><br />
+    <span class="f36 b">Directory</span>
+  </p>
 
-    <p style="text-align: center; width: 100%" class="f12">
-        {{ config.address }}<br />
-        Telephone: {{ config.phone }}<br />
-        {% if fax %}Fax: {{ config.fax }}<br />{% endif %}
-        Email: {{ config.email }}<br />
-        <b>{{ config.website }}</b><br />
-        <b>This book may not be used as a mailing list.</b>
-    </p>
+  <table class="f18">
+    <tr>
+      <td>
+        <a href="{{ config.qrcode_url }}"><img src="{{ qrcode }}" /></a>
+      </td>
+      <td>
+        Scan this QR
+        code to go directly to<br/>
+        {{ config.qrcode_url }}<br/>
+        for the most up-to-date
+        meeting list.
+      </td>
+    </tr>
+  </table>
+
+  <p style="text-align: center; width: 100%" class="f14">
+    Telephone: {{ config.phone }}<br />
+    {% if config.fax %}Fax: {{ config.fax }}<br />{% endif %}
+    Email: {{ config.email }}<br />
+    <b>{{ config.website }}</b><br />
+    <b>This book may not be used as a mailing list.</b>
+  </p>
 </div>
