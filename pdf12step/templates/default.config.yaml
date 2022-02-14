@@ -1,6 +1,8 @@
 # Site URL where 12 Step WP Plugin is installed
 site_url: {{ site_url }}
 
+qrcode_url: {{ site_url }}
+
 # Page size of the output PDF.
 # If not doing Letter, prepare to use custom template_dirs and stylesheets
 size: {{ size }}
