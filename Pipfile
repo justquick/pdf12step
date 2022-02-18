@@ -10,6 +10,7 @@ flask-weasyprint = "*"
 weasyprint = "*"
 pyyaml = "*"
 qrcode = "*"
+click = "*"
 
 [dev-packages]
 ipython = "*"
