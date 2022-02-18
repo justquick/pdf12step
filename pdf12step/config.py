@@ -63,6 +63,7 @@ class Config(AttrDict):
         'site_url': None,
         'size': 'Letter',
         'color': 'lightblue',
+        'header_color': 'lightblue',
         'author': 'Recovery Intergroup Council',
         'description': '',
         'address': '',
@@ -77,6 +78,8 @@ class Config(AttrDict):
         'zipcodes': {},
         'stylesheets': [],
         'template_dirs': [],
+        'qrcode_url': None,
+        'notes_pages': 0,
     }
 
     def load(self, args):
