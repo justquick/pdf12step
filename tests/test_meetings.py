@@ -83,7 +83,8 @@ class MeetingSetTest(TestCase):
     def test_index(self):
         assert len(self.meetings.index) == 10
         assert isinstance(self.meetings.index, list)
-        assert len(self.meetings.index[0]) == len(self.meetings.index[0][1]) == 2
+        assert len(self.meetings.index[0]) == 2
+        assert len(self.meetings.index[0][1]) == 3
 
     def test_regions(self):
         assert len(self.meetings.regions) == 10
