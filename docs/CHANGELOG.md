@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.3.0
+
+- using click groups for cli usage
+- adding qrcode for cover
+- added back cover w/ preamble and group description
+- added `MeetingSet.value_set(filter_none)` kwarg
+- added `latlon` and `is_conference` methods for `Meeting`
+- lots of work to the PDF layout
+- printing support 
+
 ## 1.2.0
 
 - moved to true type fonts for cross platform compatibility

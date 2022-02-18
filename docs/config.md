@@ -4,10 +4,10 @@
 
 You must create a configuration YAML file that contains the values used to render the PDF.
 Then pass the config file as the `--config` parameter to the 12step commands.
-You can use the `12step-init` command to interactively setup your configuration values.
+You can use the `12step init` command to interactively setup your configuration values.
 
 ```
-12step-init my.config.yaml
+12step init -o my.config.yaml
 ```
 
 In the repo there is also a `example.config.yml` you can use as a reference to get the program up and running using the Baltimore AA meeting data.

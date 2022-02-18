@@ -1,4 +1,4 @@
-## 12 Step Recovery Meeting PDF Generator
+# 12 Step Recovery Meeting PDF Generator
 
 This Python program can create meeting lists in PDF format for distribution on the web or print. In order to populate the meeting data, you must be connected to a site running the [12 Step Meeting List](https://wordpress.org/plugins/12-step-meeting-list/) WordPress plugin. This project was developed for the [Baltimore Intergroup Council of AA](https://baltimoreaa.org/)
 

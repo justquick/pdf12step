@@ -19,8 +19,8 @@ pytest = "*"
 pytest-cov = "*"
 Sphinx = "*"
 myst-parser = "*"
-sphinxcontrib-autoprogram = "*"
 karma-sphinx-theme = "*"
+sphinx-click = "*"
 
 [requires]
 python_version = "3.7"

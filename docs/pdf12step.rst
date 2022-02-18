@@ -1,6 +1,13 @@
 API
 ====================
 
+pdf12step.cli
+-----------------------
+
+.. automodule:: pdf12step.cli
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 pdf12step.client
 -----------------------

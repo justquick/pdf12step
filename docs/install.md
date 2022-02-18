@@ -17,4 +17,4 @@ pipenv install --dev
 pipenv run python setup.py develop
 ```
 
-Then you can now run the `12step` commands using pipenv (eg `pipenv run 12step-pdf`)
+Then you can now run the `12step` commands using pipenv (eg `pipenv run 12step pdf`)
