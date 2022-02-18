@@ -18,7 +18,7 @@ setup(
     long_description_content_type='text/markdown',
     python_requires='>=3.6',
     project_urls={
-        'Documentation': 'https://packaging.python.org/tutorials/distributing-packages/',
+        'Documentation': 'https://pdf12step.readthedocs.io/',
         'Source': 'https://github.com/justquick/pdf12step',
         'Bug Tracker': 'https://github.com/justquick/pdf12step/issues',
         'Wordpress Plugin': 'https://wordpress.org/plugins/12-step-meeting-list/',

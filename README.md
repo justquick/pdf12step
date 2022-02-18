@@ -14,4 +14,4 @@ The app also contains a [Flask](https://flask.palletsprojects.com/) webapp that 
 
 To see what it can do, check out [this generated directory](https://justquick.io/pdf12step/_static/December%202021%20Directory.pdf)
 
-For full documentation, visit https://justquick.io/pdf12step/
+For full documentation, visit https://pdf12step.readthedocs.io/
