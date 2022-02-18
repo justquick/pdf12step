@@ -1,10 +1,10 @@
 import sys
-from IPython import embed
 
 from pdf12step.templating import Context
 
 
 def main(args={}):
+    from IPython import embed
     context = Context(args)
     config = context.config
     meetings = context.get_meetings()
