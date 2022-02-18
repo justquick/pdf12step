@@ -13,16 +13,25 @@ from pdf12step.__main__ import main
 
 
 def lister(value):
+    """
+    Returns a (comma separated) string value as a list
+    """
     return value.split(',') if value else []
 
 
 def booler(value):
+    """
+    Returns a string value as a bool (eg yes, True)
+    """
     if isinstance(value, str):
         value = value.lower() in ('y', 'yes', 'true')
     return str(value).lower()
 
 
 def prompt(name, title, default=None, cast=str):
+    """
+    Prompts user input and returns a variable with type cast
+    """
     field = input(f'{title} [{default}]: ' if default else f'{title}: ').strip()
     if not field:
         if default is not None:
