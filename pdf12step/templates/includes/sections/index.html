@@ -5,6 +5,7 @@
         <th>Meeting</th>
         <th>Days</th>
         <th>Zipcode</th>
+        <th>Region</th>
     </tr>
     {% for name, info in meetings.index %}
     <tr>
@@ -18,7 +19,8 @@
                 &nbsp;&nbsp;
                 {% endif %}
             {% endfor %}</td>
-        <td>{{ info['zip'] }}</td>
+            <td>{{ info['zip'] }}</td>
+            <td>{{ info['region'] }}</td>
     </tr>
     {% endfor %}
 </table>
