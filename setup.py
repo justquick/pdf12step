@@ -51,15 +51,12 @@ setup(
         'pyyaml',
         'Flask',
         'Flask-WeasyPrint',
-        'qrcode'
+        'qrcode',
+        'click',
     ],
     entry_points={
         'console_scripts': [
-            '12step-init=pdf12step.cli:init_main',
-            '12step-pdf=pdf12step.cli:pdf_main',
-            '12step-download=pdf12step.cli:client_main',
-            '12step-flask=pdf12step.cli:flask_main',
-            '12step-shell=pdf12step.__main__:main',
+            '12step=pdf12step.cli:cli',
         ]
     }
 )
