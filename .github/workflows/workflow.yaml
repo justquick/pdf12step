@@ -4,9 +4,7 @@ name: Test and deploy
 on:
   - push
   - pull_request
-
-env:
-  GITHUB_WORKFLOW: true
+  - workflow_dispatch
 
 jobs:
   test:
@@ -47,7 +45,7 @@ jobs:
       # install environment specific dependencies
       - name: Install dependencies
         if: steps.cache-pipenv.outputs.cache-hit != 'true'
-        run: pipenv install --dev --deploy
+        run: pipenv install --dev --deploy --python python${{ matrix.python-version }}
 
       # install our package
       - name: Install package
