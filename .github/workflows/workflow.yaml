@@ -1,0 +1,51 @@
+name: Test and deploy
+
+# define when to run the action
+on:
+  - push
+  - pull_request
+
+env:
+  GITHUB_WORKFLOW: true
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-20.04
+
+    # test matrix
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - 3.6
+          - 3.7
+          - 3.8
+          - 3.9
+          - 3.10
+
+    steps:
+      # check out revision to test
+      - uses: actions/checkout@v2
+
+      # install python
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # upgrade pip
+      - name: Update pip/pipenv
+        run: python -m pip install --upgrade pip pipenv
+
+      # install environment specific dependencies
+      - name: Install dependencies
+        run: pipenv install --dev
+
+      # install our package
+      - name: Install package
+        run: pipenv run python setup.py install
+
+      # execute the tests
+      - name: Run tests
+        run: pipenv run pytest -s --cov=pdf12step
