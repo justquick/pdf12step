@@ -49,7 +49,7 @@ jobs:
 
       # install our package
       - name: Install package
-        run: pipenv run python setup.py install
+        run: pipenv run python setup.py develop
 
       # execute the tests
       - name: Run tests
