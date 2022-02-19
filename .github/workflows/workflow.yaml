@@ -60,13 +60,13 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: upload package
+          name: pypi package
           path: dist/*.*
 
       - name: Make PDF
-        run: pipenv run 12step -d -v -c example.config.yml pdf -o "Directory.online.pdf"
+        run: pipenv run 12step -v -c example.config.yml pdf -d -o "Directory.online.pdf"
 
       - uses: actions/upload-artifact@v2
         with:
-          name: upload PDF
+          name: Directory PDF
           path: Directory.online.pdf
