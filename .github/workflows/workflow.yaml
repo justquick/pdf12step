@@ -54,3 +54,19 @@ jobs:
       # execute the tests
       - name: Run tests
         run: pipenv run pytest -s --cov=pdf12step
+
+      - name: dist
+        run: pipenv run python setup.py sdist
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: upload package
+          path: dist/*.*
+
+      - name: Make PDF
+        run: pipenv run 12step -d -v -c example.config.yml pdf -o "Directory.online.pdf"
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: upload PDF
+          path: Directory.online.pdf
