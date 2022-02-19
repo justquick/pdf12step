@@ -51,14 +51,13 @@ jobs:
         # queries: ./path/to/local/query, your-org/your-repo/queries@main
 
 
-
     - name: Set up Python 3.9
       uses: actions/setup-python@v2
       with:
         python-version: 3.9
 
     - name: Install package
-      run: python setup.py install
+      run: python -m pip install Flask && python setup.py install
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
