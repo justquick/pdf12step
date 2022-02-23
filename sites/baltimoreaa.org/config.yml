@@ -28,6 +28,11 @@ website: www.baltimoreaa.org
 # template_dirs:
 #     - my/custom/templates
 
+# Static asset directories.
+# A directory where static files will be rendered
+# Other static files here will be available for the HTML to render
+asset_dirs: ./assets
+
 # CSS stylesheets to add when rendering PDF
 # Add your own to modify styles
 # stylesheets:

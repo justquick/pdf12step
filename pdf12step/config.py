@@ -78,6 +78,7 @@ class Config(AttrDict):
         'zipcodes': {},
         'stylesheets': [],
         'template_dirs': [],
+        'asset_dir': 'assets',
         'qrcode_url': None,
         'notes_pages': 0,
     }

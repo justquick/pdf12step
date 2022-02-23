@@ -6,7 +6,7 @@ from functools import reduce
 from pprint import pformat
 
 from weasyprint import HTML
-from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache, select_autoescape
+from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache, select_autoescape, PackageLoader, ChoiceLoader
 from markupsafe import Markup
 from qrcode import QRCode
 
@@ -21,8 +21,8 @@ FSBC = FileSystemBytecodeCache()
 LAYOUT_TEMPLATE = 'layout.html'
 DIR = path.abspath(path.dirname(__file__))
 ASSET_TEMPLATES = {
-    'assets/img/cover_background.svg': path.join(DIR, 'assets', 'img', 'cover_background.svg'),
-    'assets/css/style.css': path.join(DIR, 'assets', 'css', 'style.css')
+    'assets/img/cover_background.svg': ('img', 'cover_background.svg'),
+    'assets/css/style.css': ('css', 'style.css')
 }
 
 
@@ -76,6 +76,7 @@ class Context(dict):
         dict.__init__(self)
         self.args = args = args if isinstance(args, dict) else args.__dict__
         self.data_dir = args.get('data_dir', DATA_DIR)
+        self.asset_dir = args.get('asset_dir', 'assets')
         self.is_flask = args.get('flask', False)
         self.config = config = Config().load(args)
         if args.get('download', False):
@@ -103,8 +104,11 @@ class Context(dict):
             qr.add_data(self.config.qrcode_url)
             qr.make(fit=True)
             img = qr.make_image(back_color=self.config.color)
-            img_file = 'assets/img/qrcode.png'
-            img.save(path.join(path.dirname(__file__), img_file))
+            img_file = path.join(self.asset_dir,  'img', 'qrcode.png')
+            dest = path.dirname(img_file)
+            if not path.isdir(dest):
+                makedirs(dest)
+            img.save(img_file)
             return img_file
 
     @cached_property
@@ -197,7 +201,7 @@ class Context(dict):
         """
         global FSBC
         environ = Environment(
-            loader=FileSystemLoader(self.template_dirs),
+            loader=ChoiceLoader([FileSystemLoader(self.template_dirs), PackageLoader('pdf12step')]),
             autoescape=select_autoescape(),
             bytecode_cache=FSBC,
         )
@@ -219,6 +223,7 @@ class Context(dict):
         Prerenders the assets ahead of page render to ensure proper values in assets are set
         """
         for template, dest in ASSET_TEMPLATES.items():
+            dest = path.join(self.asset_dir, *dest)
             dest_dir = path.dirname(dest)
             if not path.isdir(dest_dir):
                 makedirs(dest_dir)
@@ -231,7 +236,7 @@ class Context(dict):
 
         :rtype: weasyprint.HTML
         """
-        return HTML(string=self.render(LAYOUT_TEMPLATE), base_url=DIR, encoding='utf8')
+        return HTML(string=self.render(LAYOUT_TEMPLATE), base_url=path.dirname(self.asset_dir), encoding='utf8')
 
     def pdf(self):
         """
