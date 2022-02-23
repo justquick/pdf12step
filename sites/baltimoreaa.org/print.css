@@ -1,0 +1,59 @@
+
+@page {
+    margin: .75cm .25cm .25cm .25cm;
+    @top-right {
+        height: 0.5cm;
+        width: 0.5cm;
+        font-size: 8pt;
+    }
+
+    @top-left {
+        height: 0.5cm;
+        font-size: 8pt;
+    }
+}
+
+@page narrow {
+    margin: 1.5cm 1cm .5cm 1cm;
+}
+
+html {
+    font-size: 8pt;
+}
+
+
+h2 {
+    font-size: 10pt;
+}
+
+h3 {
+    font-size: 8pt;
+}
+
+.f40 {
+    font-size: 32pt;
+}
+
+.f36 {
+    font-size: 28pt;
+}
+
+.f19 {
+    font-size: 12.5pt;
+}
+
+.f18 {
+    font-size: 10pt;
+}
+
+.f16 {
+    font-size: 12pt;
+}
+
+.f14 {
+    font-size: 10pt;
+}
+
+.f12 {
+    font-size: 7pt;
+}
