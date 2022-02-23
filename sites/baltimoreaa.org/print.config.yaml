@@ -7,7 +7,7 @@ header_color: "#dddddd"
 
 # Font size and other fixes for smaller size
 stylesheets:
-    - print.css
+    - ./sites/baltimoreaa.org/print.css
 
 # Disable links for printed edition
 show_links: false
