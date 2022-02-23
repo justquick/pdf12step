@@ -46,8 +46,17 @@ def prompt(name, title, default=None, cast=str):
     return {name: field}
 
 
+def ensure_config(ctx):
+    config = ctx.get('config', None)
+    if not config:
+        click.echo('No config found. Please create one with "12step init" and pass it with the --config option')
+        raise click.Abort
+
+
 @click.group('12step')
-@click.option('--config', '-c', multiple=True,  help='Configs file for runtime vars. Can pass multiple to override options.')
+@click.option('--config', '-c', envvar='PDF12STEP_CONFIG', multiple=True,
+              type=click.Path(file_okay=True, dir_okay=False),
+              help='Configs file for runtime vars. Can pass multiple to override options.')
 @click.option('--verbose', '-v', count=True, default=0, help='More verbose logging')
 @click.option('--logfile',  default=None, help='Optional log file to wrie to')
 @click.pass_context
@@ -63,6 +72,7 @@ def cli(ctx, config, verbose, logfile):
 @click.pass_context
 def pdf(ctx, **kwargs):
     """Formats meeting PDFs"""
+    ensure_config(ctx.obj)
     ctx.obj.update(kwargs)
     args = AttrDict(ctx.obj)
     context = Context(args)
@@ -92,6 +102,7 @@ def flask(ctx, **kwargs):
     This should never be run in production!
     You must restart this if you make any changes to code or asset file
     """
+    ensure_config(ctx.obj)
     ctx.obj.update(kwargs)
     args = AttrDict(ctx.obj)
     from pdf12step.flask_app import app
@@ -110,6 +121,7 @@ def download(ctx, **kwargs):
     Downloads meeting data from your site_url
     The site must be a WordPress site running the 12-step-meeting-list plugin.
     """
+    ensure_config(ctx.obj)
     ctx.obj.update(kwargs)
     args = ctx.obj
     site_url = args.pop('site_url')
@@ -154,9 +166,9 @@ def init(ctx, **kwargs):
     ]
     ctx = {}
     for section, fields in sections:
-        print()
-        print(section)
-        print('-' * len(section))
+        click.echo()
+        click.echo(section)
+        click.echo('-' * len(section))
         for field in fields:
             ctx.update(prompt(*field))
     env = Environment(
@@ -167,10 +179,10 @@ def init(ctx, **kwargs):
     with open(args.output, 'w') as conf:
         conf.write(content)
     logger.debug(f'Wrote init config to {args.output}')
-    print()
-    print(f'Your custom config has been rendered to {args.output}')
-    print('You can now render documents using')
-    print(f'12step-pdf -c {args.output}')
+    click.echo()
+    click.echo(f'Your custom config has been rendered to {args.output}')
+    click.echo('You can now render documents using')
+    click.echo(f'12step-pdf -c {args.output}')
 
 
 @cli.command()
@@ -180,6 +192,7 @@ def shell(ctx, **kwargs):
     Drops into an IPython shell
     Contains the context, config and meetings instances
     """
+    ensure_config(ctx.obj)
     ctx.obj.update(kwargs)
     args = AttrDict(ctx.obj)
     main(args)
