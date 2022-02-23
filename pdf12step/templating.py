@@ -164,7 +164,11 @@ class Context(dict):
         """
         sheets = ['assets/css/style.css']
         if self.config.stylesheets:
-            sheets.extend([path.abspath(path.expandvars(sheet)) for sheet in self.config.stylesheets])
+            for sheet in self.config.stylesheets:
+                sheet = path.abspath(path.expandvars(sheet))
+                if not path.isfile(sheet):
+                    raise OSError(f'CSS File not found: {sheet}')
+                sheets.append(sheet)
         return sheets
 
     @cached_property
@@ -177,7 +181,11 @@ class Context(dict):
         """
         dirs = [path.join(DIR, 'templates')]
         if self.config.template_dirs:
-            dirs.extend([path.abspath(path.expandvars(tdir)) for tdir in self.config.template_dirs])
+            for tdir in self.config.template_dirs:
+                tdir = path.abspath(path.expandvars(tdir))
+                if not path.isfile(tdir):
+                    raise OSError(f'Template folder not found: {tdir}')
+                dirs.append(tdir)
         return dirs
 
     @cached_property
