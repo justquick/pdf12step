@@ -63,10 +63,12 @@ jobs:
           name: pypi package
           path: dist/*.*
 
-      - name: Make PDF
-        run: pipenv run 12step -v -c example.config.yml pdf -d -o "Directory.online.pdf"
+      - name: Make PDFs
+        run: |
+          pipenv run 12step -v -c ./sites/baltimoreaa.org/config.yml pdf -d -o "Directory.online.pdf"
+          pipenv run 12step -v -c ./sites/baltimoreaa.org/config.yml -c ./sites/baltimoreaa.org/print.config.yml pdf -d -o "Directory.print.pdf"
 
       - uses: actions/upload-artifact@v2
         with:
-          name: Directory PDF
-          path: Directory.online.pdf
+          name: Directory PDFs
+          path: Directory.*.pdf
