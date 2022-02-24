@@ -81,6 +81,7 @@ class Config(AttrDict):
         'asset_dir': 'assets',
         'qrcode_url': None,
         'notes_pages': 0,
+        'sections': ['contact', 'codes', 'misc', 'regions', 'index', 'list', 'readings', 'notes']
     }
 
     def load(self, args):

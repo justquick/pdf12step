@@ -160,35 +160,28 @@ article {
 .f40 {
     font-size: 40pt;
 }
-
 .f36 {
     font-size: 36pt;
 }
-
 .f19 {
     font-size: 19pt;
 }
-
-
 .f18 {
     font-size: 18pt;
 }
-
 .f16 {
     font-size: 16pt;
 }
-
 .f14 {
     font-size: 14pt;
 }
-
-
-.f8 {
-    font-size: 10pt;
+.f12 {
+    font-size: 12pt;
 }
 .f8 {
     font-size: 8pt;
 }
+
 .nobreak {
     page-break-inside: avoid;
 }

@@ -187,7 +187,7 @@ class Context(dict):
         if self.config.template_dirs:
             for tdir in self.config.template_dirs:
                 tdir = path.abspath(path.expandvars(tdir))
-                if not path.isfile(tdir):
+                if not path.isdir(tdir):
                     raise OSError(f'Template folder not found: {tdir}')
                 dirs.append(tdir)
         return dirs

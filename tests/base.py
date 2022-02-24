@@ -10,4 +10,4 @@ ENV = {
 
 def contains_parts(content, parts):
     for part in parts:
-        assert part in content
+        assert part in content, f'Part "{part}" not in \n{content}'

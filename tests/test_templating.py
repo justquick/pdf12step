@@ -9,7 +9,8 @@ def get_context(**kwargs):
 
     kwargs.update(data_dir=DATA_DIR,
                   config=[CONFIG_FILE],
-                  template_dirs=[DATA_DIR])
+                  template_dirs=[DATA_DIR],
+                  stylesheets=[path.join(DATA_DIR, 'blank.css')])
     return Context(kwargs)
 
 
@@ -67,7 +68,7 @@ def test_pdftemplate():
 @mock.patch.dict(environ, ENV, clear=True)
 def test_methods():
     ctx = get_context()
-    assert ctx.stylesheets == ['assets/css/style.css', path.join(getcwd(), 'test/css')]
+    assert ctx.stylesheets == ['assets/css/style.css', path.join(DATA_DIR, 'blank.css')]
     assert len(ctx.template_dirs) == 2
     assert ctx.template_dirs[1] == DATA_DIR
 
