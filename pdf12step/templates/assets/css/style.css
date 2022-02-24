@@ -182,11 +182,12 @@ article {
     font-size: 14pt;
 }
 
-.f12 {
-    font-size: 12pt;
-}
-.f12 {
+
+.f8 {
     font-size: 10pt;
+}
+.f8 {
+    font-size: 8pt;
 }
 .nobreak {
     page-break-inside: avoid;

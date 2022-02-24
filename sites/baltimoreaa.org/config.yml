@@ -23,6 +23,16 @@ fax: 410-663-7465
 email: intergroup@baltimoreaa.org
 website: www.baltimoreaa.org
 
+sections:
+  - contact
+  - codes
+  - misc
+  - regions
+  - index
+  - list
+  - readings
+  - notes
+
 # Template directories.
 # Create your own directory and add it here to override default emplates
 # template_dirs:
@@ -31,7 +41,7 @@ website: www.baltimoreaa.org
 # Static asset directories.
 # A directory where static files will be rendered
 # Other static files here will be available for the HTML to render
-asset_dirs: ./assets
+asset_dir: ./assets
 
 # CSS stylesheets to add when rendering PDF
 # Add your own to modify styles

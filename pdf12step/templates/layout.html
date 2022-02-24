@@ -16,72 +16,14 @@
 </head>
 
 <body>
-    {% block cover %}
-    <article id="cover" class="mid">
-        {% include 'includes/sections/cover.html' %}
-    </article>
-    {% endblock %}
+  {% include 'includes/sections/cover.html' %}
 
-    {% block contact %}
-    <article class="columns" id="contact">
-        {% include 'includes/sections/contact.html' %}
-    </article>
-    {% endblock %}
-
-    {% block codes %}
-    {% if config.meetingcodes %}
-    <article id="codes" class="columns f14">
-        {% include 'includes/sections/codes.html' %}
-    </article>
-    {% endif %}
-    {% endblock %}
-
-    {% block misc %}
-    <article id="misc" class="f14">
-        {% include 'includes/sections/misc.html' %}
-    </article>
-    {% endblock %}
-
-{#
-    {% block regions %}
-    {% if config.zipcodes %}
-    <article id="regions" class="f14">
-        {% include 'includes/sections/regions.html' %}
-    </article>
-    {% endif %}
-    {% endblock %}
-#}
-
-    {% block index %}
-    <article id="index" class="f12">
-        {% include 'includes/sections/index.html' %}
-    </article>
-    {% endblock %}
-
-
-    {% block list %}
-    {% include 'includes/sections/list.html' %}
-    {% endblock %}
-
-    {% block readings %}
-    <article id="readings" class="f14">
-        {% include 'includes/sections/readings.html' %}
-    </article>
-    {% endblock %}
-
-    {% block notes %}
-    {% for x in range(config.notes_pages) %}
-    <article id="notes-{{ x }}" class="f14">
-        {% include 'includes/sections/notes.html' %}
-    </article>
+    {% for section in config.sections %}
+        {% include 'includes/sections/' + section + '.html' %}
     {% endfor %}
-    {% endblock %}
 
-    {% block backcover %}
-    <article id="backcover" class="f19">
-        {% include 'includes/sections/backcover.html' %}
-    </article>
-    {% endblock %}
+  {% include 'includes/sections/backcover.html' %}
+
 </body>
 
 </html>
