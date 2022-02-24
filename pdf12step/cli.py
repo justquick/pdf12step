@@ -70,6 +70,33 @@ def cli(ctx, config, verbose, logfile):
 @click.option('--download', '-d', is_flag=True, help='Download the assets before rendering. Produces up to date PDFs')
 @click.option('--limit', '-l', type=int, help='Limit the rendering to this number of meetings')
 @click.pass_context
+def html(ctx, **kwargs):
+    """Formats meeting HTML"""
+    ensure_config(ctx.obj)
+    ctx.obj.update(kwargs)
+    args = AttrDict(ctx.obj)
+    context = Context(args)
+    context.prerender()
+    content = context.render()
+    logger.info(f'Generated {len(content)//1000}KB of HTML content')
+    logger.info(f'Total meetings renderd: {len(context["meetings"])}')
+    outfile = args.output
+    if outfile is None:
+        outfile = open(context['now'].strftime('%B %Y Directory.html'), 'w')
+    elif outfile == '-':
+        outfile = sys.stdout.buffer
+    else:
+        outfile = open(outfile, 'w')
+    outfile.write(content)
+    outfile.close()
+    logger.info(f'Wrote to {outfile.name}')
+
+
+@cli.command()
+@click.option('--output', '-o', default=None, help='Output file name to render to. Use "-" for stdout')
+@click.option('--download', '-d', is_flag=True, help='Download the assets before rendering. Produces up to date PDFs')
+@click.option('--limit', '-l', type=int, help='Limit the rendering to this number of meetings')
+@click.pass_context
 def pdf(ctx, **kwargs):
     """Formats meeting PDFs"""
     ensure_config(ctx.obj)

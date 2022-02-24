@@ -208,7 +208,7 @@ class Context(dict):
         logger.info('Loaded template env')
         return environ
 
-    def render(self, template):
+    def render(self, template=LAYOUT_TEMPLATE):
         """
         Renders a template by name and returns its content
 
@@ -236,7 +236,7 @@ class Context(dict):
 
         :rtype: weasyprint.HTML
         """
-        return HTML(string=self.render(LAYOUT_TEMPLATE), base_url=path.dirname(self.asset_dir), encoding='utf8')
+        return HTML(string=self.render(), base_url=path.dirname(self.asset_dir), encoding='utf8')
 
     def pdf(self):
         """
