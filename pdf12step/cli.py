@@ -182,11 +182,13 @@ def init(ctx, **kwargs):
         ('Formatting', [
             ('size', 'Page size to print', 'Letter'),
             ('color', 'Cover background and header color', 'lightblue'),
-            ('show_links', 'Display links on pages', True, booler)
+            ('show_links', 'Display links on pages', True, booler),
+            ('qrcode_url', 'URL to tie to QR code on cover', 'empty')
         ],),
         ('Customizations', [
             ('template_dirs', 'Directories to search for templates (comma separated)', [], lister),
             ('stylesheets', 'CSS files to add to modify page styles (comma separated)', [], lister),
+            ('asset_dir', 'Asset directory to look for static files', './assets'),
             ('attendance_options', 'Only display these comma separated attendance_options (eg in_person/hybrid/online)', [], lister),
             ('filtercodes', 'Do not display meetings that have these codes (comma separated)', [], lister)
         ])

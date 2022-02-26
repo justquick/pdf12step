@@ -35,13 +35,26 @@ The data will now be stored in JSON files in the project root.
 
 ### Commmand Line
 
+#### PDF
+
 Run the `12step pdf` script to generate the PDF
 
 ```
 12step --config my.config.yaml -v pdf
 ```
 
-The PDF will be generated in the project directory in the format `<month> <year> Directory.pdf` with the current date.
+The PDF file will be generated in the project directory in the format `<month> <year> Directory.pdf` with the current date.
+
+####  HTML
+
+Run the `12step html` script to generate the HTML page which weasyprint renders to PDF.
+It's a good way to see what is rendered ahead of time and check any images/css that are included from your config.
+
+```
+12step --config my.config.yaml -v pdf
+```
+
+The HTML file will be generated in the project directory in the format `<month> <year> Directory.pdf` with the current date.
 
 ### From the Web App
 
@@ -52,6 +65,8 @@ Run the Flask server to start the local web app running.
 ```
 12step flask
 ```
+
+Hosts a webapp that will render the HTML or PDF in your browser for easy viewing.
 
 The app will now be available on [http://localhost:5000](http://localhost:5000)
 
