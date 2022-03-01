@@ -11,6 +11,9 @@ color: "#42f56f"
 # Background css color of page headers
 header_color: "#42f56f"
 
+# Page number text color for header on all pages. Background color is header_color above
+page_number_color: "black"
+
 # URL to add to QR code image. Scanning the code takes you to this URL
 qrcode_url: https://baltimoreaa.org/meetings/
 

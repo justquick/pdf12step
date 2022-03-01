@@ -28,6 +28,7 @@
     margin: 1.5cm .5cm .5cm .5cm;
     @top-right {
         background: {{ config.header_color }};
+        color: {{ config.page_number_color }};
         content: counter(page);
         font-size: 15pt;
         height: 1cm;

@@ -3,7 +3,8 @@ size:  5.5in 8.5in
 
 # Black and white
 color: white
-header_color: "#dddddd"
+header_color: "black"
+page_number_color: white
 
 # Font size and other fixes for smaller size
 stylesheets:
