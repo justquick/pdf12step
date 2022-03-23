@@ -1,4 +1,6 @@
 # 12 Step Recovery Meeting PDF Generator
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fjustquick%2Fpdf12step.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fjustquick%2Fpdf12step?ref=badge_shield)
+
 
 This Python program can create meeting lists in PDF format for distribution on the web or print. In order to populate the meeting data, you must be connected to a site running the [12 Step Meeting List](https://wordpress.org/plugins/12-step-meeting-list/) WordPress plugin. This project was developed for the [Baltimore Intergroup Council of AA](https://baltimoreaa.org/)
 
@@ -15,3 +17,7 @@ The app also contains a [Flask](https://flask.palletsprojects.com/) webapp that 
 To see what it can do, check out [this generated directory](https://justquick.io/pdf12step/_static/December%202021%20Directory.pdf)
 
 For full documentation, visit https://pdf12step.readthedocs.io/
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fjustquick%2Fpdf12step.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fjustquick%2Fpdf12step?ref=badge_large)
