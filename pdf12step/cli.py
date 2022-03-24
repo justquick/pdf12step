@@ -139,7 +139,6 @@ def flask(ctx, **kwargs):
 
 
 @cli.command()
-@click.option('-u', '--site-url', default=None, help='WordPress Site URL root')
 @click.option('-f', '--format', default='json', type=click.Choice(('json', 'csv')), help='Format of downloaded meeting data')
 @click.option('-s', '--sections',  default=','.join(Client.sections), help='Comma separated list of sections to download')
 @click.pass_context
@@ -151,9 +150,9 @@ def download(ctx, **kwargs):
     ensure_config(ctx.obj)
     ctx.obj.update(kwargs)
     args = ctx.obj
-    site_url = args.pop('site_url')
     config = Config().load(args)
-    Client(site_url if site_url is not None else config.site_url).download(*args['sections'].split(','), format=args['format'])
+    client = Client(config.site_url, config.api_uri, config.nonce_uri)
+    client.download(*args['sections'].split(','), format=args['format'])
 
 
 @cli.command()

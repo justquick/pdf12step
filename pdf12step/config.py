@@ -61,6 +61,8 @@ class Config(AttrDict):
     _defaults = {
         'config_file': CONFIG_FILE,
         'site_url': None,
+        'api_uri': None,
+        'nonce_uri': None,
         'size': 'Letter',
         'color': 'lightblue',
         'header_color': 'lightblue',

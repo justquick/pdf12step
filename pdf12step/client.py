@@ -49,14 +49,14 @@ class Client(object):
 
     :param str url: Base URL of the WP site to gather data from
     """
-    sections = ('meetings', 'locations', 'groups', 'regions')
+    sections = ('meetings',)  # 'locations', 'groups', 'regions') these arent necessary for now
 
-    def __init__(self, url=None):
-        if not url:
+    def __init__(self, site_url=None, api_uri='wordpress/wp-admin/admin-ajax.php', nonce_uri=None):
+        if not site_url:
             raise ValueError('Site URL required')
-        url = url.rstrip('/')
-        self.base = f'{url}/wordpress/wp-admin/'
-        self.nonce_url = f'{url}/meetings/'
+        self.site_url = site_url.rstrip('/')
+        self.api_uri = api_uri
+        self.nonce_uri = nonce_uri
 
     @cached_property
     def nonce(self):
@@ -66,18 +66,19 @@ class Client(object):
 
         :rtype: str
         """
-        response = requests.get(self.nonce_url)
+        response = requests.get(f'{self.site_url}/{self.nonce_uri}')
         response.raise_for_status()
         content = response.content.decode()
-        return NONCE_RE.search(content, re.M).groups()[0]
+        match = NONCE_RE.search(content, re.M)
+        if match:
+            return match.groups()[0]
 
-    def _dispatch(self, method, url, *args, **kwargs):
-        logger.debug(f'{method.upper()} {self.base}{url} {args}')
-        response = getattr(requests, method)(f'{self.base}{url}', *args, **kwargs)
-        if response.status_code == 404:
-            # sometimes the wp-admin is at the root
-            self.base = self.base.replace('/wordpress', '')
-            return self._dispatch(method, url, *args, **kwargs)
+    def _dispatch(self, method, uri, *args, **kwargs):
+        logger.debug(f'{method.upper()} {self.site_url}/{uri} {args}')
+        method = getattr(requests, method)
+        if not uri.startswith(self.site_url):
+            uri = f'{self.site_url}/{uri}'
+        response = method(uri, *args, **kwargs)
         response.raise_for_status()
         logger.debug(f'GOT {len(response.content)}B {response.headers["Content-Type"].split(";")[0]} in {response.elapsed}')
         return response.json()
@@ -90,14 +91,17 @@ class Client(object):
         """Returns a POST request to the given resource"""
         return self._dispatch('post', *args, **kwargs)
 
-    def tsml(self, entity):
+    def tsml(self, entity, params=None):
         """
         Returns and loads the data from the named entity TSML endpoint
 
         :param str entity: Name of the entity to load (eg meetings/locations)
         :rtype: list
         """
-        return self.get('admin-ajax.php', {'action': f'tsml_{entity}'})
+        if params is None:
+            params = {}
+        params['action'] = f'tsml_{entity}'
+        return self.get(self.api_uri, params)
 
     def meetings(self, **params):
         """
@@ -107,9 +111,11 @@ class Client(object):
         :rtype: list
         """
         data = DEFAULTS.copy()
-        data.update(params)
-        data.update(nonce=self.nonce, action='meetings')
-        return self.post('admin-ajax.php', data)
+        data.update(params, action='meetings')
+        if self.nonce_uri:
+            data['nonce'] = self.nonce
+            return self.post(self.api_uri, data)
+        return self.tsml('meetings')
 
     def locations(self):
         """

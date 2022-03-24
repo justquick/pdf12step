@@ -1,5 +1,6 @@
 import json
 import re
+from datetime import datetime
 from collections import defaultdict
 from urllib.parse import unquote
 
@@ -47,6 +48,13 @@ class Meeting(AttrDict):
         addr = ' '.join(self.formatted_address.split()[1:])
         match = ZIP_RE.search(addr)
         return match.groups()[0] if match else ''
+
+    @cached_property
+    def time_display(self):
+        if self.time_formatted:
+            return self.time_formatted
+        dt = datetime.strptime(self.time, '%H:%M')
+        return dt.strftime('%I:%M %p')
 
     @cached_property
     def conference_url(self):
