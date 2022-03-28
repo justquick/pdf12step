@@ -6,11 +6,13 @@ from .base import ENV, CONFIG_FILE, DATA_DIR, contains_parts
 
 def get_context(**kwargs):
     from pdf12step.templating import Context
+    from pdf12step.config import Config
 
     kwargs.update(data_dir=DATA_DIR,
                   config=[CONFIG_FILE],
                   template_dirs=[DATA_DIR],
                   stylesheets=[path.join(DATA_DIR, 'blank.css')])
+    Config().load(kwargs)
     return Context(kwargs)
 
 
@@ -28,8 +30,10 @@ def test_slugify():
 @mock.patch.dict(environ, ENV, clear=True)
 def test_codify():
     from pdf12step.templating import codify
+    from pdf12step.config import OPTS
+
     ctx = get_context(title='My Test Title', mycodes=['A', 'B', 'C'])
-    coded = codify(ctx.config.codemap, ctx.config.filtercodes)(['C', 'B'])
+    coded = codify(OPTS.config.codemap, OPTS.config.filtercodes)(['C', 'B'])
     assert list(coded) == ['BB']
 
 
