@@ -1,5 +1,5 @@
 <tr class="f12 nobreak">
-    <td style="width: 8ch;">{{ meeting.time_formatted }}</td>
+    <td style="width: 8ch;">{{ meeting.time_display }}</td>
     <td style="width: 40%;">
         {% block meeting_title %}<b>{{  link(meeting.url, meeting.name, meeting.id) }}</b>{% endblock %}
         {% set codes = codify(meeting.types)|join(' ') %}
@@ -34,7 +34,7 @@
         {% if meeting.zipcode %}
             {% block meeting_address %}
             <br/>
-            {{ link('https://www.google.com/maps/search/?api=1&query=' + meeting.latlon, meeting.formatted_address) }}
+            {{ link('https://www.google.com/maps/search/?api=1&query=' + meeting.latlon, meeting.address_display) }}
             {% endblock %}
         {% endif %}
 

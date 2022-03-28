@@ -1,4 +1,4 @@
-# pdf12step 1.2.0 documentation
+# pdf12step documentation
 
 ```{include} README.md
 ```
@@ -10,6 +10,7 @@ config
 usage
 features
 commands
+custom
 examples
 pdf12step
 CHANGELOG

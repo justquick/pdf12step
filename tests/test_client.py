@@ -29,16 +29,16 @@ def test_cilent(mocked_dump, mocked_get, mocked_post):
     mocked_post.return_value = mocked_get.return_value = MockedResponse()
     from pdf12step.client import Client
 
-    client = Client('http://fakewordpress-site.us')
+    client = Client('http://fakewordpress-site.us', 'api', 'nonce')
     meetings = client.meetings()
     assert len(meetings) == 12
 
     args, kwargs = mocked_get.call_args
-    assert args[0] == 'http://fakewordpress-site.us/meetings/'
+    assert args[0] == 'http://fakewordpress-site.us/nonce'
     assert len(kwargs) == 0
 
     args = mocked_post.call_args[0]
-    assert args[0] == 'http://fakewordpress-site.us/wordpress/wp-admin/admin-ajax.php'
+    assert args[0] == 'http://fakewordpress-site.us/api'
     assert args[1] == {
         'mode': 'search',
         'distance': 2,
@@ -50,7 +50,7 @@ def test_cilent(mocked_dump, mocked_get, mocked_post):
 
     client.download()
     calls = mocked_dump.call_args_list
-    assert len(calls) == 4
+    assert len(calls) == len(Client.sections)
     meeting = calls[0][0][0][0]
     assert meeting['id'] == 319513
     assert meeting['name'] == 'Columbia Dawn Patrol'

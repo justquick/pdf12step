@@ -1,5 +1,6 @@
 import json
 import re
+from datetime import datetime
 from collections import defaultdict
 from urllib.parse import unquote
 
@@ -40,13 +41,31 @@ class Meeting(AttrDict):
         return DAYS.get(self.day, 'Other')
 
     @cached_property
+    def address_display(self):
+        """
+        Displays a long form address line
+        """
+        if self.formatted_address:
+            return self.formatted_address
+        return f'{self.address}, {self.city} {self.state}, {self.zipcode}'
+
+    @cached_property
     def zipcode(self):
         """
         Returns a 5 digit zipcode from the formatted address
         """
+        if self.postal_code:
+            return self.postal_code
         addr = ' '.join(self.formatted_address.split()[1:])
         match = ZIP_RE.search(addr)
         return match.groups()[0] if match else ''
+
+    @cached_property
+    def time_display(self):
+        if self.time_formatted:
+            return self.time_formatted
+        dt = datetime.strptime(self.time, '%H:%M')
+        return dt.strftime('%I:%M %p')
 
     @cached_property
     def conference_url(self):
@@ -93,8 +112,11 @@ class Meeting(AttrDict):
     def is_conference(self):
         """
         Returns True if the attendance_option is either online or hybrid.
+        Failing having that value, determines whether a conference_url is set
         """
-        return self.attendance_option in ('online', 'hybrid')
+        if self.attendance_option:
+            return self.attendance_option in ('online', 'hybrid')
+        return self.conference_url
 
 
 class MeetingSet(object):
@@ -158,7 +180,7 @@ class MeetingSet(object):
             counter[getattr(item, attr)] += 1
         return counter
 
-    def by_value(self, attr, sort=False, limit=None):
+    def by_value(self, attr, sort=False, limit=None, cast=str):
         """
         Groups the results by the given attribute values.
         Returns a dict with the values as keys and filtered MeetingSet as values
@@ -178,7 +200,7 @@ class MeetingSet(object):
             else:
                 result[key].append(item)
         if sort:
-            return sorted([(key, MeetingSet(items)) for key, items in result.items()])
+            return sorted([(cast(key), MeetingSet(items)) for key, items in result.items()])
         return {key: MeetingSet(items) for key, items in result.items()}
 
     def filter(self, **kwargs):

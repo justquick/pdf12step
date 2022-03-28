@@ -14,7 +14,7 @@ from pdf12step.client import Client
 from pdf12step.meetings import MeetingSet, DAYS
 from pdf12step.cached import cached_property
 from pdf12step.log import logger
-from pdf12step.config import Config, DATA_DIR
+from pdf12step.config import DATA_DIR, OPTS
 
 
 FSBC = FileSystemBytecodeCache()
@@ -78,9 +78,8 @@ class Context(dict):
         self.data_dir = args.get('data_dir', DATA_DIR)
         self.asset_dir = args.get('asset_dir', 'assets')
         self.is_flask = args.get('flask', False)
-        self.config = config = Config().load(args)
         if args.get('download', False):
-            Client(config.site_url).download()
+            Client(OPTS.config.site_url, OPTS.config.api_url, OPTS.config.nonce_url).download()
         self.update(
             meetings=self.get_meetings(),
             DAYS=DAYS,
@@ -89,21 +88,21 @@ class Context(dict):
             filtered_codes=self.filtered_codes,
             stylesheets=self.stylesheets,
             slugify=slugify,
-            codify=codify(config.codemap, config.filtercodes),
-            link=link(config.show_links),
+            codify=codify(OPTS.config.codemap, OPTS.config.filtercodes),
+            link=link(OPTS.config.show_links),
             qrcode=self.qrcode,
-            config=config
+            config=OPTS.config
         )
         logger.info('Loaded context config')
         logger.debug(pformat(dict(self)))
 
     @cached_property
     def qrcode(self):
-        if self.config.qrcode_url:
+        if OPTS.config.qrcode_url:
             qr = QRCode(box_size=5)
-            qr.add_data(self.config.qrcode_url)
+            qr.add_data(OPTS.config.qrcode_url)
             qr.make(fit=True)
-            img = qr.make_image(back_color=self.config.color)
+            img = qr.make_image(back_color=OPTS.config.color)
             img_file = path.join(self.asset_dir,  'img', 'qrcode.png')
             dest = path.dirname(img_file)
             if not path.isdir(dest):
@@ -119,7 +118,7 @@ class Context(dict):
         :rtype: dict
         """
         zbr = defaultdict(set)
-        for zipcode, region in self.config.zipcodes.items():
+        for zipcode, region in OPTS.config.zipcodes.items():
             zbr[region].add(zipcode)
         return zbr
 
@@ -131,10 +130,10 @@ class Context(dict):
         :rtype: list
         """
         codes = []
-        for code, name in self.config.meetingcodes.items():
-            if code in self.config.filtercodes:
+        for code, name in OPTS.config.meetingcodes.items():
+            if code in OPTS.config.filtercodes:
                 continue
-            code = self.config.codemap.get(code, code)
+            code = OPTS.config.codemap.get(code, code)
             codes.append((code, name))
         return codes
 
@@ -148,10 +147,10 @@ class Context(dict):
         if not path.isfile(meetings_file):
             raise OSError(f'Meeting data file {meetings_file} not found! Please download first')
         meetings = MeetingSet(meetings_file)
-        if getattr(self.config, 'attendance_options', []):
+        if getattr(OPTS.config, 'attendance_options', []):
             meetings = meetings.by_value('attendance_option').items()
             options = [meeting_set for attendance_option, meeting_set in meetings
-                       if attendance_option in self.config.attendance_options]
+                       if attendance_option in OPTS.config.attendance_options]
             meetings = reduce(lambda x, y: x + y, options)
         limit = self.args.get('limit', 0)
         if limit:
@@ -167,8 +166,8 @@ class Context(dict):
         :rtype: list
         """
         sheets = ['assets/css/style.css']
-        if self.config.stylesheets:
-            for sheet in self.config.stylesheets:
+        if OPTS.config.stylesheets:
+            for sheet in OPTS.config.stylesheets:
                 sheet = path.abspath(path.expandvars(sheet))
                 if not path.isfile(sheet):
                     raise OSError(f'CSS File not found: {sheet}')
@@ -184,8 +183,8 @@ class Context(dict):
         :rtype: list
         """
         dirs = [path.join(DIR, 'templates')]
-        if self.config.template_dirs:
-            for tdir in self.config.template_dirs:
+        if OPTS.config.template_dirs:
+            for tdir in OPTS.config.template_dirs:
                 tdir = path.abspath(path.expandvars(tdir))
                 if not path.isdir(tdir):
                     raise OSError(f'Template folder not found: {tdir}')

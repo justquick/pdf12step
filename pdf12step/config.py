@@ -1,5 +1,7 @@
 import os
 import logging
+import threading
+from urllib.parse import urlparse
 
 from weasyprint import LOGGER as wlogger
 try:
@@ -19,6 +21,7 @@ LEVEL_MAP = {
     1: logging.INFO,
     2: logging.DEBUG
 }
+OPTS = threading.local()
 
 
 def setup_logging(args):
@@ -61,6 +64,9 @@ class Config(AttrDict):
     _defaults = {
         'config_file': CONFIG_FILE,
         'site_url': None,
+        'site_domain': None,
+        'api_url': None,
+        'nonce_url': None,
         'size': 'Letter',
         'color': 'lightblue',
         'header_color': 'lightblue',
@@ -90,6 +96,7 @@ class Config(AttrDict):
 
         :param dict args: Args override pass for runtime overrides
         """
+        global OPTS
         if not isinstance(args, dict):
             args = args.__dict__ if hasattr(args, '__dict__') else dict(args)
         setup_logging(args)
@@ -106,4 +113,6 @@ class Config(AttrDict):
         for key, value in self.items():
             if value and isinstance(value, dict):
                 self[key] = {str(k): str(v) for k, v in value.items()}
+        self['site_domain'] = urlparse(self['site_url']).netloc
+        OPTS.config = self
         return self
