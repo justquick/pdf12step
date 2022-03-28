@@ -34,7 +34,7 @@
         {% if meeting.zipcode %}
             {% block meeting_address %}
             <br/>
-            {{ link('https://www.google.com/maps/search/?api=1&query=' + meeting.latlon, meeting.formatted_address) }}
+            {{ link('https://www.google.com/maps/search/?api=1&query=' + meeting.latlon, meeting.address_display) }}
             {% endblock %}
         {% endif %}
 
