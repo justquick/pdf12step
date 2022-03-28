@@ -1,3 +1,4 @@
+```yaml
 # Site URL where 12 Step WP Plugin is installed
 site_url: https://baltimoreaa.org/
 # URL to gather nonce param which is required for certain versions of the plugin
@@ -229,3 +230,4 @@ zipcodes:
     21791: Union Bridge
     21794: West Friendship
     21921: Elkton
+```

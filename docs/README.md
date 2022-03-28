@@ -8,8 +8,8 @@ The tool works by
 - Rendering the meeting list directory as HTML using [Jinja2](https://jinja.palletsprojects.com/) templates
 - Converting the HTML into a PDF using the [WeasyPrint](https://weasyprint.org/) document factory
 
-The CSS and HTML templates are extensible so you can customize the PDF output and make it fit your meeting format.
+The config, CSS and HTML templates are extensible so you can customize the PDF output and make it fit your meeting format.
 
 The app also contains a [Flask](https://flask.palletsprojects.com/) webapp that can render the live HTML and PDF content in your browser.
 
-To see what it can do, check out [this generated directory](https://justquick.io/pdf12step/_static/December%202021%20Directory.pdf)
+To see what it can do, check out [this generated directory](./_static/December%202021%20Directory.pdf)

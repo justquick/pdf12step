@@ -1,3 +1,4 @@
+(config)=
 # Configuration
 
 ## YAML Configuration File
@@ -10,7 +11,17 @@ You can use the `12step init` command to interactively setup your configuration 
 12step init -o my.config.yaml
 ```
 
-In the repo there is also a `example.config.yml` you can use as a reference to get the program up and running using the Baltimore AA meeting data.
+## Example
+
+
+
+Here is a full example of the YAML configuration file for Baltimore AA intergroup.
+See comments below for each setting and its purpose.
+You can copy this config from and modify it to fit your sites' needs.
+You can find this file in the repo at `sites/baltimoreaa.org/config.yml`
+
+```{include} configvalues.md
+```
 
 ## Environment Variables
 
