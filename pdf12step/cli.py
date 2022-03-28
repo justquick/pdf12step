@@ -6,7 +6,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from pdf12step.templating import Context, DIR
 from pdf12step.log import logger
-from pdf12step.config import Config
+from pdf12step.config import Config, DATA_DIR, OPTS
 from pdf12step.client import Client
 from pdf12step.adict import AttrDict
 from pdf12step.__main__ import main
@@ -47,8 +47,7 @@ def prompt(name, title, default=None, cast=str):
 
 
 def ensure_config(ctx):
-    config = ctx.get('config', None)
-    if not config:
+    if not ctx.get('config', None):
         click.echo('No config found. Please create one with "12step init" and pass it with the --config option')
         raise click.Abort
 
@@ -63,6 +62,7 @@ def ensure_config(ctx):
 def cli(ctx, config, verbose, logfile):
     ctx.ensure_object(dict)
     ctx.obj.update(config=config, verbose=verbose, logfile=logfile)
+    Config().load(AttrDict(ctx.obj))
 
 
 @cli.command()
@@ -141,6 +141,7 @@ def flask(ctx, **kwargs):
 @cli.command()
 @click.option('-f', '--format', default='json', type=click.Choice(('json', 'csv')), help='Format of downloaded meeting data')
 @click.option('-s', '--sections',  default=','.join(Client.sections), help='Comma separated list of sections to download')
+@click.option('-o', '--output', envvar='PDF12STEP_DATA_DIR', default=DATA_DIR, help='Output data directory')
 @click.pass_context
 def download(ctx, **kwargs):
     """
@@ -150,9 +151,8 @@ def download(ctx, **kwargs):
     ensure_config(ctx.obj)
     ctx.obj.update(kwargs)
     args = ctx.obj
-    config = Config().load(args)
-    client = Client(config.site_url, config.api_uri, config.nonce_uri)
-    client.download(*args['sections'].split(','), format=args['format'])
+    client = Client(OPTS.config.site_url, OPTS.config.api_url, OPTS.config.nonce_url)
+    client.download(*args['sections'].split(','), format=args['format'], data_dir=args['output'])
 
 
 @cli.command()

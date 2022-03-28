@@ -50,13 +50,16 @@ class Client(object):
     :param str url: Base URL of the WP site to gather data from
     """
     sections = ('meetings',)  # 'locations', 'groups', 'regions') these arent necessary for now
+    nonce_url = api_url = None
 
-    def __init__(self, site_url=None, api_uri='wordpress/wp-admin/admin-ajax.php', nonce_uri=None):
+    def __init__(self, site_url=None, api_url=None, nonce_url=None):
         if not site_url:
             raise ValueError('Site URL required')
-        self.site_url = site_url.rstrip('/')
-        self.api_uri = api_uri
-        self.nonce_uri = nonce_uri
+        self.site_url = site_url = site_url.rstrip('/')
+        if nonce_url:
+            self.nonce_url = nonce_url if nonce_url.startswith('http') else f'{site_url}/{nonce_url}'
+        if api_url:
+            self.api_url = api_url if api_url.startswith('http') else f'{site_url}/{api_url}'
 
     @cached_property
     def nonce(self):
@@ -66,19 +69,19 @@ class Client(object):
 
         :rtype: str
         """
-        response = requests.get(f'{self.site_url}/{self.nonce_uri}')
+        response = requests.get(self.nonce_url)
         response.raise_for_status()
         content = response.content.decode()
         match = NONCE_RE.search(content, re.M)
         if match:
             return match.groups()[0]
 
-    def _dispatch(self, method, uri, *args, **kwargs):
-        logger.debug(f'{method.upper()} {self.site_url}/{uri} {args}')
+    def _dispatch(self, method, url, *args, **kwargs):
+        if not url.startswith('http'):
+            url = f'{self.site_url}/{url}'
+        logger.debug(f'{method.upper()} {url} {args}')
         method = getattr(requests, method)
-        if not uri.startswith(self.site_url):
-            uri = f'{self.site_url}/{uri}'
-        response = method(uri, *args, **kwargs)
+        response = method(url, *args, **kwargs)
         response.raise_for_status()
         logger.debug(f'GOT {len(response.content)}B {response.headers["Content-Type"].split(";")[0]} in {response.elapsed}')
         return response.json()
@@ -101,7 +104,7 @@ class Client(object):
         if params is None:
             params = {}
         params['action'] = f'tsml_{entity}'
-        return self.get(self.api_uri, params)
+        return self.get(self.api_url, params)
 
     def meetings(self, **params):
         """
@@ -112,9 +115,9 @@ class Client(object):
         """
         data = DEFAULTS.copy()
         data.update(params, action='meetings')
-        if self.nonce_uri:
+        if self.nonce_url:
             data['nonce'] = self.nonce
-            return self.post(self.api_uri, data)
+            return self.post(self.api_url, data)
         return self.tsml('meetings')
 
     def locations(self):
@@ -141,21 +144,21 @@ class Client(object):
         """
         return self.tsml('regions')
 
-    def download(self, *sections, format='json'):
+    def download(self, *sections, format='json', data_dir=DATA_DIR):
         """
         Downloads all the TSML endpoints meeting data to the DATA_DIR destination.
 
         :param tuple sections: Specific sections to download (eg meetings)
         :param str format: Which format to load the data in (eg json/csv)
         """
-        if not os.path.exists(DATA_DIR):
-            logger.warn(f'DATA_DIR not found, creating: {DATA_DIR}')
-            os.makedirs(DATA_DIR)
+        if not os.path.exists(data_dir):
+            logger.warn(f'data dir not found, creating: {data_dir}')
+            os.makedirs(data_dir)
         sections = self.sections if not sections else sections
         for section in sections:
             if not hasattr(self, section):
                 raise ValueError(f'Section {section} not known')
             data = getattr(self, section)()
-            outfile = os.path.join(DATA_DIR, f'{section}.{format}')
+            outfile = os.path.join(data_dir, f'{section}.{format}')
             json_dump(data, outfile) if format == 'json' else csv_dump(data, outfile)
             logger.info(f'Downloaded {outfile}')
