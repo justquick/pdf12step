@@ -1,7 +1,7 @@
 # Site URL where 12 Step WP Plugin is installed
 site_url: https://baltimoreaa.org/
-nonce_uri: meetings
-api_uri: wordpress/wp-admin/admin-ajax.php
+nonce_url: https://baltimoreaa.org/meetings
+api_url: https://baltimoreaa.org/wordpress/wp-admin/admin-ajax.php
 
 # Page size of the output PDF.
 # If not doing Letter, prepare to use custom template_dirs and stylesheets
