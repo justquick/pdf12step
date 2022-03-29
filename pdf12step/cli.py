@@ -9,7 +9,6 @@ from pdf12step.log import logger
 from pdf12step.config import Config, DATA_DIR, OPTS
 from pdf12step.client import Client
 from pdf12step.adict import AttrDict
-from pdf12step.__main__ import main
 
 
 def lister(value):
@@ -62,7 +61,8 @@ def ensure_config(ctx):
 def cli(ctx, config, verbose, logfile):
     ctx.ensure_object(dict)
     ctx.obj.update(config=config, verbose=verbose, logfile=logfile)
-    Config().load(AttrDict(ctx.obj))
+    ctx.obj = AttrDict(ctx.obj)
+    Config().load(ctx.obj)
 
 
 @cli.command()
@@ -74,13 +74,12 @@ def html(ctx, **kwargs):
     """Formats meeting HTML"""
     ensure_config(ctx.obj)
     ctx.obj.update(kwargs)
-    args = AttrDict(ctx.obj)
-    context = Context(args)
+    context = Context(ctx.obj)
     context.prerender()
     content = context.render()
     logger.info(f'Generated {len(content)//1000}KB of HTML content')
     logger.info(f'Total meetings renderd: {len(context["meetings"])}')
-    outfile = args.output
+    outfile = ctx.obj.output
     if outfile is None:
         outfile = open(context['now'].strftime('%B %Y Directory.html'), 'w')
     elif outfile == '-':
@@ -101,13 +100,12 @@ def pdf(ctx, **kwargs):
     """Formats meeting PDFs"""
     ensure_config(ctx.obj)
     ctx.obj.update(kwargs)
-    args = AttrDict(ctx.obj)
-    context = Context(args)
+    context = Context(ctx.obj)
     context.prerender()
     content = context.pdf()
     logger.info(f'Generated {len(content)//1000}KB of PDF content')
     logger.info(f'Total meetings renderd: {len(context["meetings"])}')
-    outfile = args.output
+    outfile = ctx.obj.output
     if outfile is None:
         outfile = open(context['now'].strftime('%B %Y Directory.pdf'), 'wb')
     elif outfile == '-':
@@ -131,11 +129,10 @@ def flask(ctx, **kwargs):
     """
     ensure_config(ctx.obj)
     ctx.obj.update(kwargs)
-    args = AttrDict(ctx.obj)
     from pdf12step.flask_app import app
 
     os.environ['FLASK_APP'] = __name__
-    app.run(args.address, args.port)
+    app.run(ctx.obj.address, ctx.obj.port)
 
 
 @cli.command()
@@ -164,7 +161,6 @@ def init(ctx, **kwargs):
     Iniitialize your custom configuration interactively by answering a few questions
     """
     ctx.obj.update(kwargs)
-    args = AttrDict(ctx.obj)
     sections = [
         ('Data Gathering', [
             ('site_url', 'Site URL running 12 Step Meeting WordPress plugin'),
@@ -204,13 +200,13 @@ def init(ctx, **kwargs):
         autoescape=select_autoescape(),
     )
     content = env.get_template('default.config.yaml').render(ctx)
-    with open(args.output, 'w') as conf:
+    with open(ctx.obj.output, 'w') as conf:
         conf.write(content)
-    logger.debug(f'Wrote init config to {args.output}')
+    logger.debug(f'Wrote init config to {ctx.obj.output}')
     click.echo()
-    click.echo(f'Your custom config has been rendered to {args.output}')
+    click.echo(f'Your custom config has been rendered to {ctx.obj.output}')
     click.echo('You can now render documents using')
-    click.echo(f'12step-pdf -c {args.output}')
+    click.echo(f'12step-pdf -c {ctx.obj.output}')
 
 
 @cli.command()
@@ -220,13 +216,11 @@ def shell(ctx, **kwargs):
     Drops into an IPython shell
     Contains the context, config and meetings instances
     """
+    from IPython import embed
+
     ensure_config(ctx.obj)
     ctx.obj.update(kwargs)
-    args = AttrDict(ctx.obj)
-    main(args)
-
-
-if __name__ == '__main__':
-    import ipdb
-    with ipdb.launch_ipdb_on_exception():
-        cli(obj={})
+    context = Context(ctx.obj)
+    ctx = sys.modules['__main__'].__dict__
+    ctx.update(context=context, config=OPTS.config, meetings=context.get_meetings())
+    embed(colors='linux', module=sys.modules['__main__'], user_ns=ctx)
