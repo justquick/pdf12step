@@ -16,7 +16,6 @@ from pdf12step.utils import slugify, link, codify, qrcode
 
 FSBC = FileSystemBytecodeCache()
 LAYOUT_TEMPLATE = 'layout.html'
-BASE_CSS = path.join(BASE_DIR, 'assets/css/style.css')
 ASSET_TEMPLATES = {
     'assets/img/cover_background.svg': ('img', 'cover_background.svg'),
     'assets/css/style.css': ('css', 'style.css')
