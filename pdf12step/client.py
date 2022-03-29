@@ -52,9 +52,11 @@ class Client(object):
     sections = ('meetings',)  # 'locations', 'groups', 'regions') these arent necessary for now
     nonce_url = api_url = None
 
-    def __init__(self, site_url=None, api_url=None, nonce_url=None):
+    def __init__(self, site_url, api_url, nonce_url=None):
         if not site_url:
-            raise ValueError('Site URL required')
+            raise ValueError('Site URL required, please set site_url in your config')
+        if not api_url:
+            raise ValueError('API URL required, please set api_url in your config')
         self.site_url = site_url = site_url.rstrip('/')
         if nonce_url:
             self.nonce_url = nonce_url if nonce_url.startswith('http') else f'{site_url}/{nonce_url}'
