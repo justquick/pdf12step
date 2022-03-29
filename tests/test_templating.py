@@ -1,24 +1,26 @@
 from unittest import mock
-from os import environ, getcwd, path
+from os import environ, path
 
 from .base import ENV, CONFIG_FILE, DATA_DIR, contains_parts
 
 
 def get_context(**kwargs):
     from pdf12step.templating import Context
-    from pdf12step.config import Config
+    from pdf12step.config import Config, OPTS
+    from pdf12step.adict import AttrDict
 
     kwargs.update(data_dir=DATA_DIR,
                   config=[CONFIG_FILE],
                   template_dirs=[DATA_DIR],
                   stylesheets=[path.join(DATA_DIR, 'blank.css')])
-    Config().load(kwargs)
+    OPTS.config = AttrDict(Config.load(kwargs))
     return Context(kwargs)
 
 
 @mock.patch.dict(environ, ENV, clear=True)
 def test_slugify():
-    from pdf12step.templating import slugify
+    from pdf12step.utils import slugify
+
     for text, slug in (
         ('concurrently.\n-Zoom Mee', 'concurrently-zoom-mee'),
         ('23,,5131', '235131'),
@@ -29,7 +31,7 @@ def test_slugify():
 
 @mock.patch.dict(environ, ENV, clear=True)
 def test_codify():
-    from pdf12step.templating import codify
+    from pdf12step.utils import codify
     from pdf12step.config import OPTS
 
     ctx = get_context(title='My Test Title', mycodes=['A', 'B', 'C'])

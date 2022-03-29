@@ -1,16 +1,12 @@
 import os
-import logging
 import threading
+import logging
 from urllib.parse import urlparse
 
 from weasyprint import LOGGER as wlogger
-try:
-    from yaml import CLoader as Loader
-except ImportError:
-    from yaml import Loader
 
 from pdf12step.adict import AttrDict
-from pdf12step.log import logger
+from pdf12step.utils import yaml_load
 
 
 DATA_DIR = os.path.abspath(os.getenv('PDF12STEP_DATA_DIR', 'data'))
@@ -22,6 +18,7 @@ LEVEL_MAP = {
     2: logging.DEBUG
 }
 OPTS = threading.local()
+OPTS.logger = logging.getLogger('pdf12step')
 
 
 def setup_logging(args):
@@ -30,30 +27,15 @@ def setup_logging(args):
 
     :param dict args: config arguments for verbose & logfile logging settings
     """
+    global OPTS
     level = LEVEL_MAP.get(int(args.get('verbose', 0)), logging.DEBUG)
     handler = logging.FileHandler(args['logfile']) if 'logfile' in args and args['logfile'] else logging.StreamHandler()
     formatter = logging.Formatter('%(asctime)s %(levelname)s %(name)s %(message)s')
     handler.setFormatter(formatter)
     handler.setLevel(level)
-    for lggr in (wlogger, logger):
+    for lggr in (wlogger, OPTS.logger):
         lggr.addHandler(handler)
         lggr.setLevel(level)
-
-
-def yaml_load(filename):
-    """
-    Returns the config dict loaded from the given filename
-
-    :param str filename: YAML filename to load
-    :rtype: dict
-    """
-    stream = open(filename)
-    loader = Loader(stream)
-    try:
-        return loader.get_single_data()
-    finally:
-        stream.close()
-        loader.dispose()
 
 
 class Config(AttrDict):
@@ -63,6 +45,7 @@ class Config(AttrDict):
     """
     _defaults = {
         'config_file': CONFIG_FILE,
+        'data_dir': DATA_DIR,
         'site_url': None,
         'site_domain': None,
         'api_url': None,
@@ -90,29 +73,29 @@ class Config(AttrDict):
         'sections': ['contact', 'codes', 'misc', 'regions', 'index', 'list', 'readings', 'notes']
     }
 
-    def load(self, args):
+    @classmethod
+    def load(cls, args):
         """
         Loads the config from defaults, file and args in that order
 
         :param dict args: Args override pass for runtime overrides
         """
-        global OPTS
+        config = {}
         if not isinstance(args, dict):
             args = args.__dict__ if hasattr(args, '__dict__') else dict(args)
         setup_logging(args)
-        self.update(self._defaults)  # load sane defaults
+        config.update(cls._defaults)  # load sane defaults
         if 'config' not in args or args['config'] is None:
-            args['config'] = [self._defaults['config_file']]
+            args['config'] = [cls._defaults['config_file']]
         for config_file in args['config']:  # from file
-            logger.info(f'Loaded config file {config_file}')
+            OPTS.logger.info(f'Loaded config file {config_file}')
             if not os.path.isfile(config_file):
                 raise OSError(f'Configuration file {config_file} not found! Use 12step-init to create one')
-            self.update(yaml_load(config_file))
-        self.update(args)  # runtime
-        logger.debug(f'Loaded runtime options {args}')
-        for key, value in self.items():
+            config.update(yaml_load(config_file))
+        config.update(args)  # runtime
+        OPTS.logger.debug(f'Loaded runtime options {args}')
+        for key, value in config.items():
             if value and isinstance(value, dict):
-                self[key] = {str(k): str(v) for k, v in value.items()}
-        self['site_domain'] = urlparse(self['site_url']).netloc
-        OPTS.config = self
-        return self
+                config[key] = {str(k): str(v) for k, v in value.items()}
+        config['site_domain'] = urlparse(config['site_url']).netloc
+        return config

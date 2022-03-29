@@ -5,26 +5,10 @@ import click
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from pdf12step.templating import Context, DIR
-from pdf12step.log import logger
 from pdf12step.config import Config, DATA_DIR, OPTS
 from pdf12step.client import Client
 from pdf12step.adict import AttrDict
-
-
-def lister(value):
-    """
-    Returns a (comma separated) string value as a list
-    """
-    return value.split(',') if value else []
-
-
-def booler(value):
-    """
-    Returns a string value as a bool (eg yes, True)
-    """
-    if isinstance(value, str):
-        value = value.lower() in ('y', 'yes', 'true')
-    return str(value).lower()
+from pdf12step.utils import booler, lister
 
 
 def prompt(name, title, default=None, cast=str):
@@ -41,7 +25,7 @@ def prompt(name, title, default=None, cast=str):
     if field == 'empty':
         field = ''
     field = cast(field)
-    logger.debug(f'Got prompt value {name}={field}')
+    OPTS.logger.debug(f'Got prompt value {name}={field}')
     return {name: field}
 
 
@@ -51,18 +35,28 @@ def ensure_config(ctx):
         raise click.Abort
 
 
+def do_download(ctx):
+    sections = ctx.obj.sections.split(',') if hasattr(ctx.obj, 'sections') else Client.sections
+    client = Client(OPTS.config.site_url, OPTS.config.api_url, OPTS.config.nonce_url)
+    client.download(sections, getattr(ctx.obj, 'format', 'json'), ctx.obj.data_dir, OPTS.config.site_domain)
+
+
 @click.group('12step')
 @click.option('--config', '-c', envvar='PDF12STEP_CONFIG', multiple=True,
               type=click.Path(file_okay=True, dir_okay=False),
               help='Configs file for runtime vars. Can pass multiple to override options.')
 @click.option('--verbose', '-v', count=True, default=0, help='More verbose logging')
+@click.option('--data-dir', '-D', default=DATA_DIR, envvar='PDF12STEP_DATA_DIR',
+              type=click.Path(file_okay=False, dir_okay=True, exists=False),
+              help='Data directory to download meeting data to')
 @click.option('--logfile',  default=None, help='Optional log file to wrie to')
 @click.pass_context
-def cli(ctx, config, verbose, logfile):
+def cli(ctx, config, verbose, data_dir, logfile):
+    global OPTS
     ctx.ensure_object(dict)
-    ctx.obj.update(config=config, verbose=verbose, logfile=logfile)
+    ctx.obj.update(config=config, data_dir=data_dir, verbose=verbose, logfile=logfile)
     ctx.obj = AttrDict(ctx.obj)
-    Config().load(ctx.obj)
+    OPTS.config = AttrDict(Config.load(ctx.obj))
 
 
 @cli.command()
@@ -74,11 +68,13 @@ def html(ctx, **kwargs):
     """Formats meeting HTML"""
     ensure_config(ctx.obj)
     ctx.obj.update(kwargs)
+    if ctx.obj.download:
+        do_download(ctx)
     context = Context(ctx.obj)
     context.prerender()
     content = context.render()
-    logger.info(f'Generated {len(content)//1000}KB of HTML content')
-    logger.info(f'Total meetings renderd: {len(context["meetings"])}')
+    OPTS.logger.info(f'Generated {len(content)//1000}KB of HTML content')
+    OPTS.logger.info(f'Total meetings renderd: {len(context["meetings"])}')
     outfile = ctx.obj.output
     if outfile is None:
         outfile = open(context['now'].strftime('%B %Y Directory.html'), 'w')
@@ -88,7 +84,7 @@ def html(ctx, **kwargs):
         outfile = open(outfile, 'w')
     outfile.write(content)
     outfile.close()
-    logger.info(f'Wrote to {outfile.name}')
+    OPTS.logger.info(f'Wrote to {outfile.name}')
 
 
 @cli.command()
@@ -100,11 +96,13 @@ def pdf(ctx, **kwargs):
     """Formats meeting PDFs"""
     ensure_config(ctx.obj)
     ctx.obj.update(kwargs)
+    if ctx.obj.download:
+        do_download(ctx)
     context = Context(ctx.obj)
     context.prerender()
     content = context.pdf()
-    logger.info(f'Generated {len(content)//1000}KB of PDF content')
-    logger.info(f'Total meetings renderd: {len(context["meetings"])}')
+    OPTS.logger.info(f'Generated {len(content)//1000}KB of PDF content')
+    OPTS.logger.info(f'Total meetings renderd: {len(context["meetings"])}')
     outfile = ctx.obj.output
     if outfile is None:
         outfile = open(context['now'].strftime('%B %Y Directory.pdf'), 'wb')
@@ -114,7 +112,7 @@ def pdf(ctx, **kwargs):
         outfile = open(outfile, 'wb')
     outfile.write(content)
     outfile.close()
-    logger.info(f'Wrote to {outfile.name}')
+    OPTS.logger.info(f'Wrote to {outfile.name}')
 
 
 @cli.command()
@@ -138,7 +136,6 @@ def flask(ctx, **kwargs):
 @cli.command()
 @click.option('-f', '--format', default='json', type=click.Choice(('json', 'csv')), help='Format of downloaded meeting data')
 @click.option('-s', '--sections',  default=','.join(Client.sections), help='Comma separated list of sections to download')
-@click.option('-o', '--output', envvar='PDF12STEP_DATA_DIR', default=DATA_DIR, help='Output data directory')
 @click.pass_context
 def download(ctx, **kwargs):
     """
@@ -147,9 +144,7 @@ def download(ctx, **kwargs):
     """
     ensure_config(ctx.obj)
     ctx.obj.update(kwargs)
-    args = ctx.obj
-    client = Client(OPTS.config.site_url, OPTS.config.api_url, OPTS.config.nonce_url)
-    client.download(*args['sections'].split(','), format=args['format'], data_dir=args['output'])
+    do_download(ctx)
 
 
 @cli.command()
@@ -202,7 +197,7 @@ def init(ctx, **kwargs):
     content = env.get_template('default.config.yaml').render(ctx)
     with open(ctx.obj.output, 'w') as conf:
         conf.write(content)
-    logger.debug(f'Wrote init config to {ctx.obj.output}')
+    OPTS.logger.debug(f'Wrote init config to {ctx.obj.output}')
     click.echo()
     click.echo(f'Your custom config has been rendered to {ctx.obj.output}')
     click.echo('You can now render documents using')

@@ -1,9 +1,9 @@
 from unittest import mock
 from json import load
-from os import path, environ
+from os import environ
 
 
-from .base import ENV, DATA_DIR
+from .base import ENV, DATA_DIR, MEETINGS_FILE
 
 
 class MockedResponse:
@@ -15,7 +15,7 @@ class MockedResponse:
     }
 
     def json(self):
-        return load(open(path.join(DATA_DIR, 'meetings.json')))
+        return load(open(MEETINGS_FILE))
 
     def raise_for_status(self):
         pass

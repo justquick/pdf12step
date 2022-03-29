@@ -1,13 +1,10 @@
 import re
 import requests
-import json
 import os
-from csv import DictWriter
 
-from pdf12step.adict import AttrDict
 from pdf12step.cached import cached_property
-from pdf12step.log import logger
-from pdf12step.config import DATA_DIR
+from pdf12step.config import DATA_DIR, OPTS
+from pdf12step.utils import csv_dump, json_dump
 
 
 DEFAULTS = {
@@ -17,30 +14,6 @@ DEFAULTS = {
     'distance_units': 'm',
 }
 NONCE_RE = re.compile('nonce":"([0-9a-fA-F]+)"')
-
-
-def csv_dump(data, outfile):
-    """
-    Dumps csv data to a file with default Nones and AttrDefaults to handle missing fields
-
-    :param list data: List of row data to dump
-    :param file outfile: File instance to write to
-    """
-    keys = set()
-    [keys.update(item.keys()) for item in data]
-    if 'id' in keys:
-        keys = ['id'] + list(keys.difference({'id'}))
-    with open(outfile, 'w') as csvfile:
-        writer = DictWriter(csvfile, keys,  extrasaction='ignore')
-        writer.writeheader()
-        writer.writerows([AttrDict({key: '|'.join(value) if isinstance(value, list) else value
-                                    for key, value in item.items()})
-                          for item in data])
-
-
-def json_dump(data, outfile):
-    with open(outfile, 'w') as jsonfile:
-        json.dump(data, jsonfile, indent=2)
 
 
 class Client(object):
@@ -81,11 +54,11 @@ class Client(object):
     def _dispatch(self, method, url, *args, **kwargs):
         if not url.startswith('http'):
             url = f'{self.site_url}/{url}'
-        logger.debug(f'{method.upper()} {url} {args}')
+        OPTS.logger.debug(f'{method.upper()} {url} {args}')
         method = getattr(requests, method)
         response = method(url, *args, **kwargs)
         response.raise_for_status()
-        logger.debug(f'GOT {len(response.content)}B {response.headers["Content-Type"].split(";")[0]} in {response.elapsed}')
+        OPTS.logger.debug(f'GOT {len(response.content)}B {response.headers["Content-Type"].split(";")[0]} in {response.elapsed}')
         return response.json()
 
     def get(self, *args, **kwargs):
@@ -146,21 +119,24 @@ class Client(object):
         """
         return self.tsml('regions')
 
-    def download(self, *sections, format='json', data_dir=DATA_DIR):
+    def download(self, sections=None, format='json', data_dir=DATA_DIR, prefix=None):
         """
         Downloads all the TSML endpoints meeting data to the DATA_DIR destination.
 
         :param tuple sections: Specific sections to download (eg meetings)
         :param str format: Which format to load the data in (eg json/csv)
         """
+        if sections is None:
+            sections = self.sections
         if not os.path.exists(data_dir):
-            logger.warn(f'data dir not found, creating: {data_dir}')
+            OPTS.logger.warn(f'data dir not found, creating: {data_dir}')
             os.makedirs(data_dir)
         sections = self.sections if not sections else sections
         for section in sections:
             if not hasattr(self, section):
                 raise ValueError(f'Section {section} not known')
             data = getattr(self, section)()
-            outfile = os.path.join(data_dir, f'{section}.{format}')
+            fname = f'{prefix}-{section}.{format}' if prefix else f'{section}.{format}'
+            outfile = os.path.join(data_dir, fname)
             json_dump(data, outfile) if format == 'json' else csv_dump(data, outfile)
-            logger.info(f'Downloaded {outfile}')
+            OPTS.logger.info(f'Downloaded {outfile}')

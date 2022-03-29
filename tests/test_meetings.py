@@ -1,7 +1,8 @@
-from os import path
 from unittest import TestCase
 
 from pdf12step.meetings import MeetingSet, Meeting
+
+from .base import MEETINGS_FILE
 
 
 def item(**kwargs):
@@ -39,7 +40,7 @@ def test_conference_id():
 class MeetingSetTest(TestCase):
 
     def setUp(self):
-        self.meetings = MeetingSet(path.join(path.dirname(__file__), 'data', 'meetings.json'))
+        self.meetings = MeetingSet(MEETINGS_FILE)
         self.attendance_options = {'hybrid', 'online', 'in_person'}
 
     def test_copy(self):

@@ -1,4 +1,3 @@
-import re
 from os import path, makedirs
 from datetime import datetime
 from collections import defaultdict
@@ -6,63 +5,23 @@ from functools import reduce
 from pprint import pformat
 
 from weasyprint import HTML
-from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache, select_autoescape, PackageLoader, ChoiceLoader
-from markupsafe import Markup
-from qrcode import QRCode
+from jinja2 import (Environment, FileSystemLoader, FileSystemBytecodeCache,
+                    select_autoescape, PackageLoader, ChoiceLoader)
 
-from pdf12step.client import Client
 from pdf12step.meetings import MeetingSet, DAYS
 from pdf12step.cached import cached_property
-from pdf12step.log import logger
-from pdf12step.config import DATA_DIR, OPTS
+from pdf12step.config import OPTS
+from pdf12step.utils import slugify, link, codify, qrcode
 
 
 FSBC = FileSystemBytecodeCache()
 LAYOUT_TEMPLATE = 'layout.html'
 DIR = path.abspath(path.dirname(__file__))
+BASE_CSS = 'assets/css/style.css'
 ASSET_TEMPLATES = {
     'assets/img/cover_background.svg': ('img', 'cover_background.svg'),
-    'assets/css/style.css': ('css', 'style.css')
+    BASE_CSS: ('css', 'style.css')
 }
-
-
-def slugify(value):
-    """
-    Turns str into slug value
-
-    :param str value: Regular string to slugify
-    """
-    value = re.sub(r'[^\w\s-]', '', value.lower()).strip()
-    return re.sub(r'[-\s]+', '-', value)
-
-
-def codify(codemap, filtercodes):
-    """
-    Filters codes list in values to renamed/ignored list of codes
-
-    :param dict codemap: Mapping of codes to names to use in display
-    :param list filtercodes: List of codes to ignore
-    """
-    def inner(values):
-        codes = [codemap.get(code, code)
-                 for code in values if code and code not in filtercodes]
-        return filter(lambda c: len(c), codes)
-    return inner
-
-
-def link(show):
-    """
-    Displays an <a> tag for the given url and name
-    If show (config.show_links) is False, just returns name
-
-    :param bool show: True if to display <a> tags
-    """
-    def inner(url, name, id=None):
-        if show:
-            id = f' id="{id}"' if id is not None else ''
-            return Markup(f'<a{id} href="{url}">{name}</a>')
-        return name
-    return inner
 
 
 class Context(dict):
@@ -75,11 +34,7 @@ class Context(dict):
     def __init__(self, args):
         dict.__init__(self)
         self.args = args = args if isinstance(args, dict) else args.__dict__
-        self.data_dir = args.get('data_dir', DATA_DIR)
-        self.asset_dir = args.get('asset_dir', 'assets')
         self.is_flask = args.get('flask', False)
-        if args.get('download', False):
-            Client(OPTS.config.site_url, OPTS.config.api_url, OPTS.config.nonce_url).download()
         self.update(
             meetings=self.get_meetings(),
             DAYS=DAYS,
@@ -93,21 +48,15 @@ class Context(dict):
             qrcode=self.qrcode,
             config=OPTS.config
         )
-        logger.info('Loaded context config')
-        logger.debug(pformat(dict(self)))
+        OPTS.logger.info('Loaded context config')
+        OPTS.logger.debug(pformat(dict(self)))
 
     @cached_property
     def qrcode(self):
         if OPTS.config.qrcode_url:
-            qr = QRCode(box_size=5)
-            qr.add_data(OPTS.config.qrcode_url)
-            qr.make(fit=True)
-            img = qr.make_image(back_color=OPTS.config.color)
-            img_file = path.join(self.asset_dir,  'img', 'qrcode.png')
-            dest = path.dirname(img_file)
-            if not path.isdir(dest):
-                makedirs(dest)
-            img.save(img_file)
+            img_file = path.join(OPTS.config.asset_dir,  'img', 'qrcode.png')
+            qrcode(OPTS.config.qrcode_url, img_file, back_color=OPTS.config.color)
+            OPTS.logger.info(f'Created QR {img_file}')
             return img_file
 
     @cached_property
@@ -137,16 +86,18 @@ class Context(dict):
             codes.append((code, name))
         return codes
 
-    def get_meetings(self):
+    def get_meetings(self, meetings_file=None):
         """
         Loads list of meetings for main context based on filters/limiting
 
         :rtype: MeetingSet
         """
-        meetings_file = path.join(self.data_dir, 'meetings.json')
+        if meetings_file is None:
+            meetings_file = path.join(OPTS.config.data_dir, f'{OPTS.config.site_domain}-meetings.json')
         if not path.isfile(meetings_file):
             raise OSError(f'Meeting data file {meetings_file} not found! Please download first')
         meetings = MeetingSet(meetings_file)
+        OPTS.logger.info(f'Loaded {len(meetings)} meetings from {meetings_file}')
         if getattr(OPTS.config, 'attendance_options', []):
             meetings = meetings.by_value('attendance_option').items()
             options = [meeting_set for attendance_option, meeting_set in meetings
@@ -165,7 +116,7 @@ class Context(dict):
 
         :rtype: list
         """
-        sheets = ['assets/css/style.css']
+        sheets = [BASE_CSS]
         if OPTS.config.stylesheets:
             for sheet in OPTS.config.stylesheets:
                 sheet = path.abspath(path.expandvars(sheet))
@@ -204,7 +155,7 @@ class Context(dict):
             autoescape=select_autoescape(),
             bytecode_cache=FSBC,
         )
-        logger.info('Loaded template env')
+        OPTS.logger.info('Loaded template env')
         return environ
 
     def render(self, template=LAYOUT_TEMPLATE):
@@ -214,7 +165,7 @@ class Context(dict):
         :param str template: relative name of template to load
         :rtype: str
         """
-        logger.info(f'Renderd {template}')
+        OPTS.logger.info(f'Renderd {template}')
         return self.env.get_template(template).render(self)
 
     def prerender(self):
@@ -222,10 +173,9 @@ class Context(dict):
         Prerenders the assets ahead of page render to ensure proper values in assets are set
         """
         for template, dest in ASSET_TEMPLATES.items():
-            dest = path.join(self.asset_dir, *dest)
+            dest = path.join(OPTS.config.asset_dir, *dest)
             dest_dir = path.dirname(dest)
-            if not path.isdir(dest_dir):
-                makedirs(dest_dir)
+            makedirs(dest_dir, exist_ok=True)
             with open(dest, 'w') as destfile:
                 destfile.write(self.render(template))
 
@@ -235,7 +185,7 @@ class Context(dict):
 
         :rtype: weasyprint.HTML
         """
-        return HTML(string=self.render(), base_url=path.dirname(self.asset_dir), encoding='utf8')
+        return HTML(string=self.render(), base_url=path.dirname(OPTS.config.asset_dir), encoding='utf8')
 
     def pdf(self):
         """
