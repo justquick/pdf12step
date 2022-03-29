@@ -65,7 +65,7 @@ class Meeting(AttrDict):
         if self.time_formatted:
             return self.time_formatted
         dt = datetime.strptime(self.time, '%H:%M')
-        return dt.strftime('%I:%M %p')
+        return dt.strftime('%I:%M %p').strip('0')
 
     @cached_property
     def conference_url(self):
