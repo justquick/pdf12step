@@ -10,17 +10,16 @@ from jinja2 import (Environment, FileSystemLoader, FileSystemBytecodeCache,
 
 from pdf12step.meetings import MeetingSet, DAYS
 from pdf12step.cached import cached_property
-from pdf12step.config import OPTS
+from pdf12step.config import OPTS, BASE_DIR
 from pdf12step.utils import slugify, link, codify, qrcode
 
 
 FSBC = FileSystemBytecodeCache()
 LAYOUT_TEMPLATE = 'layout.html'
-DIR = path.abspath(path.dirname(__file__))
-BASE_CSS = 'assets/css/style.css'
+BASE_CSS = path.join(BASE_DIR, 'assets/css/style.css')
 ASSET_TEMPLATES = {
     'assets/img/cover_background.svg': ('img', 'cover_background.svg'),
-    BASE_CSS: ('css', 'style.css')
+    'assets/css/style.css': ('css', 'style.css')
 }
 
 
@@ -116,7 +115,7 @@ class Context(dict):
 
         :rtype: list
         """
-        sheets = [BASE_CSS]
+        sheets = [BASE_CSS]  # package css
         if OPTS.config.stylesheets:
             for sheet in OPTS.config.stylesheets:
                 sheet = path.abspath(path.expandvars(sheet))
@@ -133,7 +132,7 @@ class Context(dict):
 
         :rtype: list
         """
-        dirs = [path.join(DIR, 'templates')]
+        dirs = [path.join(BASE_DIR, 'templates')]  # package templates
         if OPTS.config.template_dirs:
             for tdir in OPTS.config.template_dirs:
                 tdir = path.abspath(path.expandvars(tdir))
@@ -193,4 +192,11 @@ class Context(dict):
 
         :rtype: bytes
         """
-        return self.html().render().write_pdf()
+        document = self.html().render(optimize_size=('images', 'fonts'))
+        content = document.write_pdf(finisher=self.finisher)
+        OPTS.logger.info(f'Generated {len(content)//1000}KB of PDF content')
+        return content
+
+    def finisher(self, document, pdf):
+        # TODO: pad notes pages evenly
+        OPTS.logger.info(f'Generated {len(document.pages)} pages')

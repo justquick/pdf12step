@@ -8,7 +8,7 @@ from weasyprint import LOGGER as wlogger
 from pdf12step.adict import AttrDict
 from pdf12step.utils import yaml_load
 
-
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.abspath(os.getenv('PDF12STEP_DATA_DIR', 'data'))
 CONFIG_FILE = os.getenv('PDF12STEP_CONFIG', 'config.yaml')
 

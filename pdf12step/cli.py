@@ -4,8 +4,8 @@ import os
 import click
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from pdf12step.templating import Context, DIR
-from pdf12step.config import Config, DATA_DIR, OPTS
+from pdf12step.templating import Context
+from pdf12step.config import Config, DATA_DIR, OPTS, BASE_DIR
 from pdf12step.client import Client
 from pdf12step.adict import AttrDict
 from pdf12step.utils import booler, lister
@@ -73,8 +73,6 @@ def html(ctx, **kwargs):
     context = Context(ctx.obj)
     context.prerender()
     content = context.render()
-    OPTS.logger.info(f'Generated {len(content)//1000}KB of HTML content')
-    OPTS.logger.info(f'Total meetings renderd: {len(context["meetings"])}')
     outfile = ctx.obj.output
     if outfile is None:
         outfile = open(context['now'].strftime('%B %Y Directory.html'), 'w')
@@ -101,8 +99,6 @@ def pdf(ctx, **kwargs):
     context = Context(ctx.obj)
     context.prerender()
     content = context.pdf()
-    OPTS.logger.info(f'Generated {len(content)//1000}KB of PDF content')
-    OPTS.logger.info(f'Total meetings renderd: {len(context["meetings"])}')
     outfile = ctx.obj.output
     if outfile is None:
         outfile = open(context['now'].strftime('%B %Y Directory.pdf'), 'wb')
@@ -191,7 +187,7 @@ def init(ctx, **kwargs):
         for field in fields:
             ctx.update(prompt(*field))
     env = Environment(
-        loader=FileSystemLoader([os.path.join(DIR, 'templates')]),
+        loader=FileSystemLoader([os.path.join(BASE_DIR, 'templates')]),
         autoescape=select_autoescape(),
     )
     content = env.get_template('default.config.yaml').render(ctx)
