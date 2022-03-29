@@ -23,6 +23,10 @@ ASSET_TEMPLATES = {
 }
 
 
+def asset_join(*paths):
+    return path.join(OPTS.config.asset_dir, *paths)
+
+
 class Context(dict):
     """
     Context for jinja2 templating
@@ -53,7 +57,7 @@ class Context(dict):
     @cached_property
     def qrcode(self):
         if OPTS.config.qrcode_url:
-            img_file = path.join(OPTS.config.asset_dir,  'img', 'qrcode.png')
+            img_file = asset_join('img', 'qrcode.png')
             qrcode(OPTS.config.qrcode_url, img_file, back_color=OPTS.config.color)
             OPTS.logger.info(f'Created QR {img_file}')
             return img_file
@@ -115,7 +119,7 @@ class Context(dict):
 
         :rtype: list
         """
-        sheets = [BASE_CSS]  # package css
+        sheets = [asset_join('css', 'style.css')]  # asset css
         if OPTS.config.stylesheets:
             for sheet in OPTS.config.stylesheets:
                 sheet = path.abspath(path.expandvars(sheet))
@@ -172,7 +176,7 @@ class Context(dict):
         Prerenders the assets ahead of page render to ensure proper values in assets are set
         """
         for template, dest in ASSET_TEMPLATES.items():
-            dest = path.join(OPTS.config.asset_dir, *dest)
+            dest = asset_join(*dest)
             dest_dir = path.dirname(dest)
             makedirs(dest_dir, exist_ok=True)
             with open(dest, 'w') as destfile:
