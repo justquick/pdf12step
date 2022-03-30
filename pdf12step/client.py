@@ -9,9 +9,6 @@ from pdf12step.utils import csv_dump, json_dump
 
 DEFAULTS = {
     'mode': 'search',
-    'distance': 2,
-    'view': 'list',
-    'distance_units': 'm',
 }
 NONCE_RE = re.compile('nonce":"([0-9a-fA-F]+)"')
 
@@ -57,6 +54,8 @@ class Client(object):
         OPTS.logger.debug(f'{method.upper()} {url} {args}')
         method = getattr(requests, method)
         response = method(url, *args, **kwargs)
+        if response.status_code != 200:
+            OPTS.logger.error(f'Bad response: {response.content}')
         response.raise_for_status()
         OPTS.logger.debug(f'GOT {len(response.content)}B {response.headers["Content-Type"].split(";")[0]} in {response.elapsed}')
         return response.json()
@@ -92,7 +91,7 @@ class Client(object):
         data.update(params, action='meetings')
         if self.nonce_url:
             data['nonce'] = self.nonce
-            return self.post(self.api_url, data)
+            return self.get(self.api_url, data)
         return self.tsml('meetings')
 
     def locations(self):
