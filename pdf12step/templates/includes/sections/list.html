@@ -1,7 +1,7 @@
 {% for day, meets in meetings.by_value('day_display').items() %}
 <article class="list">
     <h2>{{ day }}</h2>
-    {% for region, rmeets in meets.by_value('region', sort=True) %}
+    {% for region, rmeets in meets.by_value('region_display', sort=True) %}
         {% set zips = zipcodes_by_region[region] %}
         {% if not zips %}
             {% set zips = rmeets.zipcodes %}

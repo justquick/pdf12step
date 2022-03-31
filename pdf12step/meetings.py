@@ -36,6 +36,14 @@ def clean_url(url):
 class Meeting(AttrDict):
 
     @cached_property
+    def id_display(self):
+        if self.id:
+            return self.id
+        if self.slug:
+            return self.slug
+        return id(self)
+
+    @cached_property
     def day_display(self):
         """Gets the weekday name (eg Thursday)"""
         return DAYS.get(self.day, 'Other')
@@ -95,11 +103,24 @@ class Meeting(AttrDict):
         return ' '.join([zoom_id[:3], zoom_id[3:idx], zoom_id[idx:]])
 
     @cached_property
+    def conference_notes_display(self):
+        if self.conference_notes:
+            return self.conference_notes
+        return self.conference_url_notes
+
+    @cached_property
     def notes_list(self):
         """
         Returns a list of notes
         """
         return [line.lstrip('-').strip() for line in self.notes.splitlines()]
+
+    @cached_property
+    def region_display(self):
+        if self.region:
+            return f'{self.region}/{self.sub_region}' if self.sub_region else self.region
+        elif self.regions:
+            return '/'.join(self.regions)
 
     @cached_property
     def latlon(self):
@@ -236,8 +257,8 @@ class MeetingSet(object):
         meets = {}
         for item in self.items:
             if item.zipcode:
-                meets.setdefault(item.name, {'zip': item.zipcode, 'region': item.region, 'days': {}})
-                meets[item.name]['days'][item.day] = item.id
+                meets.setdefault(item.name, {'zip': item.zipcode, 'region': item.region_display, 'days': {}})
+                meets[item.name]['days'][item.day] = item.id_display
         return sorted(meets.items(), key=lambda i: i[0])
 
     @cached_property
@@ -248,7 +269,7 @@ class MeetingSet(object):
         region_set = defaultdict(set)
         for item in self.items:
             if item.zipcode:
-                region_set[item.region] |= set([item.zipcode])
+                region_set[item.region_display] |= set([item.zipcode])
         return sorted(region_set.items(), key=lambda i: i[0])
 
     @cached_property

@@ -1,7 +1,7 @@
 <tr class="f12 nobreak">
     <td style="width: 8ch;">{{ meeting.time_display }}</td>
     <td style="width: 40%;">
-        {% block meeting_title %}<b>{{  link(meeting.url, meeting.name, meeting.id) }}</b>{% endblock %}
+        {% block meeting_title %}<b>{{  link(meeting.url, meeting.name, meeting.id_display) }}</b>{% endblock %}
         {% set codes = codify(meeting.types)|join(' ') %}
         {% block meeting_codes %}
             {% if codes %}
@@ -23,9 +23,9 @@
                     {% block phone_link %}{{ link('tel:' + meeting.conference_phone, 'Join on Phone') }}{% endblock %}
                 {% endif %}
             {% endif %}
-            {% if meeting.conference_notes %}
+            {% if meeting.conference_notes_display %}
                 {% if meeting.conference_url or meeting.conference_phone %}<br/>{% endif %}
-                {{ meeting.conference_notes }}
+                {{ meeting.conference_notes_display }}
             {% endif %}
         {% endif %}
         {% if meeting.notes %}
