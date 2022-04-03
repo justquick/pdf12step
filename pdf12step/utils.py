@@ -13,19 +13,21 @@ except ImportError:
 from pdf12step.adict import AttrDict
 
 
-def yaml_load(filename):
+def yaml_load(filename_or_string):
     """
     Returns the config dict loaded from the given filename
 
     :param str filename: YAML filename to load
     :rtype: dict
     """
-    stream = open(filename)
+    isfile = os.path.isfile(filename_or_string)
+    stream = open(filename_or_string) if isfile else filename_or_string
     loader = Loader(stream)
     try:
         return loader.get_single_data()
     finally:
-        stream.close()
+        if isfile:
+            stream.close()
         loader.dispose()
 
 

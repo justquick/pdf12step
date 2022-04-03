@@ -37,6 +37,9 @@ class Meeting(AttrDict):
 
     @cached_property
     def id_display(self):
+        """
+        Gets a unique ID of the meeting either from the id or slug field or python generated
+        """
         if self.id:
             return self.id
         if self.slug:
@@ -70,6 +73,9 @@ class Meeting(AttrDict):
 
     @cached_property
     def time_display(self):
+        """
+        Returns the formatted time of day in H:M AM/PM
+        """
         if self.time_formatted:
             return self.time_formatted
         dt = datetime.strptime(self.time, '%H:%M')
@@ -104,6 +110,9 @@ class Meeting(AttrDict):
 
     @cached_property
     def conference_notes_display(self):
+        """
+        Gets the text of the conference notes
+        """
         if self.conference_notes:
             return self.conference_notes
         return self.conference_url_notes
@@ -117,6 +126,9 @@ class Meeting(AttrDict):
 
     @cached_property
     def region_display(self):
+        """
+        Gets the text of the region and sub_region
+        """
         if self.region:
             return f'{self.region}/{self.sub_region}' if self.sub_region else self.region
         elif self.regions:

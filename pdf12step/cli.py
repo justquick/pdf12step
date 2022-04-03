@@ -126,6 +126,7 @@ def flask(ctx, **kwargs):
     from pdf12step.flask_app import app
 
     os.environ['FLASK_APP'] = __name__
+    app.pdfconfig = OPTS.config
     app.run(ctx.obj.address, ctx.obj.port)
 
 

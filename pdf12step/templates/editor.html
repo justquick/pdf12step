@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Editor</title>
+  <style type="text/css" media="screen">
+    .myMarker {
+      position:absolute;
+      background:red;
+      z-index:20
+    }
+
+    .ace_editor {
+    }
+
+
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.14/ace.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.14/mode-yaml.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+      <script>
+        let editors = [];
+        function clearMarks(editor){
+          const prevMarkers = editor.session.getMarkers();
+          if (prevMarkers) {
+            const prevMarkersArr = Object.keys(prevMarkers);
+            for (let item of prevMarkersArr) {
+              editor.session.removeMarker(prevMarkers[item].id);
+            }
+          }
+        }
+        function addEditor(name){
+          let editor = ace.edit( name + '-editor' );
+          editor.setOptions({
+              maxLines: Infinity
+          });
+          editor.getSession().setMode( "ace/mode/yaml" );
+          editor.setShowPrintMargin( false );
+          document.getElementById(name + '-editor' ).style.fontSize='18px';
+          editor.getSession().on("change", function () {
+            val = editor.getSession().getValue()
+            $('#' + name + '-src').val(val);
+            clearMarks(editor);
+          });
+          editor.focus();
+          editors[name] = editor;
+        }
+        $( function() {
+          $( "#accordion" ).accordion({collapsible: true, active: false});
+        } );
+        </script>
+</head>
+<body>
+<form method="POST" action="/edit">
+  <input type="submit" value="Go">
+{% if errors %}
+  <p>Errors found in configs below<p>
+{% endif %}
+{% if success %}
+  <p>Saved the files
+    <ul>{% for fn in success %}<li>{{ fn }}</li>{% endfor %}</ul>
+    <p>
+{% endif %}
+<div id="accordion">
+  {% for name, src in config.items() %}
+  <h3>{{ name }}</h3>
+  <div>
+    <div>
+    {% if name in errors %}
+      <p id="{{ hash(name) }}-error"></p>
+      <script>
+        $( document ).ready(function(){
+          var error = jQuery.parseJSON("{{ errors[name]|safe }}");
+          $('#{{ hash(name) }}-error').text(error.context + ': ' + error.problem);
+          var Range = ace.require('ace/range').Range;
+          var editor = ace.edit('{{ hash(name) }}-editor')
+          var mark = editor.session.addMarker(new Range(error.problem_mark, 0, error.problem_mark, 10), "myMarker", "fullLine");
+          console.log(mark);
+        })
+      </script>
+    {% endif %}
+    </div>
+    <div id="{{ hash(name) }}-editor">{{ src }}</div>
+    <input type="hidden" name="{{ name }}" id="{{ hash(name) }}-src" value="{{ src }}"/>
+    <script>$(document).ready(function(){ addEditor('{{ hash(name) }}') });</script>
+  </div>
+  {% endfor %}
+</div>
+<input type="submit" value="Go">
+
+</form>
+
+
+
+
+</body>
+</html>

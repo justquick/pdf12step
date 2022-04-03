@@ -1,5 +1,5 @@
 from os.path import join
-
+import json
 try:
     from flask import Flask
 except ModuleNotFoundError:
@@ -9,11 +9,29 @@ except ModuleNotFoundError:
 from flask import render_template, request
 from flask_weasyprint import HTML as FHTML, render_pdf
 
-from pdf12step.templating import DIR, Context, FSBC, LAYOUT_TEMPLATE
+from yaml.parser import ParserError
+from yaml.scanner import ScannerError
+
+from pdf12step.templating import Context, FSBC, LAYOUT_TEMPLATE
+from pdf12step.config import BASE_DIR
+from pdf12step.utils import yaml_load
 
 
-app = Flask(__name__, static_folder=join(DIR, 'assets'))
+app = Flask(__name__, static_folder=join(BASE_DIR, 'assets'))
+app.secret_key = 'wtf'
 app.jinja_env.bytecode_cache = FSBC
+
+
+def validate_config_yaml(stream):
+    try:
+        yaml_load(stream)
+    except (ParserError, ScannerError) as exc:
+        return json.dumps({
+            'context': exc.context,
+            'context_mark': exc.context_mark.line,
+            'problem': exc.problem,
+            'problem_mark': exc.problem_mark.line,
+        }).replace('"', '\\"')
 
 
 def context():
@@ -44,3 +62,22 @@ def html():
     """
     context().prerender()
     return render_template(LAYOUT_TEMPLATE, **app.config['context'])
+
+
+@app.route('/edit', methods=['GET', 'POST'])
+def edit():
+    config = {name: open(name).read() for name in app.pdfconfig.config}
+    errors, success = {}, []
+    if request.method == 'POST':
+        for name, value in request.form.items():
+            if name in config:
+                config[name] = value
+                err = validate_config_yaml(value)
+                if err:
+                    errors[name] = err
+        if not errors:
+            for name, content in request.form.items():
+                with open(name, 'w') as f:
+                    f.write(content.replace('\r', ''))
+                success.append(name)
+    return render_template('editor.html', errors=errors, success=success, config=config, hash=hash)
