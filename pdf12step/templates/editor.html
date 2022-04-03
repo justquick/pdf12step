@@ -1,100 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <title>Editor</title>
   <style type="text/css" media="screen">
     .myMarker {
-      position:absolute;
-      background:red;
-      z-index:20
+      position: absolute;
+      background: red;
+      z-index: 20
     }
 
-    .ace_editor {
+    .ace_editor {}
+
+    .sidenav {
+      width: 130px;
+      position: fixed;
+      z-index: 1;
+      top: 20px;
+      left: 10px;
+      background: #eee;
+      overflow-x: hidden;
+      padding: 8px 0;
     }
 
+    .sidenav a {
+      padding: 6px 8px 6px 16px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #2196F3;
+      display: block;
+    }
 
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.14/ace.js" ></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.14/mode-yaml.js" ></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-      <script>
-        let editors = [];
-        function clearMarks(editor){
-          const prevMarkers = editor.session.getMarkers();
-          if (prevMarkers) {
-            const prevMarkersArr = Object.keys(prevMarkers);
-            for (let item of prevMarkersArr) {
-              editor.session.removeMarker(prevMarkers[item].id);
-            }
+    .sidenav a:hover {
+      color: #064579;
+    }
+
+    .main {
+      margin-left: 140px; /* Same width as the sidebar + left position in px */
+      font-size: 22px; /* Increased text to enable scrolling */
+      padding: 0px 10px;
+    }
+
+    @media screen and (max-height: 450px) {
+      .sidenav {padding-top: 15px;}
+      .sidenav a {font-size: 18px;}
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.14/ace.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.14/mode-yaml.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script>
+
+  function run(){
+      $.ajax('/make/pdf', {
+          xhrFields: {
+              onprogress: function(e)
+              {
+                  var this_response, response = e.currentTarget.response;
+                  console.log(response);
+              }
           }
+      })
+      .done(function(data)
+      {
+          console.log('Complete response = ' + data);
+      })
+      .fail(function(data)
+      {
+          console.log('Error: ', data);
+      })
+      console.log('Request Sent');
+    };
+    let editors = [];
+    const editorOpts = {
+      maxLines: Infinity,
+      fontSize: "14pt"
+    }
+    const accOpts = {
+      collapsible: true,
+      active: false,
+      icons: {
+        header: "ui-icon-arrowthick-1-e",
+        activeHeader: "ui-icon-arrowthick-1-s"
+      }
+    }
+
+    function clearMarks(editor) {
+      const prevMarkers = editor.session.getMarkers();
+      if (prevMarkers) {
+        const prevMarkersArr = Object.keys(prevMarkers);
+        for (let item of prevMarkersArr) {
+          editor.session.removeMarker(prevMarkers[item].id);
         }
-        function addEditor(name){
-          let editor = ace.edit( name + '-editor' );
-          editor.setOptions({
-              maxLines: Infinity
-          });
-          editor.getSession().setMode( "ace/mode/yaml" );
-          editor.setShowPrintMargin( false );
-          document.getElementById(name + '-editor' ).style.fontSize='18px';
-          editor.getSession().on("change", function () {
-            val = editor.getSession().getValue()
-            $('#' + name + '-src').val(val);
-            clearMarks(editor);
-          });
-          editor.focus();
-          editors[name] = editor;
-        }
-        $( function() {
-          $( "#accordion" ).accordion({collapsible: true, active: false});
-        } );
-        </script>
+      }
+    }
+
+    function addEditor(name) {
+      let editor = ace.edit(name + '-editor');
+      editor.setOptions(editorOpts);
+      editor.getSession().setMode("ace/mode/yaml");
+      editor.setShowPrintMargin(false);
+      // document.getElementById(name + '-editor' ).style.fontSize='18px';
+      editor.getSession().on("change", function() {
+        val = editor.getSession().getValue()
+        $('#' + name + '-src').val(val);
+        clearMarks(editor);
+      });
+      editor.focus();
+      editors[name] = editor;
+    }
+    $(function() {
+      $("#accordion").accordion(accOpts);
+    });
+  </script>
 </head>
+
 <body>
-<form method="POST" action="/edit">
-  <input type="submit" value="Go">
-{% if errors %}
-  <p>Errors found in configs below<p>
-{% endif %}
-{% if success %}
-  <p>Saved the files
-    <ul>{% for fn in success %}<li>{{ fn }}</li>{% endfor %}</ul>
-    <p>
-{% endif %}
-<div id="accordion">
-  {% for name, src in config.items() %}
-  <h3>{{ name }}</h3>
-  <div>
-    <div>
-    {% if name in errors %}
-      <p id="{{ hash(name) }}-error"></p>
-      <script>
-        $( document ).ready(function(){
-          var error = jQuery.parseJSON("{{ errors[name]|safe }}");
-          $('#{{ hash(name) }}-error').text(error.context + ': ' + error.problem);
-          var Range = ace.require('ace/range').Range;
-          var editor = ace.edit('{{ hash(name) }}-editor')
-          var mark = editor.session.addMarker(new Range(error.problem_mark, 0, error.problem_mark, 10), "myMarker", "fullLine");
-          console.log(mark);
-        })
-      </script>
-    {% endif %}
-    </div>
-    <div id="{{ hash(name) }}-editor">{{ src }}</div>
-    <input type="hidden" name="{{ name }}" id="{{ hash(name) }}-src" value="{{ src }}"/>
-    <script>$(document).ready(function(){ addEditor('{{ hash(name) }}') });</script>
+
+  <div class="sidenav">
+    <a href="/editor">Edit config</a>
+    <a href="/pdf">Make PDFs</a>
+    <a href="#clients">Clients</a>
+    <a href="#contact">Contact</a>
   </div>
-  {% endfor %}
-</div>
-<input type="submit" value="Go">
 
-</form>
+  <div class="main">
 
+    <form method="POST" action="/edit">
+      <input type="submit" class="ui-button ui-widget ui-corner-all" value="Save">
+      {% if errors %}
+      <p>Errors found in configs below
+      <p>
+        {% endif %}
+        {% if success %}
+      <p>Saved the files
+      <ul>{% for fn in success %}<li>{{ fn }}</li>{% endfor %}</ul>
+      <p>
+        {% endif %}
+      <div id="accordion">
+        {% for name, src in config.items() %}
+        <h3>{{ name }}</h3>
+        <div>
+          <div>
+            {% if name in errors %}
+            <p id="{{ hash(name) }}-error"></p>
+            <script>
+              $(document).ready(function() {
+                var error = jQuery.parseJSON("{{ errors[name]|safe }}");
+                $('#{{ hash(name) }}-error').text(error.context + ': ' + error.problem + ' on line ' + error.problem_mark);
+                var Range = ace.require('ace/range').Range;
+                var editor = ace.edit('{{ hash(name) }}-editor')
+                var mark = editor.session.addMarker(new Range(error.problem_mark, 0, error.problem_mark, 10), "myMarker", "fullLine");
+                console.log(mark);
+              })
+            </script>
+            {% endif %}
+          </div>
+          <div id="{{ hash(name) }}-editor">{{ src }}</div>
+          <input type="hidden" name="{{ name }}" id="{{ hash(name) }}-src" value="{{ src }}" />
+          <script>
+            $(document).ready(function() {
+              addEditor('{{ hash(name) }}')
+            });
+          </script>
+        </div>
+        {% endfor %}
+      </div>
+      <input type="submit" class="ui-button ui-widget ui-corner-all" value="Save">
 
+    </form>
+
+  </div>
 
 
 </body>
+
 </html>

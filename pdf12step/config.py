@@ -1,4 +1,5 @@
 import os
+import sys
 import threading
 import logging
 from urllib.parse import urlparse
@@ -29,7 +30,7 @@ def setup_logging(args):
     """
     global OPTS
     level = LEVEL_MAP.get(int(args.get('verbose', 0)), logging.DEBUG)
-    handler = logging.FileHandler(args['logfile']) if 'logfile' in args and args['logfile'] else logging.StreamHandler()
+    handler = logging.FileHandler(args['logfile']) if 'logfile' in args and args['logfile'] else logging.StreamHandler(sys.stdout)
     formatter = logging.Formatter('%(asctime)s %(levelname)s %(name)s %(message)s')
     handler.setFormatter(formatter)
     handler.setLevel(level)

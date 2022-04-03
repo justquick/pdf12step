@@ -1,12 +1,14 @@
 from os.path import join
 import json
+import sys
+import subprocess
 try:
     from flask import Flask
 except ModuleNotFoundError:
     print('You must install Flask to use the pdf12step Flask app')
     exit(1)
 
-from flask import render_template, request
+from flask import render_template, request, Response
 from flask_weasyprint import HTML as FHTML, render_pdf
 
 from yaml.parser import ParserError
@@ -34,6 +36,17 @@ def validate_config_yaml(stream):
         }).replace('"', '\\"')
 
 
+def liveproc(args):
+    proc = subprocess.Popen(args, stdout=subprocess.PIPE, bufsize=1)
+    yield '<pre>'
+    while True:
+        line = proc.stdout.readline()
+        if not line:
+            yield '</pre>'
+            break
+        yield line
+
+
 def context():
     """
     Loads the Context instance from runtime Flask request parameters as args to Context config
@@ -46,7 +59,7 @@ def context():
 
 
 @app.route('/meetings.pdf')
-def pdf():
+def viewpdf():
     """
     View to render live PDF view. Takes a while to run but produces live PDF
     """
@@ -56,12 +69,25 @@ def pdf():
 
 
 @app.route('/meetings.html')
-def html():
+def viewhtml():
     """
     View to render live HTML. Doesnt have the page/header formatting like the PDF but renders faster.
     """
     context().prerender()
     return render_template(LAYOUT_TEMPLATE, **app.config['context'])
+
+
+@app.route('/make/pdf', methods=['GET', 'POST'])
+def makepdf():
+    if request.method == 'POST':
+        args = [sys.executable, '-m', 'pdf12step', '-v']
+        for conf in app.pdfconfig.config:
+            args.extend(['-c', conf])
+        args.append('pdf')
+        if 'download' in request.form:
+            args.append('-d')
+        return Response(liveproc(args))
+    return render_template('flask/pdf.html')
 
 
 @app.route('/edit', methods=['GET', 'POST'])
