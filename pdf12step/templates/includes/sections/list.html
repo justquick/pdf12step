@@ -1,16 +1,22 @@
-{% for day, meets in meetings.by_value('day_display').items() %}
+{% for name1, group1 in meetings.by_value(config.section_group1).items() %}
 <article class="list">
-    <h2>{{ day }}</h2>
-    {% for region, rmeets in meets.by_value('region_display', sort=True) %}
-        {% set zips = zipcodes_by_region[region] %}
+    <h2>{{ name1 }}</h2>
+    {% for name2, group2 in group1.by_value(config.section_group2, sort=True) %}
+    {% if config.section_group1 == 'region_display' %}
+      {% set rkey = name1 %}
+    {% else %}
+      {% set rkey = name2 %}
+    {% endif %}
+
+        {% set zips = zipcodes_by_region[rkey] %}
         {% if not zips %}
-            {% set zips = rmeets.zipcodes %}
+            {% set zips = group2.zipcodes %}
         {% endif %}
-        <h3>{{ day }} - {{ region }}    <span style="float:right;">{{ zips|join('/') }}</span></h3>
+        <h3>{{ name1 }} - {{ name2 }}    <span style="float:right;">{{ zips|join('/') }}</span></h3>
 
             <article class="meeting">
             <table class="mtable">
-            {% for meeting in rmeets.sort('time') %}
+            {% for meeting in group2.sort('time') %}
                 {% include 'includes/info.html' %}
             {% endfor %}
             </table>

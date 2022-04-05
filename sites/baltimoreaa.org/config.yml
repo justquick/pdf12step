@@ -5,6 +5,12 @@ nonce_url: https://baltimoreaa.org/meetings
 # URL to POST to in order to get meeting TSML JSON data
 api_url: https://baltimoreaa.org/wordpress/wp-admin/admin-ajax.php
 
+# The main sections to order the meeting list.
+# The PDF will have sections from the first group's attribute and then subsections from the second
+# One of these should have region_display to enable the zipcodes to show in the headers
+section_group1: day_display
+section_ group2: region_display
+
 # Page size of the output PDF.
 # If not doing Letter, prepare to use custom template_dirs and stylesheets
 size: Letter #  5.5in 8.5in
