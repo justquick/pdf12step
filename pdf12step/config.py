@@ -2,6 +2,7 @@ import os
 import sys
 import threading
 import logging
+from datetime import datetime
 from urllib.parse import urlparse
 
 from weasyprint import LOGGER as wlogger
@@ -30,7 +31,13 @@ def setup_logging(args):
     """
     global OPTS
     level = LEVEL_MAP.get(int(args.get('verbose', 0)), logging.DEBUG)
-    handler = logging.FileHandler(args['logfile']) if 'logfile' in args and args['logfile'] else logging.StreamHandler(sys.stdout)
+    if 'logfile' in args and args['logfile']:
+        if args['logfile'] == '-':
+            handler = logging.StreamHandler(sys.stdout)
+        else:
+            logging.FileHandler(args['logfile'])
+    else:
+        handler = logging.StreamHandler(sys.stderr)
     formatter = logging.Formatter('%(asctime)s %(levelname)s %(name)s %(message)s')
     handler.setFormatter(formatter)
     handler.setLevel(level)
@@ -71,6 +78,7 @@ class Config(AttrDict):
         'asset_dir': 'assets',
         'qrcode_url': None,
         'notes_pages': 0,
+        'date_fmt': datetime.now().strftime('%B %Y Directory'),
         'sections': ['contact', 'codes', 'misc', 'regions', 'index', 'list', 'readings', 'notes']
     }
 

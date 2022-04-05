@@ -75,7 +75,7 @@ def html(ctx, **kwargs):
     content = context.render()
     outfile = ctx.obj.output
     if outfile is None:
-        outfile = open(context['now'].strftime('%B %Y Directory.html'), 'w')
+        outfile = open(f'{OPTS.config.date_fmt}.html', 'w')
     elif outfile == '-':
         outfile = sys.stdout.buffer
     else:
@@ -101,7 +101,7 @@ def pdf(ctx, **kwargs):
     content = context.pdf()
     outfile = ctx.obj.output
     if outfile is None:
-        outfile = open(context['now'].strftime('%B %Y Directory.pdf'), 'wb')
+        outfile = open(f'{OPTS.config.date_fmt}.pdf', 'wb')
     elif outfile == '-':
         outfile = sys.stdout.buffer
     else:

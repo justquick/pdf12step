@@ -37,17 +37,16 @@ def validate_config_yaml(stream):
 
 
 def liveproc(args):
+    yield f'{" ".join(map(str, args))}\n'
     proc = subprocess.Popen(args, stdout=subprocess.PIPE, bufsize=1)
-    yield '<pre>'
     while True:
         line = proc.stdout.readline()
         if not line:
-            yield '</pre>'
             break
         yield line
 
 
-def context():
+def loadcontext():
     """
     Loads the Context instance from runtime Flask request parameters as args to Context config
 
@@ -63,7 +62,7 @@ def viewpdf():
     """
     View to render live PDF view. Takes a while to run but produces live PDF
     """
-    context().prerender()
+    loadcontext().prerender()
     html = render_template(LAYOUT_TEMPLATE, **app.config['context'])
     return render_pdf(FHTML(string=html), stylesheets=app.config['context']['config']['stylesheets'])
 
@@ -73,37 +72,43 @@ def viewhtml():
     """
     View to render live HTML. Doesnt have the page/header formatting like the PDF but renders faster.
     """
-    context().prerender()
+    loadcontext().prerender()
     return render_template(LAYOUT_TEMPLATE, **app.config['context'])
 
 
 @app.route('/make/pdf', methods=['GET', 'POST'])
 def makepdf():
+    errors = {}
     if request.method == 'POST':
-        args = [sys.executable, '-m', 'pdf12step', '-v']
-        for conf in app.pdfconfig.config:
-            args.extend(['-c', conf])
+        hashmap = {str(hash(name)): name for name in app.pdfconfig.config}
+        args = [sys.executable, '-m', 'pdf12step', '-v', '--logfile', '-']
+        for name, lst in request.form.lists():
+            if name.startswith('configs'):
+                for hsh in lst:
+                    args.extend(['-c', hashmap[hsh]])
         args.append('pdf')
-        if 'download' in request.form:
+        if 'download' in request.form and request.form['download'] == 'true':
             args.append('-d')
+        if 'output' in request.form and request.form['output']:
+            args.extend(['-o', request.form['output']])
         return Response(liveproc(args))
-    return render_template('flask/pdf.html')
+    return render_template('flask/pdf.html', hash=hash, errors=errors, app_config=app.pdfconfig, config=app.pdfconfig.config)
 
 
 @app.route('/edit', methods=['GET', 'POST'])
 def edit():
-    config = {name: open(name).read() for name in app.pdfconfig.config}
-    errors, success = {}, []
+    context = {'hash': hash, 'errors': {}, 'success': []}
+    context['config'] = config = {name: open(name).read() for name in app.pdfconfig.config}
     if request.method == 'POST':
         for name, value in request.form.items():
             if name in config:
                 config[name] = value
                 err = validate_config_yaml(value)
                 if err:
-                    errors[name] = err
-        if not errors:
+                    context['errors'][name] = err
+        if not context['errors']:
             for name, content in request.form.items():
                 with open(name, 'w') as f:
                     f.write(content.replace('\r', ''))
-                success.append(name)
-    return render_template('editor.html', errors=errors, success=success, config=config, hash=hash)
+                context['success'].append(name)
+    return render_template('flask/editor.html', **context)
