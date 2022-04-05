@@ -1,0 +1,127 @@
+{% extends 'flask/base.html' %}
+
+{% block head %}
+<style>
+  #console {
+    font-size: 11pt;
+  }
+
+  #toggle {
+    /* position: relative; */
+  }
+
+  #button {
+    padding: .5em 1em;
+    text-decoration: none;
+  }
+
+  #effect {
+    height: 170px;
+    padding: 0.4em;
+    /* position: relative; */
+    border: none
+  }
+
+  #effect h3 {
+    margin: 0;
+    padding: 0.4em;
+    text-align: center;
+  }
+
+  #sortable {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 60%;
+  }
+
+  pre {
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+    overflow-y: scroll;
+    height: 100%;
+  }
+</style>
+<script>
+  var post = null;
+
+  function run() {
+    var data = [];
+    $("label.ui-checkboxradio-checked").each(function() {
+      ident = $(this).attr('for');
+      if (ident != 'download'){data.push(ident);};
+    });
+    if (data.length === 0) {
+      alert('Please select at least one config');
+      return
+    }
+    $('#toggle').show();
+    post = $.ajax('/make/pdf', {
+        method: 'POST',
+        data: {
+          configs: data,
+          output: $('#output').val(),
+          download: $('#download').is(':checked'),
+        },
+        xhrFields: {
+          onprogress: function(e) {
+            var this_response, response = e.currentTarget.response;
+            $('#console').text(response);
+            const element = document.getElementById('console');
+            element.scrollTop = element.scrollHeight;
+          }
+        }
+      })
+      .done(function(data) {
+        $('#toggle-title').text('Request completed');
+      })
+      .fail(function(data) {
+        $('#toggle-title').text('Request failed ' + data.statusText);
+      })
+  };
+
+  function cancel() {
+    post.abort();
+  }
+  $(function() {
+    $('#toggle').hide();
+    $("input.checkbox").checkboxradio();
+    $("#sortable").sortable();
+    $(document).tooltip();
+  });
+</script>
+{% endblock %}
+
+{% block main %}
+
+<h3>Generate PDF from these configs<h3>
+<h4>Check them to use them. Drag and drop to change order. Latter configs will overwrite values from the former ones</h4>
+<ul id="sortable">
+  {% for name in config %}
+  <li>
+    <input type="checkbox" class="checkbox" name="{{ name }}" id="{{ hash(name) }}" checked>
+    <label for="{{ hash(name) }}">{{ name }}</label><br />
+  </li>
+  {% endfor %}
+</ul>
+
+<button class="ui-button ui-widget ui-corner-all" title="Launches the pdf12step program" onclick="run()">Go</button>
+<button class="ui-button ui-widget ui-corner-all" title="Halts the process once started" onclick="cancel()">Cancel</button>
+<span class="ui-button ui-widget ui-corner-all" >
+<label for="output">Output:</label><input id="output" value="{{ app_config.date_fmt }}.pdf" title="Output file to write to.">
+</span>
+<input type="checkbox" class="checkbox" name="download" id="download">
+<label title="Downloads new meeting data from the site" for="download">Download?</label><br />
+
+<div id="toggle">
+  <div id="effect" class="ui-widget-content ui-corner-all">
+    <h3 id='toggle-title' class="ui-widget-header ui-corner-all">Loading <img width="35" height="35" src="https://www.primeai2.org/PICS/waiting001.gif" /></h3>
+    <pre id="console"></pre>
+  </div>
+</div>
+
+
+{% endblock %}
