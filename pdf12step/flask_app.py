@@ -125,6 +125,11 @@ def preview():
     return render_template('flask/preview.html', pdfs=pdfs, modified=dt('st_mtime'), created=dt('st_ctime'))
 
 
+@app.route('/')
+def index():
+    return render_template('flask/base.html')
+
+
 @app.route('/<path:path>')
 def view(path):
     return send_from_directory(os.getcwd(), path)
