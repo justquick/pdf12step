@@ -1,4 +1,4 @@
-from os import path, makedirs
+from os import path, makedirs, getcwd
 from datetime import datetime
 from collections import defaultdict
 from functools import reduce
@@ -23,7 +23,7 @@ ASSET_TEMPLATES = {
 
 
 def asset_join(*paths):
-    return path.join(OPTS.config.asset_dir, *paths)
+    return path.join(OPTS.config.asset_dir, *paths).replace('\\', '/')
 
 
 class Context(dict):
@@ -124,7 +124,9 @@ class Context(dict):
                 sheet = path.abspath(path.expandvars(sheet))
                 if not path.isfile(sheet):
                     raise OSError(f'CSS File not found: {sheet}')
+                sheet = path.relpath(sheet, getcwd()).replace('\\', '/')
                 sheets.append(sheet)
+        OPTS.logger.info(f'Using stylesheets: {sheets}')
         return sheets
 
     @cached_property
@@ -142,6 +144,7 @@ class Context(dict):
                 if not path.isdir(tdir):
                     raise OSError(f'Template folder not found: {tdir}')
                 dirs.append(tdir)
+        OPTS.logger.info(f'Using template dirs: {dirs}')
         return dirs
 
     @cached_property
