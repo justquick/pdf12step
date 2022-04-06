@@ -16,9 +16,8 @@
   }
 
   #effect {
-    height: 170px;
+    height: 350px;
     padding: 0.4em;
-    /* position: relative; */
     border: none
   }
 
@@ -52,18 +51,21 @@
     var data = [];
     $("label.ui-checkboxradio-checked").each(function() {
       ident = $(this).attr('for');
-      if (ident != 'download'){data.push(ident);};
+      if (ident != 'download') {
+        data.push(ident);
+      };
     });
     if (data.length === 0) {
       alert('Please select at least one config');
       return
     }
     $('#toggle').show();
+    var output = $('#output').val();
     post = $.ajax('/make/pdf', {
         method: 'POST',
         data: {
           configs: data,
-          output: $('#output').val(),
+          output: output,
           download: $('#download').is(':checked'),
         },
         xhrFields: {
@@ -76,7 +78,7 @@
         }
       })
       .done(function(data) {
-        $('#toggle-title').text('Request completed');
+        $('#toggle-title').html('Request completed <a href="/' + output + '">View generated PDF</a>');
       })
       .fail(function(data) {
         $('#toggle-title').text('Request failed ' + data.statusText);
@@ -85,6 +87,10 @@
 
   function cancel() {
     post.abort();
+  }
+
+  function view() {
+    window.location.assign($('#output').val());
   }
   $(function() {
     $('#toggle').hide();
@@ -98,30 +104,30 @@
 {% block main %}
 
 <h3>Generate PDF from these configs<h3>
-<h4>Check them to use them. Drag and drop to change order. Latter configs will overwrite values from the former ones</h4>
-<ul id="sortable">
-  {% for name in config %}
-  <li>
-    <input type="checkbox" class="checkbox" name="{{ name }}" id="{{ hash(name) }}" checked>
-    <label for="{{ hash(name) }}">{{ name }}</label><br />
-  </li>
-  {% endfor %}
-</ul>
+    <h4>Check them to use them. Drag and drop to change order. Latter configs will overwrite values from the former ones</h4>
+    <ul id="sortable">
+      {% for name in config %}
+      <li>
+        <input type="checkbox" class="checkbox" name="{{ name }}" id="{{ hash(name) }}" checked>
+        <label for="{{ hash(name) }}">{{ name }}</label><br />
+      </li>
+      {% endfor %}
+    </ul>
 
-<button class="ui-button ui-widget ui-corner-all" title="Launches the pdf12step program" onclick="run()">Go</button>
-<button class="ui-button ui-widget ui-corner-all" title="Halts the process once started" onclick="cancel()">Cancel</button>
-<span class="ui-button ui-widget ui-corner-all" >
-<label for="output">Output:</label><input id="output" value="{{ app_config.date_fmt }}.pdf" title="Output file to write to.">
-</span>
-<input type="checkbox" class="checkbox" name="download" id="download">
-<label title="Downloads new meeting data from the site" for="download">Download?</label><br />
+    <button class="ui-button ui-widget ui-corner-all" title="Launches the pdf12step program" onclick="run()">Go</button>
+    <button class="ui-button ui-widget ui-corner-all" title="Halts the process once started" onclick="cancel()">Cancel</button>
+    <span class="ui-button ui-widget ui-corner-all">
+      <label for="output">Output:</label><input id="output" value="{{ app_config.date_fmt }}.pdf" title="Output file to write to.">
+    </span>
+    <input type="checkbox" class="checkbox" name="download" id="download">
+    <label title="Downloads new meeting data from the site" for="download">Download?</label><br />
 
-<div id="toggle">
-  <div id="effect" class="ui-widget-content ui-corner-all">
-    <h3 id='toggle-title' class="ui-widget-header ui-corner-all">Loading <img width="35" height="35" src="https://www.primeai2.org/PICS/waiting001.gif" /></h3>
-    <pre id="console"></pre>
-  </div>
-</div>
+    <div id="toggle">
+      <div id="effect" class="ui-widget-content ui-corner-all">
+        <h3 id='toggle-title' class="ui-widget-header ui-corner-all">Loading <img width="35" height="35" src="https://www.primeai2.org/PICS/waiting001.gif" /></h3>
+        <pre id="console"></pre>
+      </div>
+    </div>
 
 
-{% endblock %}
+    {% endblock %}

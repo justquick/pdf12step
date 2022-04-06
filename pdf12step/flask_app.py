@@ -1,7 +1,8 @@
-from os.path import join
+import os
 import json
 import sys
 import subprocess
+from datetime import datetime, timezone
 try:
     from flask import Flask
 except ModuleNotFoundError:
@@ -9,8 +10,8 @@ except ModuleNotFoundError:
     exit(1)
 
 from flask import render_template, request, Response
+from flask import send_from_directory
 from flask_weasyprint import HTML as FHTML, render_pdf
-
 from yaml.parser import ParserError
 from yaml.scanner import ScannerError
 
@@ -19,8 +20,7 @@ from pdf12step.config import BASE_DIR
 from pdf12step.utils import yaml_load
 
 
-app = Flask(__name__, static_folder=join(BASE_DIR, 'assets'))
-app.secret_key = 'wtf'
+app = Flask(__name__, static_folder=os.path.join(BASE_DIR, 'assets'))
 app.jinja_env.bytecode_cache = FSBC
 
 
@@ -112,3 +112,19 @@ def edit():
                     f.write(content.replace('\r', ''))
                 context['success'].append(name)
     return render_template('flask/editor.html', **context)
+
+
+@app.route('/preview')
+def preview():
+    def dt(attr):
+        def inner(fn):
+            stat = os.stat(fn)
+            return datetime.fromtimestamp(getattr(stat, attr), tz=timezone.utc).strftime('%Y-%m-%dT%H:%M:%S')
+        return inner
+    pdfs = [fn for fn in os.listdir() if fn.endswith('.pdf')]
+    return render_template('flask/preview.html', pdfs=pdfs, modified=dt('st_mtime'), created=dt('st_ctime'))
+
+
+@app.route('/<path:path>')
+def view(path):
+    return send_from_directory(os.getcwd(), path)

@@ -1,0 +1,36 @@
+{% extends 'flask/base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="//cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" />
+<script src="//cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script>
+  $(function() {
+    $('#pdfs').DataTable({
+        "order": [[ 1, "desc" ]]
+    });
+  });
+</script>
+{% endblock %}
+
+{% block main %}
+<h2>Available PDFs</h2>
+<table id="pdfs">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Created</th>
+      <th>Modified</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for pdf in pdfs %}
+    <tr>
+      <td><a href="/{{ pdf }}">{{ pdf }}</a></td>
+      <td>{{ created(pdf) }}</td>
+      <td>{{ modified(pdf) }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
