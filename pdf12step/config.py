@@ -78,6 +78,7 @@ class Config(AttrDict):
         'asset_dir': 'assets',
         'qrcode_url': None,
         'notes_pages': 0,
+        'even_pages': True,
         'date_fmt': datetime.now().strftime('%B %Y Directory'),
         'sections': ['contact', 'codes', 'misc', 'regions', 'index', 'list', 'readings', 'notes']
     }

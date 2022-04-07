@@ -85,6 +85,9 @@ filtercodes:
 # Helpful to padd the total pages to a fixed amount
 notes_pages: 4
 
+# Adds notes pages to make the total page count even for printing
+even_pages: true
+
 # Maps a system code to a new code to display in the directory
 codemap:
     B: BB

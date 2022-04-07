@@ -199,10 +199,10 @@ class Context(dict):
         :rtype: bytes
         """
         document = self.html().render(optimize_size=('images', 'fonts'))
-        content = document.write_pdf(finisher=self.finisher)
+        if OPTS.config.even_pages and len(document.pages) % 2:
+            note = document.pages[-2]
+            document.pages.insert(-1, note)
+        content = document.write_pdf()
+        OPTS.logger.info(f'Generated {len(document.pages)} pages')
         OPTS.logger.info(f'Generated {len(content)//1000}KB of PDF content')
         return content
-
-    def finisher(self, document, pdf):
-        # TODO: pad notes pages evenly
-        OPTS.logger.info(f'Generated {len(document.pages)} pages')
