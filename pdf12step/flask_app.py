@@ -1,6 +1,7 @@
 import os
 import json
 import sys
+import hashlib
 import subprocess
 from datetime import datetime, timezone
 try:
@@ -46,6 +47,10 @@ def liveproc(args):
         yield line
 
 
+def hashfunc(s):
+    return hashlib.md5(s.encode()).hexdigest()
+
+
 def loadcontext():
     """
     Loads the Context instance from runtime Flask request parameters as args to Context config
@@ -80,7 +85,7 @@ def viewhtml():
 def makepdf():
     errors = {}
     if request.method == 'POST':
-        hashmap = {str(hash(name)): name for name in app.pdfconfig.config}
+        hashmap = {str(hashfunc(name)): name for name in app.pdfconfig.config}
         args = [sys.executable, '-m', 'pdf12step', '-v', '--logfile', '-']
         for name, lst in request.form.lists():
             if name.startswith('configs'):
@@ -92,12 +97,12 @@ def makepdf():
         if 'output' in request.form and request.form['output']:
             args.extend(['-o', request.form['output']])
         return Response(liveproc(args))
-    return render_template('flask/pdf.html', hash=hash, errors=errors, app_config=app.pdfconfig, config=app.pdfconfig.config)
+    return render_template('flask/pdf.html', hash=hashfunc, errors=errors, app_config=app.pdfconfig, config=app.pdfconfig.config)
 
 
 @app.route('/edit', methods=['GET', 'POST'])
 def edit():
-    context = {'hash': hash, 'errors': {}, 'success': []}
+    context = {'hash': hashfunc, 'errors': {}, 'success': []}
     context['config'] = config = {name: open(name).read() for name in app.pdfconfig.config}
     if request.method == 'POST':
         for name, value in request.form.items():
