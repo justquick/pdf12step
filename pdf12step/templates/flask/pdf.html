@@ -61,7 +61,7 @@
     }
     $('#toggle').show();
     var output = $('#output').val();
-    post = $.ajax('/make/pdf', {
+    post = $.ajax('?action=makepdf', {
         method: 'POST',
         data: {
           configs: data,

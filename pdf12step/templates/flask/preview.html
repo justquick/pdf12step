@@ -25,7 +25,7 @@
   <tbody>
     {% for pdf in pdfs %}
     <tr>
-      <td><a href="/{{ pdf }}">{{ pdf }}</a></td>
+      <td><a href="?action=view&path={{ pdf }}">{{ pdf }}</a></td>
       <td>{{ created(pdf) }}</td>
       <td>{{ modified(pdf) }}</td>
     </tr>

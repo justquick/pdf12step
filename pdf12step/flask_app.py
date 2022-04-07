@@ -125,11 +125,21 @@ def preview():
     return render_template('flask/preview.html', pdfs=pdfs, modified=dt('st_mtime'), created=dt('st_ctime'))
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
+    actions = {
+        'preview': preview,
+        'edit': edit,
+        'makepdf': makepdf,
+        'view': view
+    }
+    action = request.args.get('action', None)
+    if action in actions:
+        return actions[action]()
     return render_template('flask/base.html')
 
 
-@app.route('/<path:path>')
-def view(path):
+@app.route('/view')
+def view():
+    path = request.args.get('path')
     return send_from_directory(os.getcwd(), path)

@@ -37,7 +37,7 @@
 {% endblock %}
 
 {% block main %}
-<form method="POST" action="/edit">
+<form method="POST" action="?action=edit">
   <h3>Click on a config file below to edit it</h3>
   <input type="submit" class="ui-button ui-widget ui-corner-all" value="Save">
   {% if errors %}
