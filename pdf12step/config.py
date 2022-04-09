@@ -1,10 +1,6 @@
 import os
-import sys
-import threading
-import logging
 from datetime import datetime
 from urllib.parse import urlparse
-
 
 from pdf12step.adict import AttrDict
 from pdf12step.utils import yaml_load
@@ -14,11 +10,6 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.abspath(os.getenv('PDF12STEP_DATA_DIR', 'data'))
 CONFIG_FILE = os.getenv('PDF12STEP_CONFIG', 'config.yaml')
 
-class CONFIG:
-    @staticmethod
-    def setup(config):
-        for k,v in config.items():
-            setattr(CONFIG,k,v)
 
 class Config(AttrDict):
     """
@@ -28,6 +19,8 @@ class Config(AttrDict):
     _defaults = {
         'config_file': CONFIG_FILE,
         'data_dir': DATA_DIR,
+        'section_group1': 'day_display',
+        'section_group2': 'region_display',
         'site_url': None,
         'site_domain': None,
         'api_url': None,

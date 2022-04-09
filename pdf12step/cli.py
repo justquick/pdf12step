@@ -5,7 +5,7 @@ import click
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from pdf12step.templating import Context
-from pdf12step.config import Config, DATA_DIR, BASE_DIR, CONFIG
+from pdf12step.config import Config, DATA_DIR, BASE_DIR
 from pdf12step.client import Client
 from pdf12step.adict import AttrDict
 from pdf12step.utils import booler, lister
@@ -38,8 +38,8 @@ def ensure_config(ctx):
 
 def do_download(ctx):
     sections = ctx.obj.sections.split(',') if hasattr(ctx.obj, 'sections') else Client.sections
-    client = Client(CONFIG.site_url, CONFIG.api_url, CONFIG.nonce_url)
-    client.download(sections, getattr(ctx.obj, 'format', 'json'), ctx.obj.data_dir, CONFIG.site_domain)
+    client = Client(ctx.obj.configobj.site_url, ctx.obj.configobj.api_url, ctx.obj.configobj.nonce_url)
+    client.download(sections, getattr(ctx.obj, 'format', 'json'), ctx.obj.data_dir, ctx.obj.configobj.site_domain)
 
 
 @click.group('12step')
@@ -53,11 +53,10 @@ def do_download(ctx):
 @click.option('--logfile',  default=None, help='Optional log file to wrie to')
 @click.pass_context
 def cli(ctx, config, verbose, data_dir, logfile):
-    global CONFIG
     ctx.ensure_object(dict)
     ctx.obj.update(config=config, data_dir=data_dir, verbose=verbose, logfile=logfile)
     ctx.obj = AttrDict(ctx.obj)
-    CONFIG.setup(AttrDict(Config.load(ctx.obj)))
+    ctx.obj.configobj = AttrDict(Config.load(ctx.obj))
 
 
 @cli.command()
@@ -71,12 +70,12 @@ def html(ctx, **kwargs):
     ctx.obj.update(kwargs)
     if ctx.obj.download:
         do_download(ctx)
-    context = Context(ctx.obj)
+    context = Context(ctx.obj.configobj, ctx.obj)
     context.prerender()
     content = context.render()
     outfile = ctx.obj.output
     if outfile is None:
-        outfile = open(f'{CONFIG.date_fmt}.html', 'w')
+        outfile = open(f'{ctx.obj.configobj.date_fmt}.html', 'w')
     elif outfile == '-':
         outfile = sys.stdout.buffer
     else:
@@ -97,12 +96,12 @@ def pdf(ctx, **kwargs):
     ctx.obj.update(kwargs)
     if ctx.obj.download:
         do_download(ctx)
-    context = Context(ctx.obj)
+    context = Context(ctx.obj.configobj, ctx.obj)
     context.prerender()
     content = context.pdf()
     outfile = ctx.obj.output
     if outfile is None:
-        outfile = open(f'{CONFIG.date_fmt}.pdf', 'wb')
+        outfile = open(f'{ctx.obj.configobj.date_fmt}.pdf', 'wb')
     elif outfile == '-':
         outfile = sys.stdout.buffer
     else:
@@ -127,7 +126,7 @@ def flask(ctx, **kwargs):
     from pdf12step.flask_app import app
 
     os.environ['FLASK_APP'] = __name__
-    app.pdfconfig = CONFIG
+    app.pdfconfig = ctx.obj.configobj
     app.run(ctx.obj.address, ctx.obj.port)
 
 
@@ -213,7 +212,7 @@ def shell(ctx, **kwargs):
 
     ensure_config(ctx.obj)
     ctx.obj.update(kwargs)
-    context = Context(ctx.obj)
+    context = Context(ctx.obj.configobj, ctx.obj)
     ctx = sys.modules['__main__'].__dict__
-    ctx.update(context=context, config=CONFIG, meetings=context.get_meetings())
+    ctx.update(context=context, config=ctx.obj.configobj, meetings=context.get_meetings())
     embed(colors='linux', module=sys.modules['__main__'], user_ns=ctx)

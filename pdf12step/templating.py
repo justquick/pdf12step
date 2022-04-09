@@ -10,7 +10,7 @@ from jinja2 import (Environment, FileSystemLoader, FileSystemBytecodeCache,
 
 from pdf12step.meetings import MeetingSet, DAYS
 from pdf12step.cached import cached_property
-from pdf12step.config import CONFIG, BASE_DIR
+from pdf12step.config import BASE_DIR
 from pdf12step.utils import slugify, link, codify, qrcode
 from pdf12step.log import logger
 
@@ -23,8 +23,8 @@ ASSET_TEMPLATES = {
 }
 
 
-def asset_join(*paths):
-    return path.join(CONFIG.asset_dir, *paths).replace('\\', '/')
+def asset_join(asset_dir, *paths):
+    return path.join(asset_dir, *paths).replace('\\', '/')
 
 
 class Context(dict):
@@ -34,8 +34,9 @@ class Context(dict):
     :param dict args: Runtime arguments to inject into template context
     """
 
-    def __init__(self, args):
+    def __init__(self, config, args):
         dict.__init__(self)
+        self.config = config
         self.args = args = args if isinstance(args, dict) else args.__dict__
         self.is_flask = args.get('flask', False)
         self.update(
@@ -46,19 +47,19 @@ class Context(dict):
             filtered_codes=self.filtered_codes,
             stylesheets=self.stylesheets,
             slugify=slugify,
-            codify=codify(CONFIG.codemap, CONFIG.filtercodes),
-            link=link(CONFIG.show_links),
+            codify=codify(self.config.codemap, self.config.filtercodes),
+            link=link(self.config.show_links),
             qrcode=self.qrcode,
-            config=CONFIG
+            config=config
         )
         logger.info('Loaded context config')
         logger.debug(pformat(dict(self)))
 
     @cached_property
     def qrcode(self):
-        if CONFIG.qrcode_url:
-            img_file = asset_join('img', 'qrcode.png')
-            qrcode(CONFIG.qrcode_url, img_file, back_color=CONFIG.color)
+        if self.config.qrcode_url:
+            img_file = asset_join(self.config.asset_dir, 'img', 'qrcode.png')
+            qrcode(self.config.qrcode_url, img_file, back_color=self.config.color)
             logger.info(f'Created QR {img_file}')
             return img_file
 
@@ -70,7 +71,7 @@ class Context(dict):
         :rtype: dict
         """
         zbr = defaultdict(set)
-        for zipcode, region in CONFIG.zipcodes.items():
+        for zipcode, region in self.config.zipcodes.items():
             zbr[region].add(zipcode)
         return zbr
 
@@ -82,10 +83,10 @@ class Context(dict):
         :rtype: list
         """
         codes = []
-        for code, name in CONFIG.meetingcodes.items():
-            if code in CONFIG.filtercodes:
+        for code, name in self.config.meetingcodes.items():
+            if code in self.config.filtercodes:
                 continue
-            code = CONFIG.codemap.get(code, code)
+            code = self.config.codemap.get(code, code)
             codes.append((code, name))
         return codes
 
@@ -96,15 +97,15 @@ class Context(dict):
         :rtype: MeetingSet
         """
         if meetings_file is None:
-            meetings_file = path.join(CONFIG.data_dir, f'{CONFIG.site_domain}-meetings.json')
+            meetings_file = path.join(self.config.data_dir, f'{self.config.site_domain}-meetings.json')
         if not path.isfile(meetings_file):
             raise OSError(f'Meeting data file {meetings_file} not found! Please download first')
         meetings = MeetingSet(meetings_file)
         logger.info(f'Loaded {len(meetings)} meetings from {meetings_file}')
-        if getattr(CONFIG, 'attendance_options', []):
+        if getattr(self.config, 'attendance_options', []):
             meetings = meetings.by_value('attendance_option').items()
             options = [meeting_set for attendance_option, meeting_set in meetings
-                       if attendance_option in CONFIG.attendance_options]
+                       if attendance_option in self.config.attendance_options]
             meetings = reduce(lambda x, y: x + y, options)
         limit = self.args.get('limit', 0)
         if limit:
@@ -119,9 +120,9 @@ class Context(dict):
 
         :rtype: list
         """
-        sheets = [asset_join('css', 'style.css')]  # asset css
-        if CONFIG.stylesheets:
-            for sheet in CONFIG.stylesheets:
+        sheets = [asset_join(self.config.asset_dir, 'css', 'style.css')]  # asset css
+        if self.config.stylesheets:
+            for sheet in self.config.stylesheets:
                 sheet = path.abspath(path.expandvars(sheet))
                 if not path.isfile(sheet):
                     raise OSError(f'CSS File not found: {sheet}')
@@ -139,8 +140,8 @@ class Context(dict):
         :rtype: list
         """
         dirs = [path.join(BASE_DIR, 'templates')]  # package templates
-        if CONFIG.template_dirs:
-            for tdir in CONFIG.template_dirs:
+        if self.config.template_dirs:
+            for tdir in self.config.template_dirs:
                 tdir = path.abspath(path.expandvars(tdir))
                 if not path.isdir(tdir):
                     raise OSError(f'Template folder not found: {tdir}')
@@ -179,7 +180,7 @@ class Context(dict):
         Prerenders the assets ahead of page render to ensure proper values in assets are set
         """
         for template, dest in ASSET_TEMPLATES.items():
-            dest = asset_join(*dest)
+            dest = asset_join(self.config.asset_dir, *dest)
             dest_dir = path.dirname(dest)
             makedirs(dest_dir, exist_ok=True)
             with open(dest, 'w') as destfile:
@@ -191,7 +192,7 @@ class Context(dict):
 
         :rtype: weasyprint.HTML
         """
-        return HTML(string=self.render(), base_url=path.dirname(CONFIG.asset_dir), encoding='utf8')
+        return HTML(string=self.render(), base_url=path.dirname(self.config.asset_dir), encoding='utf8')
 
     def pdf(self):
         """
@@ -200,7 +201,7 @@ class Context(dict):
         :rtype: bytes
         """
         document = self.html().render(optimize_size=('images', 'fonts'))
-        if CONFIG.even_pages and len(document.pages) % 2:
+        if self.config.even_pages and len(document.pages) % 2:
             note = document.pages[-2]
             document.pages.insert(-1, note)
         content = document.write_pdf()

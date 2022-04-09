@@ -6,15 +6,14 @@ from .base import ENV, CONFIG_FILE, DATA_DIR, contains_parts
 
 def get_context(**kwargs):
     from pdf12step.templating import Context
-    from pdf12step.config import Config, OPTS
+    from pdf12step.config import Config
     from pdf12step.adict import AttrDict
 
     kwargs.update(data_dir=DATA_DIR,
                   config=[CONFIG_FILE],
                   template_dirs=[DATA_DIR],
                   stylesheets=[path.join(DATA_DIR, 'blank.css')])
-    OPTS.config = AttrDict(Config.load(kwargs))
-    return Context(kwargs)
+    return Context(AttrDict(Config.load(kwargs)), kwargs)
 
 
 @mock.patch.dict(environ, ENV, clear=True)
@@ -32,10 +31,9 @@ def test_slugify():
 @mock.patch.dict(environ, ENV, clear=True)
 def test_codify():
     from pdf12step.utils import codify
-    from pdf12step.config import OPTS
 
     ctx = get_context(title='My Test Title', mycodes=['A', 'B', 'C'])
-    coded = codify(OPTS.config.codemap, OPTS.config.filtercodes)(['C', 'B'])
+    coded = codify(ctx.config.codemap, ctx.config.filtercodes)(['C', 'B'])
     assert list(coded) == ['BB']
 
 
@@ -74,7 +72,7 @@ def test_pdftemplate():
 @mock.patch.dict(environ, ENV, clear=True)
 def test_methods():
     ctx = get_context()
-    assert ctx.stylesheets == ['assets/css/style.css', path.join(DATA_DIR, 'blank.css')]
+    assert ctx.stylesheets == ['assets/css/style.css', 'tests/data/blank.css']
     assert len(ctx.template_dirs) == 2
     assert ctx.template_dirs[1] == DATA_DIR
 

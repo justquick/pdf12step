@@ -34,19 +34,8 @@ def test_cilent(mocked_dump, mocked_get, mocked_post):
     assert len(meetings) == 12
 
     args, kwargs = mocked_get.call_args
-    assert args[0] == 'http://fakewordpress-site.us/nonce'
-    assert len(kwargs) == 0
-
-    args = mocked_post.call_args[0]
     assert args[0] == 'http://fakewordpress-site.us/api'
-    assert args[1] == {
-        'mode': 'search',
-        'distance': 2,
-        'view': 'list',
-        'distance_units': 'm',
-        'nonce': '1622995ce5',
-        'action': 'meetings'
-    }
+    assert len(kwargs) == 0
 
     client.download()
     calls = mocked_dump.call_args_list
