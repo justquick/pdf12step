@@ -5,46 +5,20 @@ import logging
 from datetime import datetime
 from urllib.parse import urlparse
 
-from weasyprint import LOGGER as wlogger
 
 from pdf12step.adict import AttrDict
 from pdf12step.utils import yaml_load
+from pdf12step.log import logger, setup_logging
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.abspath(os.getenv('PDF12STEP_DATA_DIR', 'data'))
 CONFIG_FILE = os.getenv('PDF12STEP_CONFIG', 'config.yaml')
 
-LEVEL_MAP = {
-    0: logging.WARN,
-    1: logging.INFO,
-    2: logging.DEBUG
-}
-OPTS = threading.local()
-OPTS.logger = logging.getLogger('pdf12step')
-
-
-def setup_logging(args):
-    """
-    Sets up the pdf12step and weasyprint logger with given args
-
-    :param dict args: config arguments for verbose & logfile logging settings
-    """
-    global OPTS
-    level = LEVEL_MAP.get(int(args.get('verbose', 0)), logging.DEBUG)
-    if 'logfile' in args and args['logfile']:
-        if args['logfile'] == '-':
-            handler = logging.StreamHandler(sys.stdout)
-        else:
-            logging.FileHandler(args['logfile'])
-    else:
-        handler = logging.StreamHandler(sys.stderr)
-    formatter = logging.Formatter('%(asctime)s %(levelname)s %(name)s %(message)s')
-    handler.setFormatter(formatter)
-    handler.setLevel(level)
-    for lggr in (wlogger, OPTS.logger):
-        lggr.addHandler(handler)
-        lggr.setLevel(level)
-
+class CONFIG:
+    @staticmethod
+    def setup(config):
+        for k,v in config.items():
+            setattr(CONFIG,k,v)
 
 class Config(AttrDict):
     """
@@ -98,12 +72,12 @@ class Config(AttrDict):
         if 'config' not in args or args['config'] is None:
             args['config'] = [cls._defaults['config_file']]
         for config_file in args['config']:  # from file
-            OPTS.logger.info(f'Loaded config file {config_file}')
+            logger.info(f'Loaded config file {config_file}')
             if not os.path.isfile(config_file):
                 raise OSError(f'Configuration file {config_file} not found! Use 12step-init to create one')
             config.update(yaml_load(config_file))
         config.update(args)  # runtime
-        OPTS.logger.debug(f'Loaded runtime options {args}')
+        logger.debug(f'Loaded runtime options {args}')
         for key, value in config.items():
             if value and isinstance(value, dict):
                 config[key] = {str(k): str(v) for k, v in value.items()}

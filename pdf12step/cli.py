@@ -5,10 +5,11 @@ import click
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from pdf12step.templating import Context
-from pdf12step.config import Config, DATA_DIR, OPTS, BASE_DIR
+from pdf12step.config import Config, DATA_DIR, BASE_DIR, CONFIG
 from pdf12step.client import Client
 from pdf12step.adict import AttrDict
 from pdf12step.utils import booler, lister
+from pdf12step.log import logger
 
 
 def prompt(name, title, default=None, cast=str):
@@ -25,7 +26,7 @@ def prompt(name, title, default=None, cast=str):
     if field == 'empty':
         field = ''
     field = cast(field)
-    OPTS.logger.debug(f'Got prompt value {name}={field}')
+    logger.debug(f'Got prompt value {name}={field}')
     return {name: field}
 
 
@@ -37,8 +38,8 @@ def ensure_config(ctx):
 
 def do_download(ctx):
     sections = ctx.obj.sections.split(',') if hasattr(ctx.obj, 'sections') else Client.sections
-    client = Client(OPTS.config.site_url, OPTS.config.api_url, OPTS.config.nonce_url)
-    client.download(sections, getattr(ctx.obj, 'format', 'json'), ctx.obj.data_dir, OPTS.config.site_domain)
+    client = Client(CONFIG.site_url, CONFIG.api_url, CONFIG.nonce_url)
+    client.download(sections, getattr(ctx.obj, 'format', 'json'), ctx.obj.data_dir, CONFIG.site_domain)
 
 
 @click.group('12step')
@@ -52,11 +53,11 @@ def do_download(ctx):
 @click.option('--logfile',  default=None, help='Optional log file to wrie to')
 @click.pass_context
 def cli(ctx, config, verbose, data_dir, logfile):
-    global OPTS
+    global CONFIG
     ctx.ensure_object(dict)
     ctx.obj.update(config=config, data_dir=data_dir, verbose=verbose, logfile=logfile)
     ctx.obj = AttrDict(ctx.obj)
-    OPTS.config = AttrDict(Config.load(ctx.obj))
+    CONFIG.setup(AttrDict(Config.load(ctx.obj)))
 
 
 @cli.command()
@@ -75,14 +76,14 @@ def html(ctx, **kwargs):
     content = context.render()
     outfile = ctx.obj.output
     if outfile is None:
-        outfile = open(f'{OPTS.config.date_fmt}.html', 'w')
+        outfile = open(f'{CONFIG.date_fmt}.html', 'w')
     elif outfile == '-':
         outfile = sys.stdout.buffer
     else:
         outfile = open(outfile, 'w')
     outfile.write(content)
     outfile.close()
-    OPTS.logger.info(f'Wrote to {outfile.name}')
+    logger.info(f'Wrote to {outfile.name}')
 
 
 @cli.command()
@@ -101,14 +102,14 @@ def pdf(ctx, **kwargs):
     content = context.pdf()
     outfile = ctx.obj.output
     if outfile is None:
-        outfile = open(f'{OPTS.config.date_fmt}.pdf', 'wb')
+        outfile = open(f'{CONFIG.date_fmt}.pdf', 'wb')
     elif outfile == '-':
         outfile = sys.stdout.buffer
     else:
         outfile = open(outfile, 'wb')
     outfile.write(content)
     outfile.close()
-    OPTS.logger.info(f'Wrote to {outfile.name}')
+    logger.info(f'Wrote to {outfile.name}')
 
 
 @cli.command()
@@ -126,7 +127,7 @@ def flask(ctx, **kwargs):
     from pdf12step.flask_app import app
 
     os.environ['FLASK_APP'] = __name__
-    app.pdfconfig = OPTS.config
+    app.pdfconfig = CONFIG
     app.run(ctx.obj.address, ctx.obj.port)
 
 
@@ -194,7 +195,7 @@ def init(ctx, **kwargs):
     content = env.get_template('default.config.yaml').render(ctx)
     with open(ctx.obj.output, 'w') as conf:
         conf.write(content)
-    OPTS.logger.debug(f'Wrote init config to {ctx.obj.output}')
+    logger.debug(f'Wrote init config to {ctx.obj.output}')
     click.echo()
     click.echo(f'Your custom config has been rendered to {ctx.obj.output}')
     click.echo('You can now render documents using')
@@ -214,5 +215,5 @@ def shell(ctx, **kwargs):
     ctx.obj.update(kwargs)
     context = Context(ctx.obj)
     ctx = sys.modules['__main__'].__dict__
-    ctx.update(context=context, config=OPTS.config, meetings=context.get_meetings())
+    ctx.update(context=context, config=CONFIG, meetings=context.get_meetings())
     embed(colors='linux', module=sys.modules['__main__'], user_ns=ctx)

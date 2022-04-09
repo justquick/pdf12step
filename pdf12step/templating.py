@@ -10,8 +10,9 @@ from jinja2 import (Environment, FileSystemLoader, FileSystemBytecodeCache,
 
 from pdf12step.meetings import MeetingSet, DAYS
 from pdf12step.cached import cached_property
-from pdf12step.config import OPTS, BASE_DIR
+from pdf12step.config import CONFIG, BASE_DIR
 from pdf12step.utils import slugify, link, codify, qrcode
+from pdf12step.log import logger
 
 
 FSBC = FileSystemBytecodeCache()
@@ -23,7 +24,7 @@ ASSET_TEMPLATES = {
 
 
 def asset_join(*paths):
-    return path.join(OPTS.config.asset_dir, *paths).replace('\\', '/')
+    return path.join(CONFIG.asset_dir, *paths).replace('\\', '/')
 
 
 class Context(dict):
@@ -45,20 +46,20 @@ class Context(dict):
             filtered_codes=self.filtered_codes,
             stylesheets=self.stylesheets,
             slugify=slugify,
-            codify=codify(OPTS.config.codemap, OPTS.config.filtercodes),
-            link=link(OPTS.config.show_links),
+            codify=codify(CONFIG.codemap, CONFIG.filtercodes),
+            link=link(CONFIG.show_links),
             qrcode=self.qrcode,
-            config=OPTS.config
+            config=CONFIG
         )
-        OPTS.logger.info('Loaded context config')
-        OPTS.logger.debug(pformat(dict(self)))
+        logger.info('Loaded context config')
+        logger.debug(pformat(dict(self)))
 
     @cached_property
     def qrcode(self):
-        if OPTS.config.qrcode_url:
+        if CONFIG.qrcode_url:
             img_file = asset_join('img', 'qrcode.png')
-            qrcode(OPTS.config.qrcode_url, img_file, back_color=OPTS.config.color)
-            OPTS.logger.info(f'Created QR {img_file}')
+            qrcode(CONFIG.qrcode_url, img_file, back_color=CONFIG.color)
+            logger.info(f'Created QR {img_file}')
             return img_file
 
     @cached_property
@@ -69,7 +70,7 @@ class Context(dict):
         :rtype: dict
         """
         zbr = defaultdict(set)
-        for zipcode, region in OPTS.config.zipcodes.items():
+        for zipcode, region in CONFIG.zipcodes.items():
             zbr[region].add(zipcode)
         return zbr
 
@@ -81,10 +82,10 @@ class Context(dict):
         :rtype: list
         """
         codes = []
-        for code, name in OPTS.config.meetingcodes.items():
-            if code in OPTS.config.filtercodes:
+        for code, name in CONFIG.meetingcodes.items():
+            if code in CONFIG.filtercodes:
                 continue
-            code = OPTS.config.codemap.get(code, code)
+            code = CONFIG.codemap.get(code, code)
             codes.append((code, name))
         return codes
 
@@ -95,15 +96,15 @@ class Context(dict):
         :rtype: MeetingSet
         """
         if meetings_file is None:
-            meetings_file = path.join(OPTS.config.data_dir, f'{OPTS.config.site_domain}-meetings.json')
+            meetings_file = path.join(CONFIG.data_dir, f'{CONFIG.site_domain}-meetings.json')
         if not path.isfile(meetings_file):
             raise OSError(f'Meeting data file {meetings_file} not found! Please download first')
         meetings = MeetingSet(meetings_file)
-        OPTS.logger.info(f'Loaded {len(meetings)} meetings from {meetings_file}')
-        if getattr(OPTS.config, 'attendance_options', []):
+        logger.info(f'Loaded {len(meetings)} meetings from {meetings_file}')
+        if getattr(CONFIG, 'attendance_options', []):
             meetings = meetings.by_value('attendance_option').items()
             options = [meeting_set for attendance_option, meeting_set in meetings
-                       if attendance_option in OPTS.config.attendance_options]
+                       if attendance_option in CONFIG.attendance_options]
             meetings = reduce(lambda x, y: x + y, options)
         limit = self.args.get('limit', 0)
         if limit:
@@ -119,14 +120,14 @@ class Context(dict):
         :rtype: list
         """
         sheets = [asset_join('css', 'style.css')]  # asset css
-        if OPTS.config.stylesheets:
-            for sheet in OPTS.config.stylesheets:
+        if CONFIG.stylesheets:
+            for sheet in CONFIG.stylesheets:
                 sheet = path.abspath(path.expandvars(sheet))
                 if not path.isfile(sheet):
                     raise OSError(f'CSS File not found: {sheet}')
                 sheet = path.relpath(sheet, getcwd()).replace('\\', '/')
                 sheets.append(sheet)
-        OPTS.logger.info(f'Using stylesheets: {sheets}')
+        logger.info(f'Using stylesheets: {sheets}')
         return sheets
 
     @cached_property
@@ -138,13 +139,13 @@ class Context(dict):
         :rtype: list
         """
         dirs = [path.join(BASE_DIR, 'templates')]  # package templates
-        if OPTS.config.template_dirs:
-            for tdir in OPTS.config.template_dirs:
+        if CONFIG.template_dirs:
+            for tdir in CONFIG.template_dirs:
                 tdir = path.abspath(path.expandvars(tdir))
                 if not path.isdir(tdir):
                     raise OSError(f'Template folder not found: {tdir}')
                 dirs.append(tdir)
-        OPTS.logger.info(f'Using template dirs: {dirs}')
+        logger.info(f'Using template dirs: {dirs}')
         return dirs
 
     @cached_property
@@ -160,7 +161,7 @@ class Context(dict):
             autoescape=select_autoescape(),
             bytecode_cache=FSBC,
         )
-        OPTS.logger.info('Loaded template env')
+        logger.info('Loaded template env')
         return environ
 
     def render(self, template=LAYOUT_TEMPLATE):
@@ -170,7 +171,7 @@ class Context(dict):
         :param str template: relative name of template to load
         :rtype: str
         """
-        OPTS.logger.info(f'Renderd {template}')
+        logger.info(f'Renderd {template}')
         return self.env.get_template(template).render(self)
 
     def prerender(self):
@@ -190,7 +191,7 @@ class Context(dict):
 
         :rtype: weasyprint.HTML
         """
-        return HTML(string=self.render(), base_url=path.dirname(OPTS.config.asset_dir), encoding='utf8')
+        return HTML(string=self.render(), base_url=path.dirname(CONFIG.asset_dir), encoding='utf8')
 
     def pdf(self):
         """
@@ -199,10 +200,10 @@ class Context(dict):
         :rtype: bytes
         """
         document = self.html().render(optimize_size=('images', 'fonts'))
-        if OPTS.config.even_pages and len(document.pages) % 2:
+        if CONFIG.even_pages and len(document.pages) % 2:
             note = document.pages[-2]
             document.pages.insert(-1, note)
         content = document.write_pdf()
-        OPTS.logger.info(f'Generated {len(document.pages)} pages')
-        OPTS.logger.info(f'Generated {len(content)//1000}KB of PDF content')
+        logger.info(f'Generated {len(document.pages)} pages')
+        logger.info(f'Generated {len(content)//1000}KB of PDF content')
         return content

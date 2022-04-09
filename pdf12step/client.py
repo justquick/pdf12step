@@ -3,8 +3,9 @@ import requests
 import os
 
 from pdf12step.cached import cached_property
-from pdf12step.config import DATA_DIR, OPTS
+from pdf12step.config import DATA_DIR
 from pdf12step.utils import csv_dump, json_dump
+from pdf12step.log import logger
 
 
 DEFAULTS = {
@@ -51,13 +52,13 @@ class Client(object):
     def _dispatch(self, method, url, *args, **kwargs):
         if not url.startswith('http'):
             url = f'{self.site_url}/{url}'
-        OPTS.logger.debug(f'{method.upper()} {url} {args}')
+        logger.debug(f'{method.upper()} {url} {args}')
         method = getattr(requests, method)
         response = method(url, *args, **kwargs)
         if response.status_code != 200:
-            OPTS.logger.error(f'Bad response: {response.content}')
+            logger.error(f'Bad response: {response.content}')
         response.raise_for_status()
-        OPTS.logger.debug(f'GOT {len(response.content)}B {response.headers["Content-Type"].split(";")[0]} in {response.elapsed}')
+        logger.debug(f'GOT {len(response.content)}B {response.headers["Content-Type"].split(";")[0]} in {response.elapsed}')
         return response.json()
 
     def get(self, *args, **kwargs):
@@ -128,7 +129,7 @@ class Client(object):
         if sections is None:
             sections = self.sections
         if not os.path.exists(data_dir):
-            OPTS.logger.warn(f'data dir not found, creating: {data_dir}')
+            logger.warn(f'data dir not found, creating: {data_dir}')
             os.makedirs(data_dir)
         sections = self.sections if not sections else sections
         for section in sections:
@@ -138,4 +139,4 @@ class Client(object):
             fname = f'{prefix}-{section}.{format}' if prefix else f'{section}.{format}'
             outfile = os.path.join(data_dir, fname)
             json_dump(data, outfile) if format == 'json' else csv_dump(data, outfile)
-            OPTS.logger.info(f'Downloaded {outfile}')
+            logger.info(f'Downloaded {outfile}')
