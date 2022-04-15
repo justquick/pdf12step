@@ -200,7 +200,12 @@ class Context(dict):
 
         :rtype: bytes
         """
-        document = self.html().render(optimize_size=('images', 'fonts'))
+        html = self.html()
+        try:
+            document = html.render(optimize_size=('images', 'fonts'))
+        except TypeError:
+            # older versions of weasyprint
+            document = html.render()
         if self.config.even_pages and len(document.pages) % 2:
             note = document.pages[-2]
             document.pages.insert(-1, note)
