@@ -23,8 +23,10 @@ def setup_logging(args):
     if 'logfile' in args and args['logfile']:
         if args['logfile'] == '-':
             handler = logging.StreamHandler(sys.stdout)
+        elif isinstance(args['logfile'], str):
+            handler = logging.FileHandler(args['logfile'])
         else:
-            logging.FileHandler(args['logfile'])
+            handler = logging.StreamHandler(args['logfile'])
     else:
         handler = logging.StreamHandler(sys.stderr)
     formatter = logging.Formatter('%(asctime)s %(levelname)s %(name)s %(message)s')
