@@ -139,13 +139,14 @@ class Context(dict):
 
         :rtype: list
         """
-        dirs = [path.join(BASE_DIR, 'templates')]  # package templates
+        dirs = []
         if self.config.template_dirs:
             for tdir in self.config.template_dirs:
                 tdir = path.abspath(path.expandvars(tdir))
                 if not path.isdir(tdir):
                     raise OSError(f'Template folder not found: {tdir}')
                 dirs.append(tdir)
+        dirs.append(path.join(BASE_DIR, 'templates'))  # package templates
         logger.info(f'Using template dirs: {dirs}')
         return dirs
 
