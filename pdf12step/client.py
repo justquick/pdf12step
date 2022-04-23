@@ -12,6 +12,9 @@ DEFAULTS = {
     'mode': 'search',
 }
 NONCE_RE = re.compile('nonce":"([0-9a-fA-F]+)"')
+HEADERS = {
+    'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36'
+}
 
 
 class Client(object):
@@ -42,7 +45,7 @@ class Client(object):
 
         :rtype: str
         """
-        response = requests.get(self.nonce_url)
+        response = requests.get(self.nonce_url, headers=HEADERS)
         response.raise_for_status()
         content = response.content.decode()
         match = NONCE_RE.search(content, re.M)
@@ -54,6 +57,7 @@ class Client(object):
             url = f'{self.site_url}/{url}'
         logger.debug(f'{method.upper()} {url} {args}')
         method = getattr(requests, method)
+        kwargs['headers'] = HEADERS
         response = method(url, *args, **kwargs)
         if response.status_code != 200:
             logger.error(f'Bad response: {response.content}')
