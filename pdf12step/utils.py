@@ -90,7 +90,7 @@ def codify(codemap, filtercodes):
     :param list filtercodes: List of codes to ignore
     """
     def inner(values):
-        codes = [codemap.get(code, code)
+        codes = [str(codemap.get(code, code))
                  for code in values if code and code not in filtercodes]
         return filter(lambda c: len(c), codes)
     return inner

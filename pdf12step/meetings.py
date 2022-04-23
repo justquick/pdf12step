@@ -296,7 +296,7 @@ class MeetingSet(object):
         """
         Returns a value_set of types
         """
-        return self.value_set('types')
+        return map(str, self.value_set('types'))
 
     @cached_property
     def zipcodes(self):
