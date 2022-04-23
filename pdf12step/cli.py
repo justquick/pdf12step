@@ -209,10 +209,9 @@ def shell(ctx, **kwargs):
     Contains the context, config and meetings instances
     """
     from IPython import embed
-
     ensure_config(ctx.obj)
     ctx.obj.update(kwargs)
     context = Context(ctx.obj.configobj, ctx.obj)
     ctx = sys.modules['__main__'].__dict__
-    ctx.update(context=context, config=ctx.obj.configobj, meetings=context.get_meetings())
+    ctx.update(context=context, config=context.config, meetings=context.get_meetings())
     embed(colors='linux', module=sys.modules['__main__'], user_ns=ctx)
