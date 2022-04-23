@@ -17,7 +17,7 @@ from yaml.parser import ParserError
 from yaml.scanner import ScannerError
 
 from pdf12step.templating import Context, FSBC, LAYOUT_TEMPLATE
-from pdf12step.config import BASE_DIR
+from pdf12step.config import BASE_DIR, Config
 from pdf12step.utils import yaml_load
 
 
@@ -59,7 +59,7 @@ def loadcontext():
     """
     args = dict(request.args)
     args['flask'] = True
-    return app.config.setdefault('context', Context(args))
+    return app.config.setdefault('context', Context(app.pdfconfig, args))
 
 
 @app.route('/meetings.pdf')
