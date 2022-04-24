@@ -18,7 +18,8 @@ DAYS = {
     6: 'Saturday',
     12: 'Other'
 }
-ZIP_RE = re.compile(r'(\d{5})')
+US_ZIP_RE = re.compile(r'(\d{5})')
+CA_ZIP_RE = re.compile(r'([ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d)', re.I)
 
 
 def clean_url(url):
@@ -68,7 +69,8 @@ class Meeting(AttrDict):
         if self.postal_code:
             return self.postal_code
         addr = ' '.join(self.formatted_address.split()[1:])
-        match = ZIP_RE.search(addr)
+        zipre = CA_ZIP_RE if '.ca/' in self.url else US_ZIP_RE
+        match = zipre.search(addr)
         return match.groups()[0] if match else ''
 
     @cached_property
@@ -280,8 +282,7 @@ class MeetingSet(object):
         """
         region_set = defaultdict(set)
         for item in self.items:
-            if item.zipcode:
-                region_set[item.region_display] |= set([item.zipcode])
+            region_set[item.region_display] |= set([item.zipcode] if item.zipcode else [])
         return sorted(region_set.items(), key=lambda i: i[0])
 
     @cached_property
