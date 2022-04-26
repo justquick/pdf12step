@@ -8,6 +8,7 @@ from pdf12step.log import logger, setup_logging
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.abspath(os.getenv('PDF12STEP_DATA_DIR', 'data'))
+ASSET_DIR = os.path.abspath(os.getenv('PDF12STEP_ASSET_DIR', 'assets'))
 CONFIG_FILE = os.getenv('PDF12STEP_CONFIG', 'config.yaml')
 
 

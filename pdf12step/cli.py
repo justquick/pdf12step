@@ -5,7 +5,7 @@ import click
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from pdf12step.templating import Context
-from pdf12step.config import Config, DATA_DIR, BASE_DIR
+from pdf12step.config import Config, ASSET_DIR, DATA_DIR, BASE_DIR
 from pdf12step.client import Client
 from pdf12step.adict import AttrDict
 from pdf12step.utils import booler, lister
@@ -50,11 +50,15 @@ def do_download(ctx):
 @click.option('--data-dir', '-D', default=DATA_DIR, envvar='PDF12STEP_DATA_DIR',
               type=click.Path(file_okay=False, dir_okay=True, exists=False),
               help='Data directory to download meeting data to')
+@click.option('--asset-dir', '-A', default=ASSET_DIR, envvar='PDF12STEP_ASSET_DIR',
+              type=click.Path(file_okay=False, dir_okay=True, exists=False),
+              help='Asset directory to render static assets to')
 @click.option('--logfile',  default=None, help='Optional log file to wrie to')
 @click.pass_context
-def cli(ctx, config, verbose, data_dir, logfile):
+def cli(ctx, config, verbose, data_dir, asset_dir, logfile):
     ctx.ensure_object(dict)
-    ctx.obj.update(config=config, data_dir=data_dir, verbose=verbose, logfile=logfile)
+    ctx.obj.update(config=config, data_dir=data_dir, asset_dir=asset_dir,
+                   verbose=verbose, logfile=logfile)
     ctx.obj = AttrDict(ctx.obj)
     ctx.obj.configobj = AttrDict(Config.load(ctx.obj))
 
