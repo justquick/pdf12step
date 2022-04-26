@@ -80,8 +80,9 @@ class Meeting(AttrDict):
         """
         if self.time_formatted:
             return self.time_formatted
-        dt = datetime.strptime(self.time, '%H:%M')
-        return dt.strftime('%I:%M %p').strip('0')
+        if self.time:
+            dt = datetime.strptime(self.time, '%H:%M')
+            return dt.strftime('%I:%M %p').strip('0')
 
     @cached_property
     def conference_url(self):
@@ -124,7 +125,7 @@ class Meeting(AttrDict):
         """
         Returns a list of notes
         """
-        return [line.lstrip('-').strip() for line in self.notes.splitlines()]
+        return [line.lstrip('-').strip() for line in self.notes.splitlines() if line.lstrip('-').strip()]
 
     @cached_property
     def region_display(self):
@@ -152,6 +153,16 @@ class Meeting(AttrDict):
         if self.attendance_option:
             return self.attendance_option in ('online', 'hybrid')
         return self.conference_url
+
+    @cached_property
+    def attendance_option(self):
+        if 'attendance_option' in self:
+            return self['attendance_option']
+        if 'ONL' in self.types:
+            return 'online'
+        if 'HY' in self.types or 'HYB' in self.types:
+            return 'hybrid'
+        return 'in_person'
 
 
 class MeetingSet(object):
@@ -297,7 +308,7 @@ class MeetingSet(object):
         """
         Returns a value_set of types
         """
-        return map(str, self.value_set('types'))
+        return [str(typ) for typ in self.value_set('types')]
 
     @cached_property
     def zipcodes(self):

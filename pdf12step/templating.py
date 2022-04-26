@@ -39,8 +39,9 @@ class Context(dict):
         self.config = config
         self.args = args = args if isinstance(args, dict) else args.__dict__
         self.is_flask = args.get('flask', False)
+        self.meetings = self.get_meetings()
         self.update(
-            meetings=self.get_meetings(),
+            meetings=self.meetings,
             DAYS=DAYS,
             now=datetime.now(),
             zipcodes_by_region=self.zipcodes_by_region,
@@ -84,7 +85,7 @@ class Context(dict):
         """
         codes = []
         for code, name in self.config.meetingcodes.items():
-            if code in self.config.filtercodes:
+            if code in self.config.filtercodes or code not in self.meetings.types:
                 continue
             code = self.config.codemap.get(code, code)
             codes.append((code, name))
@@ -106,6 +107,8 @@ class Context(dict):
             meetings = meetings.by_value('attendance_option').items()
             options = [meeting_set for attendance_option, meeting_set in meetings
                        if attendance_option in self.config.attendance_options]
+            if not options:
+                raise ValueError('No meetings found when filtered by attendance_option')
             meetings = reduce(lambda x, y: x + y, options)
         limit = self.args.get('limit', 0)
         if limit:
