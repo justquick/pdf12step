@@ -1,14 +1,15 @@
+{% import 'macros.html' as macros with context %}
 <tr class="f12 nobreak">
     <td style="width: 8ch;">{{ meeting.time_display }}</td>
     <td style="width: 40%;">
-        {% block meeting_title %}<b>{{  link(meeting.url, meeting.name, meeting.id_display) }}</b>{% endblock %}
+        {% block meeting_title %}<b>{{ macros.title(meeting) }}</b>{% endblock %}
         {% set codes = codify(meeting.types)|join(' ') %}
         {% block meeting_codes %}
             {% if codes %}
                 <br/>{{ codes }}
             {% endif %}
             {% if meeting.location %}
-                <br/>{{ link(meeting.location_url, meeting.location) }}
+                <br/>{{ macros.location(meeting) }}
             {% endif %}
         {% endblock %}
     </td>
@@ -16,11 +17,11 @@
         {% if meeting.is_conference %}
             {% if config.show_links %}
                 {% if meeting.conference_url %}
-                    {% block zoom_link %}{{ link(meeting.conference_url, 'Join on Zoom') }}{% endblock %}
+                    {% block zoom_link %}{{ macros.zoom_link(meeting) }}{% endblock %}
                 {% endif %}
                 {% if meeting.conference_phone %}
                     {% if meeting.conference_url and meeting.conference_phone %}|{% endif %}
-                    {% block phone_link %}{{ link('tel:' + meeting.conference_phone, 'Join on Phone') }}{% endblock %}
+                    {% block phone_link %}{{ macros.phone_link(meeting) }}{% endblock %}
                 {% endif %}
             {% endif %}
             {% if meeting.conference_notes_display %}
@@ -34,7 +35,7 @@
         {% if meeting.zipcode %}
             {% block meeting_address %}
             <br/>
-            {{ link('https://www.google.com/maps/search/?api=1&query=' + meeting.latlon, meeting.address_display) }}
+            {{ macros.address_link(meeting) }}
             {% endblock %}
         {% endif %}
 

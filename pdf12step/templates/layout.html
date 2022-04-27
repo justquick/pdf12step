@@ -5,17 +5,20 @@
 {% block head %}
     <meta charset="utf-8" />
     <title>{{ now.strftime('%B %Y') }} Directory</title>
-{% for sheet in stylesheets %}
-    <link href="{{ sheet }}" rel="stylesheet">
-{% endfor %}
+    {% block sheets %}
+    {% for sheet in stylesheets %}
+        <link href="{{ sheet }}" rel="stylesheet">
+    {% endfor %}
+    {% endblock %}
     <meta name="author" content="{{ config.author }}" />
     <meta name="generator" content="Python pdf12step" />
     <meta name="created" content="{{ now.strftime('%Y-%m-%d')}}" />
     <meta name="description" content="{{ config.description }}" />
-    {% endblock %}
+{% endblock %}
 </head>
 
 <body>
+{% block body %}
   {% include 'includes/sections/cover.html' %}
 
     {% for section in config.sections %}
@@ -23,7 +26,7 @@
     {% endfor %}
 
   {% include 'includes/sections/backcover.html' %}
-
+{% endblock %}
 </body>
 
 </html>

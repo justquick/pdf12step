@@ -1,0 +1,67 @@
+{% extends 'layout.html' %}
+{% import 'macros.html' as macros with context %}
+{% block head %}
+<style>
+@page {
+    size: 14in 8.5in;
+    margin: 0;
+    font-size: 12pt;
+    font-family: sans-serif;
+}
+table, th, td {
+  border: 1px solid;
+}
+th {
+  text-align: center;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.meetname {
+  font-weight: bold;
+  font-size: 10pt;
+}
+.meetdays {
+  font-size: 9pt;
+}
+.meettypes {
+  font-size: 6pt;
+}
+</style>
+{% endblock %}
+{% block body %}
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Sunday</th>
+    <th>Monday</th>
+    <th>Tuesday</th>
+    <th>Wednesday</th>
+    <th>Thursday</th>
+    <th>Friday</th>
+    <th>Saturday</th>
+  </tr>
+
+  {% for name, meets in meetings.by_value('name').items()|sort %}
+  <tr>
+    <td>
+        <span  class="meetname">{{ name }}</span><br/>
+        {{ macros.location(meets[0]) }}<br/>
+        {{ macros.address_link(meets[0]) }}
+    </td>
+    {% set daymeets = meets.by_value('day') %}
+    {% for day, dayname in DAYS.items()| sort %}
+      <td class="meetdays">
+        {% if daymeets[day] %}
+        {% for meet in daymeets[day] %}
+          {{ meet.time_display }} <span class="meettypes">({{meet.types|join(', ')}})</span><br>
+        {% endfor %}
+        {% endif %}
+      </td>
+    {% endfor %}
+  </tr>
+  {% endfor %}
+
+{% endblock %}

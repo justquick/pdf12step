@@ -1,0 +1,19 @@
+{% macro title(meeting) %}
+{{ link(meeting.url, meeting.name, meeting.id_display) }}
+{%- endmacro %}
+
+{% macro location(meeting) %}
+{{ link(meeting.location_url, meeting.location) }}
+{%- endmacro %}
+
+{% macro zoom_link(meeting) %}
+{{ link(meeting.conference_url, 'Join on Zoom') }}
+{%- endmacro %}
+
+{% macro phone_link(meeting) %}
+{{ link('tel:' + meeting.conference_phone, 'Join on Phone') }}
+{%- endmacro %}
+
+{% macro address_link(meeting) %}
+{{ link('https://www.google.com/maps/search/?api=1&query=' + meeting.latlon, meeting.address_display) }}
+{%- endmacro %}
