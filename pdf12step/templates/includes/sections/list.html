@@ -2,6 +2,9 @@
 <article class="list">
     <h2>{{ name1 }}</h2>
     {% for name2, group2 in group1.by_value(config.section_group2, sort=True) %}
+    {% if config.section_group2 == 'day' %}
+      {% set name2 = DAYS[name2] %}
+    {% endif %}
     {% if config.section_group1 == 'region_display' %}
       {% set rkey = name1 %}
     {% else %}
