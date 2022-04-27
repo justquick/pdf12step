@@ -51,7 +51,7 @@ def do_download(ctx):
               type=click.Path(file_okay=False, dir_okay=True, exists=False),
               help='Data directory to download meeting data to')
 @click.option('--asset-dir', '-A', default=ASSET_DIR, envvar='PDF12STEP_ASSET_DIR',
-              type=click.Path(file_okay=False, dir_okay=True, exists=False),
+              type=click.Path(file_okay=False, resolve_path=True, dir_okay=True, exists=False),
               help='Asset directory to render static assets to')
 @click.option('--logfile',  default=None, help='Optional log file to wrie to')
 @click.pass_context
