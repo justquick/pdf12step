@@ -83,6 +83,7 @@ class Config(AttrDict):
         'data_dir': DATA_DIR,
         'section_group1': 'day_display',
         'section_group2': 'region_display',
+        'base_template': BASE_TEMPLATE,
         'site_url': None,
         'site_domain': None,
         'api_url': None,

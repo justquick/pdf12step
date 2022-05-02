@@ -75,11 +75,11 @@ filtercodes:
 # Set this to display only these attendance_options in the PDF
 # Normal options are in_person, inactive, online, andhybrid
 # Used to only print hybrid/in_person for print PDF
-# attendance_options:
-#     - in_person
-#     - hybrid
-#     - online
-#     - inactive
+attendance_options:
+    - in_person
+    - hybrid
+    - online
+    # - inactive
 
 # Number of notes pages to add to the end of the PDF
 # Helpful to padd the total pages to a fixed amount

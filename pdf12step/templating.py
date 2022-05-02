@@ -180,7 +180,7 @@ class Context(dict):
         :rtype: str
         """
         if template is None:
-            template = BASE_TEMPLATE
+            template = self.config.get('base_template', BASE_TEMPLATE)
         logger.info(f'Renderd {template}')
         return self.env.get_template(template).render(self)
 

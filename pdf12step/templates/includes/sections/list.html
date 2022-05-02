@@ -15,7 +15,7 @@
         {% if not zips %}
             {% set zips = group2.zipcodes %}
         {% endif %}
-        {% set zips = zips|join('/') %}
+        {% set zips = zips|join(', ') %}
         <h3>{{ name1 }} - {{ name2 }} {% if zips|length < 40 %}<span style="float: right;">{{ zips }}</span>{% endif %}</h3>
             <article class="meeting">
               {% if zips|length > 40 %}<p class="ziplist">{{ zips }}</p>{% endif %}
