@@ -10,13 +10,12 @@ from jinja2 import (Environment, FileSystemLoader, FileSystemBytecodeCache,
 
 from pdf12step.meetings import MeetingSet, DAYS
 from pdf12step.cached import cached_property
-from pdf12step.config import BASE_DIR
+from pdf12step.config import BASE_DIR, BASE_TEMPLATE
 from pdf12step.utils import slugify, link, codify, qrcode
 from pdf12step.log import logger
 
 
 FSBC = FileSystemBytecodeCache()
-LAYOUT_TEMPLATE = 'layout.html'
 ASSET_TEMPLATES = {
     'assets/img/cover_background.svg': ('img', 'cover_background.svg'),
     'assets/css/style.css': ('css', 'style.css')
@@ -62,6 +61,8 @@ class Context(dict):
             img_file = asset_join(self.config.asset_dir, 'img', 'qrcode.png')
             qrcode(self.config.qrcode_url, img_file, back_color=self.config.color)
             logger.info(f'Created QR {img_file}')
+            if self.is_flask:
+                return path.relpath(img_file, getcwd())
             return img_file
 
     @cached_property
@@ -129,8 +130,10 @@ class Context(dict):
                 sheet = path.abspath(path.expandvars(sheet))
                 if not path.isfile(sheet):
                     raise OSError(f'CSS File not found: {sheet}')
-                sheet = path.relpath(sheet, getcwd()).replace('\\', '/')
+                # sheet = path.relpath(sheet, getcwd()).replace('\\', '/')
                 sheets.append(sheet)
+        if self.is_flask:
+            sheets = [path.relpath(sheet, getcwd()) for sheet in sheets]
         logger.info(f'Using stylesheets: {sheets}')
         return sheets
 
@@ -169,13 +172,15 @@ class Context(dict):
         logger.info('Loaded template env')
         return environ
 
-    def render(self, template=LAYOUT_TEMPLATE):
+    def render(self, template=None):
         """
         Renders a template by name and returns its content
 
         :param str template: relative name of template to load
         :rtype: str
         """
+        if template is None:
+            template = BASE_TEMPLATE
         logger.info(f'Renderd {template}')
         return self.env.get_template(template).render(self)
 
@@ -190,21 +195,21 @@ class Context(dict):
             with open(dest, 'w') as destfile:
                 destfile.write(self.render(template))
 
-    def html(self):
+    def html(self, template=None):
         """
         Gets the weasyprint HTML instance from this ontext
 
         :rtype: weasyprint.HTML
         """
-        return HTML(string=self.render(), base_url=path.dirname(self.config.asset_dir), encoding='utf8')
+        return HTML(string=self.render(template), base_url=path.dirname(self.config.asset_dir), encoding='utf8')
 
-    def pdf(self):
+    def pdf(self, template=None):
         """
         Returns the PDF content from this  of context
 
         :rtype: bytes
         """
-        html = self.html()
+        html = self.html(template)
         try:
             document = html.render(optimize_size=('images', 'fonts'))
         except TypeError:

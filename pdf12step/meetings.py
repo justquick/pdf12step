@@ -80,7 +80,7 @@ class Meeting(AttrDict):
         Returns the formatted time of day in H:M AM/PM
         """
         if self.time_formatted:
-            return self.time_formatted
+            return self.time_formatted.upper()
         if self.time:
             dt = datetime.strptime(self.time, '%H:%M')
             return dt.strftime('%I:%M %p').strip('0')
@@ -153,7 +153,7 @@ class Meeting(AttrDict):
         """
         if self.attendance_option:
             return self.attendance_option in ('online', 'hybrid')
-        return self.conference_url
+        return bool(self.conference_url)
 
     @cached_property
     def attendance_option(self):

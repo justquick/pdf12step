@@ -4,8 +4,8 @@ import os
 import click
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from pdf12step.templating import Context, LAYOUT_TEMPLATE
-from pdf12step.config import Config, ASSET_DIR, DATA_DIR, BASE_DIR
+from pdf12step.templating import Context
+from pdf12step.config import Config, ASSET_DIR, DATA_DIR, BASE_DIR, BASE_TEMPLATE
 from pdf12step.client import Client
 from pdf12step.adict import AttrDict
 from pdf12step.utils import booler, lister
@@ -67,7 +67,7 @@ def cli(ctx, config, verbose, data_dir, asset_dir, logfile):
 @click.option('--output', '-o', default=None, help='Output file name to render to. Use "-" for stdout')
 @click.option('--download', '-d', is_flag=True, help='Download the assets before rendering. Produces up to date PDFs')
 @click.option('--limit', '-l', type=int, help='Limit the rendering to this number of meetings')
-@click.option('--template', '-t', default=LAYOUT_TEMPLATE, help='Base template to render')
+@click.option('--template', '-t', default=BASE_TEMPLATE, envvar='PDF12STEP_TEMPLATE', help='Base template to render')
 @click.pass_context
 def html(ctx, **kwargs):
     """Formats meeting HTML"""
@@ -94,6 +94,7 @@ def html(ctx, **kwargs):
 @click.option('--output', '-o', default=None, help='Output file name to render to. Use "-" for stdout')
 @click.option('--download', '-d', is_flag=True, help='Download the assets before rendering. Produces up to date PDFs')
 @click.option('--limit', '-l', type=int, help='Limit the rendering to this number of meetings')
+@click.option('--template', '-t', default=BASE_TEMPLATE, envvar='PDF12STEP_TEMPLATE', help='Base template to render')
 @click.pass_context
 def pdf(ctx, **kwargs):
     """Formats meeting PDFs"""
@@ -103,7 +104,7 @@ def pdf(ctx, **kwargs):
         do_download(ctx)
     context = Context(ctx.obj.configobj, ctx.obj)
     context.prerender()
-    content = context.pdf()
+    content = context.pdf(kwargs['template'])
     outfile = ctx.obj.output
     if outfile is None:
         outfile = open(f'{ctx.obj.configobj.date_fmt}.pdf', 'wb')

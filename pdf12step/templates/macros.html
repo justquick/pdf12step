@@ -7,13 +7,18 @@
 {%- endmacro %}
 
 {% macro zoom_link(meeting) %}
-{{ link(meeting.conference_url, 'Join on Zoom') }}
+{% if meeting.conference_url %}{{ link(meeting.conference_url, 'Join on Zoom') }}{% endif %}
 {%- endmacro %}
 
 {% macro phone_link(meeting) %}
-{{ link('tel:' + meeting.conference_phone, 'Join on Phone') }}
+{% if meeting.conference_phone %}{{ link('tel:' + meeting.conference_phone, 'Join on Phone') }}{% endif %}
 {%- endmacro %}
 
 {% macro address_link(meeting) %}
 {{ link('https://www.google.com/maps/search/?api=1&query=' + meeting.latlon, meeting.address_display) }}
 {%- endmacro %}
+
+{%- macro codes(meeting, sep=' ') %}
+{%- set result = codify(meeting.types)|join(sep) -%}
+{%- if result %}{{ result }}{% endif -%}
+{%- endmacro -%}

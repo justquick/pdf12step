@@ -16,7 +16,7 @@ from flask_weasyprint import HTML as FHTML, render_pdf
 from yaml.parser import ParserError
 from yaml.scanner import ScannerError
 
-from pdf12step.templating import Context, FSBC, LAYOUT_TEMPLATE
+from pdf12step.templating import Context, FSBC, BASE_TEMPLATE
 from pdf12step.config import BASE_DIR, Config
 from pdf12step.utils import yaml_load
 
@@ -68,7 +68,7 @@ def viewpdf():
     View to render live PDF view. Takes a while to run but produces live PDF
     """
     loadcontext().prerender()
-    html = render_template(LAYOUT_TEMPLATE, **app.config['context'])
+    html = render_template(BASE_TEMPLATE, **app.config['context'])
     return render_pdf(FHTML(string=html), stylesheets=app.config['context']['config']['stylesheets'])
 
 
@@ -78,7 +78,7 @@ def viewhtml():
     View to render live HTML. Doesnt have the page/header formatting like the PDF but renders faster.
     """
     loadcontext().prerender()
-    return render_template(LAYOUT_TEMPLATE, **app.config['context'])
+    return render_template(BASE_TEMPLATE, **app.config['context'])
 
 
 @app.route('/make/pdf', methods=['GET', 'POST'])

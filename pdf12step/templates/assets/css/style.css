@@ -217,6 +217,11 @@ article {
     border-bottom: 1px solid black;
 }
 
+.ziplist {
+  text-align: center;
+  width: 100%;
+}
+
 #backcover {
   text-align: center;
   align-content: space-between;

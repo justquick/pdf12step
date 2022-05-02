@@ -10,6 +10,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.abspath(os.getenv('PDF12STEP_DATA_DIR', 'data'))
 ASSET_DIR = os.path.abspath(os.getenv('PDF12STEP_ASSET_DIR', 'assets'))
 CONFIG_FILE = os.getenv('PDF12STEP_CONFIG', 'config.yaml')
+BASE_TEMPLATE = os.getenv('PDF12STEP_TEMPLATE', 'layout.html')
 DEFAULT_CODES = {
     '11': '11th Step Meditation',
     '12x12': '12 Steps & 12 Traditions',

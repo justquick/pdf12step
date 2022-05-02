@@ -15,9 +15,10 @@
         {% if not zips %}
             {% set zips = group2.zipcodes %}
         {% endif %}
-        <h3>{{ name1 }} - {{ name2 }}    <span style="float:right;">{{ zips|join('/') }}</span></h3>
-
+        {% set zips = zips|join('/') %}
+        <h3>{{ name1 }} - {{ name2 }} {% if zips|length < 40 %}<span style="float: right;">{{ zips }}</span>{% endif %}</h3>
             <article class="meeting">
+              {% if zips|length > 40 %}<p class="ziplist">{{ zips }}</p>{% endif %}
             <table class="mtable">
             {% for meeting in group2.sort('time') %}
                 {% include 'includes/info.html' %}

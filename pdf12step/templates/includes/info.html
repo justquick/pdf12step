@@ -3,7 +3,7 @@
     <td style="width: 8ch;">{{ meeting.time_display }}</td>
     <td style="width: 40%;">
         {% block meeting_title %}<b>{{ macros.title(meeting) }}</b>{% endblock %}
-        {% set codes = codify(meeting.types)|join(' ') %}
+        {% set codes = macros.codes(meeting) %}
         {% block meeting_codes %}
             {% if codes %}
                 <br/>{{ codes }}
