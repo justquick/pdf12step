@@ -18,7 +18,6 @@ DAYS = {
     6: 'Saturday',
     12: 'Other'
 }
-DAYS.update({str(key): value for key, value in DAYS.items()})  # template values
 US_ZIP_RE = re.compile(r'(\d{5})')
 CA_ZIP_RE = re.compile(r'([ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d)', re.I)
 
