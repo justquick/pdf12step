@@ -16,10 +16,10 @@ section_group2: region_display
 size: Letter #  5.5in 8.5in
 
 # Background css color of the cover
-color: "blue"
+color: "#92d6df"
 
 # Background css color of page headers
-header_color: "blue"
+header_color: "#92d6df"
 
 # Page number text color for header on all pages. Background color is header_color above
 page_number_color: "black"
