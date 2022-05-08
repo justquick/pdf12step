@@ -258,6 +258,15 @@ class MeetingSet(object):
             if all([getattr(item, key) == val for key, val in query]):
                 yield item
 
+    def filter_types(self, types):
+        """
+        Filter by passed list of types to ignore
+        """
+        for item in self.items:
+            if any([type in item.types for type in types]):
+                continue
+            yield item
+
     def sort(self, *attrs, reverse=False):
         """
         Returns a new MeetingSet isinstance with the items ordered by the given attributes
