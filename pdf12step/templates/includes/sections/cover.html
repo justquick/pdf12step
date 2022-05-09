@@ -4,15 +4,16 @@
     <span class="f36 b" style="color: white">
       {{ config.author.split()|join('<br/>')|safe }}
       <span class="f18">of</span> <br />
-      Alcoholics <br />Anonymous,
-      <span class="f18">inc.</span></span>
+      Alcoholics <br />Anonymous
+    </span>
   </p>
   <br /><br />
   <br /><br />
   <br /><br />
   <p style="text-align: center;">
     <span class="f40 b">{{ now.strftime('%B %Y') }}</span><br />
-    <span class="f36 b">Directory</span>
+    <span class="f36 b">Directory</span><br>
+    <span class="f19 b">Last updated: {{ now.strftime('%d/%m/%Y') }}</span>
   </p>
 
   <table class="f18">

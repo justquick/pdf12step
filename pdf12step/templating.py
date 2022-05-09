@@ -18,7 +18,8 @@ from pdf12step.log import logger
 FSBC = FileSystemBytecodeCache()
 ASSET_TEMPLATES = {
     'assets/img/cover_background.svg': ('img', 'cover_background.svg'),
-    'assets/css/style.css': ('css', 'style.css')
+    'assets/css/style.css': ('css', 'style.css'),
+    'assets/css/table.css': ('css', 'table.css')
 }
 
 

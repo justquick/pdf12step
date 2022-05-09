@@ -6,8 +6,9 @@
 {{ link(meeting.location_url, meeting.location) }}
 {%- endmacro %}
 
-{% macro zoom_link(meeting) %}
-{% if meeting.conference_url %}{{ link(meeting.conference_url, 'Join on Zoom') }}{% endif %}
+{% macro zoom_link(meeting, show_id=False) %}
+{% if show_id %}{% set text = meeting.conference_id_formatted %}{% else %}{% set text = 'Join on Zoom' %}{% endif %}
+{% if meeting.conference_url %}{{ link(meeting.conference_url, text) }}{% endif %}
 {%- endmacro %}
 
 {% macro phone_link(meeting) %}
