@@ -55,14 +55,14 @@ class Client(object):
     def _dispatch(self, method, url, *args, **kwargs):
         if not url.startswith('http'):
             url = f'{self.site_url}/{url}'
-        logger.debug(f'{method.upper()} {url} {args}')
+        logger.info(f'{method.upper()} {url} {args}')
         method = getattr(requests, method)
         kwargs['headers'] = HEADERS
         response = method(url, *args, **kwargs)
         if response.status_code != 200:
             logger.error(f'Bad response: {response.content}')
         response.raise_for_status()
-        logger.debug(f'GOT {len(response.content)}B {response.headers["Content-Type"].split(";")[0]} in {response.elapsed}')
+        logger.info(f'GOT {len(response.content)}B {response.headers["Content-Type"].split(";")[0]} in {response.elapsed}')
         return response.json()
 
     def get(self, *args, **kwargs):
