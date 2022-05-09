@@ -138,4 +138,7 @@ class Config(AttrDict):
             if value and isinstance(value, dict):
                 config[key] = {str(k): str(v) for k, v in value.items()}
         config['site_domain'] = urlparse(config['site_url']).netloc
+        meetingcodes = config['meetingcodes'].copy()
+        meetingcodes.update(DEFAULT_CODES)
+        config['meetingcodes'] = meetingcodes
         return config
