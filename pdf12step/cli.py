@@ -45,7 +45,7 @@ def do_download(ctx):
 @click.group('12step')
 @click.option('--config', '-c', envvar='PDF12STEP_CONFIG', multiple=True,
               type=click.Path(file_okay=True, dir_okay=False),
-              help='Configs file for runtime vars. Can pass multiple to override options.')
+              help='Config files or YAML strings to load for runtime vars. Can pass multiple to override options.')
 @click.option('--verbose', '-v', count=True, default=0, help='More verbose logging')
 @click.option('--data-dir', '-D', default=DATA_DIR, envvar='PDF12STEP_DATA_DIR',
               type=click.Path(file_okay=False, dir_okay=True, exists=False),

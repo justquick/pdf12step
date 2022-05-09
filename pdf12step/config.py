@@ -129,11 +129,9 @@ class Config(AttrDict):
         config.update(cls._defaults)  # load sane defaults
         if 'config' not in args or args['config'] is None:
             args['config'] = [cls._defaults['config_file']]
-        for config_file in args['config']:  # from file
-            logger.info(f'Loaded config file {config_file}')
-            if not os.path.isfile(config_file):
-                raise OSError(f'Configuration file {config_file} not found! Use 12step-init to create one')
-            config.update(yaml_load(config_file))
+        for config_opt in args['config']:
+            logger.info(f'Loaded config option "{config_opt}"')
+            config.update(yaml_load(config_opt))
         config.update(args)  # runtime
         logger.debug(f'Loaded runtime options {args}')
         for key, value in config.items():
