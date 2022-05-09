@@ -45,7 +45,7 @@ sections:
   - misc
   # - regions
   - index
-  - list
+  - list_2sections
   - readings
   - notes
 

@@ -10,7 +10,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.abspath(os.getenv('PDF12STEP_DATA_DIR', 'data'))
 ASSET_DIR = os.path.abspath(os.getenv('PDF12STEP_ASSET_DIR', 'assets'))
 CONFIG_FILE = os.getenv('PDF12STEP_CONFIG', 'config.yaml')
-BASE_TEMPLATE = os.getenv('PDF12STEP_TEMPLATE', 'layout.html')
+BASE_TEMPLATE = os.getenv('PDF12STEP_BASE_TEMPLATE', 'layout.html')
+LIST_TEMPLATE = os.getenv('PDF12STEP_LIST_TEMPLATE', 'list_2sections.html')
 DEFAULT_CODES = {
     '11': '11th Step Meditation',
     '12x12': '12 Steps & 12 Traditions',
@@ -84,6 +85,7 @@ class Config(AttrDict):
         'section_group1': 'day_display',
         'section_group2': 'region_display',
         'base_template': BASE_TEMPLATE,
+        'list_template': LIST_TEMPLATE,
         'site_url': None,
         'site_domain': None,
         'api_url': None,
@@ -110,7 +112,7 @@ class Config(AttrDict):
         'notes_pages': 0,
         'even_pages': True,
         'date_fmt': datetime.now().strftime('%B %Y Directory'),
-        'sections': ['contact', 'codes', 'misc', 'regions', 'index', 'list', 'readings', 'notes']
+        'sections': ['contact', 'codes', 'misc', 'regions', 'index', 'list_2sections', 'readings', 'notes']
     }
 
     @classmethod
