@@ -2,7 +2,9 @@
 {% import 'macros.html' as macros with context %}
 
 {% block head %}
-<style media="screen">
+<style>
+{% include 'assets/css/table.css' %}
+
   @page {
     size: {{config.size}};
   }
