@@ -8,6 +8,7 @@ page_number_color: white
 
 # Font size and other fixes for smaller size
 stylesheets:
+    - assets/css/style.css
     - assets/css/print.css
 
 # Disable links for printed edition
