@@ -42,7 +42,7 @@
     font-size: 2em;
   }
   h4,hr {
-    margin-bottom: 0;
+    margin: 0;
   }
   .cover {
     text-align: center;
@@ -67,6 +67,10 @@
   tr {
     page-break-inside: avoid;
   }
+
+  .timecol {
+    font-size: .9em;
+  }
   .meetings {
     font-size: .8em;
   }
@@ -80,9 +84,12 @@
       border-bottom: 1px solid lightgrey;
       padding-bottom: 3px;
   }
-  section {
-    /* columns: 3; */
-    /* break-inside: avoid-column; */
+  .innertable {
+    border-collapse: collapse;
+  border-style: hidden;
+  }
+  .ntable {
+    break-before: column;
   }
 </style>
 {% endblock %}
@@ -120,22 +127,34 @@
   <table>
   {% for time, meets in group1.by_value('time').items()|sort %}
     <tr>
-        <td width="20%">{{ meets[0].time_display }}</td>
+        <td width="20%"><span class="timecol">{{ meets[0].time_display }}</span></td>
         <td class="meetings">
+          <table class="innertable">
           {% for meet in meets %}
+          <tr><td>
             <span class="meetname">{{ macros.title(meet) }}</span>
             <span class="meettypes">({{ macros.codes(meet, ', ') }})</span><br>
             {% if meet.notes %}<span class="notes">{{ meet.notes_list|join('|') }}</span><br/>{% endif %}
             <span class="location">{% if meet.location %}{{ macros.location(meet) }}</span><br />{% endif %}
             <span class="address">{{ macros.address_link(meet) }}</span>
-            {% if not loop.last %}<hr/>{% endif %}
+          </td></tr>
           {% endfor %}
+        </table>
         </td>
       </tr>
   {% endfor %}
 </table>
 </section>
 {% endfor %}
+  <section>
+    <table class="ntable">
+      {% for i in range(32) %}
+      <tr>
+        <td>&nbsp;</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </section>
 </div>
 
 {% endblock %}
