@@ -8,7 +8,8 @@ page_number_color: white
 
 # Font size and other fixes for smaller size
 stylesheets:
-    - ./sites/baltimoreaa.org/print.css
+    - assets/css/style.css
+    - assets/css/print.css
 
 # Disable links for printed edition
 show_links: false

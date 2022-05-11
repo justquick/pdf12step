@@ -7,7 +7,9 @@
     <title>{{ now.strftime('%B %Y') }} Directory</title>
     {% block sheets %}
     {% for sheet in stylesheets %}
-        <link href="{{ sheet }}" rel="stylesheet">
+    <style>
+      {% include sheet %}
+    </style>
     {% endfor %}
     {% endblock %}
     <meta name="author" content="{{ config.author }}" />

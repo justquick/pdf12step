@@ -69,7 +69,7 @@
 }
 
 @page :first {
-    background: url(../img/cover_background.svg) no-repeat center;
+    background: url({{ config.asset_dir }}/img/cover_background.svg) no-repeat center;
     background-size: cover;
     margin: 0;
 }
