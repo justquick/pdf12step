@@ -24,28 +24,25 @@
           <a href="{{ config.qrcode_url }}"><img src="{{ qrcode }}" /></a>
         </td>
 
-        <td style="text-align: center; width: 70%;">
+        <td class="orgtitle">
 
-          <span class="f28 b">{{ config.author }}</span><br />
-          <span class="f14">{{ config.address }}</span><br />
-          <span class="f20 b">{{ now.strftime('%B %Y') }} Directory</span>
+          <h1>{{ config.author }}</h1>
+          <h3>{{ config.address }}<br/>{{ now.strftime('%B %Y') }} Directory</h3>
         </td>
 
-        <td style="text-align: right; ">
-          Email: {{ config.email }}<br />
-          Phone: {{ config.phone }}<br />
+        <td class="orginfo">
+           {{ config.email }}<br />
+          {{ config.phone }}<br />
           <b><i>Last updated: {{ now.strftime('%d/%m/%Y') }}</i></b>
         </td>
       </tr>
+    </table>
 
-      <tr>
-        <td colspan="3">
+      <p class="codes">
           {% for code, name in filtered_codes %}
           <b>{{ code }}</b>={{ name }},
           {% endfor %}
-        </td>
-      </tr>
-    </table>
+      </p>
 
     <table class="bordered">
       <tr class="section">
