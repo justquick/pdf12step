@@ -1,20 +1,6 @@
 {% extends 'layout.html' %}
 {% import 'macros.html' as macros with context %}
 
-{% block head %}
-<style>
-{% include 'assets/css/table.css' %}
-
-  @page {
-    size: {{config.size}};
-  }
-  .section {
-    background: {{ config.header_color }};
-    color: {{ config.page_number_color }};
-  }
-</style>
-{% endblock %}
-
 {% block body %}
 <article>
   <section>
@@ -27,22 +13,22 @@
         <td class="orgtitle">
 
           <h1>{{ config.author }}</h1>
-          <h3>{{ config.address }}<br/>{{ now.strftime('%B %Y') }} Directory</h3>
+          <h3>{{ config.address }}<br />{{ now.strftime('%B %Y') }} Directory</h3>
         </td>
 
         <td class="orginfo">
-           {{ config.email }}<br />
+          {{ config.email }}<br />
           {{ config.phone }}<br />
           <b><i>Last updated: {{ now.strftime('%d/%m/%Y') }}</i></b>
         </td>
       </tr>
     </table>
 
-      <p class="codes">
-          {% for code, name in filtered_codes %}
-          <b>{{ code }}</b>={{ name }},
-          {% endfor %}
-      </p>
+    <p class="codes">
+      {% for code, name in filtered_codes %}
+      <b>{{ code }}</b>={{ name }},
+      {% endfor %}
+    </p>
 
     <table class="bordered">
       <tr class="section">
@@ -62,11 +48,11 @@
       <tr class="section">
         <td colspan="9">
           <span class="sectiontitle">&nbsp;{{ name1 }}
-          {% set zips = zipcodes_by_region[name1] %}
-          {% if not zips %}
-          {% set zips = group1.zipcodes %}
-          {% endif %}
-          {{ zips|join(',') }}
+            {% set zips = zipcodes_by_region[name1] %}
+            {% if not zips %}
+            {% set zips = group1.zipcodes %}
+            {% endif %}
+            {{ zips|join(',') }}
           </span>
         </td>
       </tr>

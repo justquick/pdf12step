@@ -18,7 +18,6 @@ from pdf12step.log import logger
 FSBC = FileSystemBytecodeCache()
 ASSET_TEMPLATES = {
     'assets/img/cover_background.svg': ('img', 'cover_background.svg'),
-    'assets/css/style.css': ('css', 'style.css'),
 }
 
 
@@ -126,16 +125,7 @@ class Context(dict):
 
         :rtype: list
         """
-        sheets = [asset_join(self.config.asset_dir, 'css', 'style.css')]  # asset css
-        if self.config.stylesheets:
-            for sheet in self.config.stylesheets:
-                sheet = path.abspath(path.expandvars(sheet))
-                if not path.isfile(sheet):
-                    raise OSError(f'CSS File not found: {sheet}')
-                # sheet = path.relpath(sheet, getcwd()).replace('\\', '/')
-                sheets.append(sheet)
-        if self.is_flask:
-            sheets = [path.relpath(sheet, getcwd()) for sheet in sheets]
+        sheets = self.config.stylesheets if self.config.stylesheets else ['assets/css/style.css']
         logger.info(f'Using stylesheets: {sheets}')
         return sheets
 

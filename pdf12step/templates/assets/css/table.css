@@ -38,7 +38,13 @@ html {
   font-family: Fira Sans;
   margin: 1.5cm .5cm .5cm .5cm;
 }
-
+@page {
+  size: {{config.size}};
+}
+.section {
+  background: {{ config.header_color }};
+  color: {{ config.page_number_color }};
+}
 .f28 {
   font-size: 1.4em;
 }
