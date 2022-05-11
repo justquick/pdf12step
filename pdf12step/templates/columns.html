@@ -64,12 +64,10 @@
       width: 100%;
       border-collapse: collapse;
   }
-  tr {
-    page-break-inside: avoid;
-  }
 
   .timecol {
     font-size: .9em;
+    width: 8ch;
   }
   .meetings {
     font-size: .8em;
@@ -88,8 +86,13 @@
     border-collapse: collapse;
   border-style: hidden;
   }
+  .innertable td {
+     page-break-inside: avoid;
+  }
   .ntable {
-    break-before: column;
+    break-before: always;
+    page-break-inside: avoid;
+    height: 8.5in;
   }
 </style>
 {% endblock %}
@@ -99,7 +102,7 @@
 
   <section class="cover">
     <h1>{{ config.author }}</h1>
-    <p>{{ config.address }}<br />{{ now.strftime('%B %Y') }} Directory</p>
+    <p>{{ config.address }}<br /><b>{{ now.strftime('%B %Y') }} Directory</b></p>
     <p><i>Last updated: {{ now.strftime('%d/%m/%Y') }}</i></p>
 
     <a href="{{ config.qrcode_url }}"><img src="{{ qrcode }}" /></a>
@@ -126,12 +129,12 @@
 <section>
   <table>
   {% for time, meets in group1.by_value('time').items()|sort %}
-    <tr>
-        <td width="20%"><span class="timecol">{{ meets[0].time_display }}</span></td>
+    <tr >
+        <td class="timecol">{{ meets[0].time_display }}</td>
         <td class="meetings">
           <table class="innertable">
           {% for meet in meets %}
-          <tr><td>
+          <tr ><td>
             <span class="meetname">{{ macros.title(meet) }}</span>
             <span class="meettypes">({{ macros.codes(meet, ', ') }})</span><br>
             {% if meet.notes %}<span class="notes">{{ meet.notes_list|join('|') }}</span><br/>{% endif %}
@@ -146,8 +149,8 @@
 </table>
 </section>
 {% endfor %}
-  <section>
-    <table class="ntable">
+  <section class="ntable">
+    <table >
       {% for i in range(32) %}
       <tr>
         <td>&nbsp;</td>
