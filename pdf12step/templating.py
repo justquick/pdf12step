@@ -218,7 +218,7 @@ class Context(dict):
         except TypeError:
             # older versions of weasyprint
             document = html.render()
-        if self.config.even_pages and len(document.pages) % 2:
+        if self.config.even_pages and len(document.pages) % 2 and len(document.pages) > 2:
             note = document.pages[-2]
             document.pages.insert(-1, note)
         content = document.write_pdf()
