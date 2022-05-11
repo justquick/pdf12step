@@ -1,0 +1,74 @@
+@page {
+    size: {{ config.size }};
+    margin: 0.1in;
+   display: flex;
+   overflow-wrap: normal;
+}
+html {
+    font-family: Fira Sans;
+    font-weight: 500;
+}
+h1 {
+  font-size: 2em;
+}
+h4,hr {
+  margin: 0;
+}
+hr {
+    background-color: lightgrey;
+    border: 0 none;
+    color: lightgrey;
+    height: 1px;
+}
+.cover {
+  text-align: center;
+}
+
+.group1header {
+  text-align: center;
+  background: {{ config.header_color }};
+  color: {{ config.page_number_color }};
+    break-before: avoid-column;
+}
+.contact {
+  font-weight: bold;
+}
+.columns  {
+  columns: 3;
+  page-break-after: always;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.timecol {
+  font-size: .9em;
+  width: 6ch;
+}
+.meetings {
+  font-size: .8em;
+}
+
+.meetname {
+  font-weight: bold;
+}
+table td{
+  vertical-align: top;
+    border-bottom: 1px solid lightgrey;
+    padding-bottom: 3px;
+    break-before: avoid-column;
+}
+.nobreak {
+   page-break-inside: avoid;
+}
+.meetrow {
+  /* break-after: avoid-column; */
+}
+.break {
+   break-before: always;
+}
+.ntable {
+
+  height: 8.5in;
+}

@@ -125,7 +125,7 @@ class Context(dict):
 
         :rtype: list
         """
-        sheets = self.config.stylesheets if self.config.stylesheets else ['assets/css/style.css']
+        sheets = self.config.stylesheets if self.config.stylesheets else ['assets/css/font.css', 'assets/css/style.css']
         logger.info(f'Using stylesheets: {sheets}')
         return sheets
 

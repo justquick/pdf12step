@@ -1,101 +1,6 @@
 {% extends 'layout.html' %}
 {% import 'macros.html' as macros with context %}
 
-{% block head %}
-<style>
-  @font-face {
-      font-family: Fira Sans;
-      font-weight: 500;
-      src: url(http://fonts.gstatic.com/s/firasans/v11/va9E4kDNxMZdWfMOD5VfkILKSTbndQ.ttf);
-  }
-
-  @font-face {
-      font-family: Fira Sans;
-      font-style: italic;
-      font-weight: 500;
-      src: url(http://fonts.gstatic.com/s/firasans/v11/va9f4kDNxMZdWfMOD5VvkrA6Qhf_XljGllLX.ttf);
-  }
-
-  @font-face {
-      font-family: Fira Sans;
-      font-style: italic;
-      font-weight: 300;
-      src: url(http://fonts.gstatic.com/s/firasans/v11/va9B4kDNxMZdWfMOD5VnPKruQR37fF3Wlg.ttf);
-  }
-
-  @font-face {
-      font-family: Fira Sans;
-      font-weight: 700;
-      src: url(http://fonts.gstatic.com/s/firasans/v11/va9B4kDNxMZdWfMOD5VnLK3uQR37fF3Wlg.ttf);
-  }
-  @page {
-      size: {{ config.size }};
-      margin: 0;
-     display: flex;
-     overflow-wrap: normal;
-  }
-  html {
-      font-family: Fira Sans;
-      font-weight: 500;
-  }
-  h1 {
-    font-size: 2em;
-  }
-  h4,hr {
-    margin: 0;
-  }
-  .cover {
-    text-align: center;
-  }
-
-  .group1header {
-    text-align: center;
-    background: {{ config.header_color }};
-    color: {{ config.page_number_color }};
-  }
-  .contact {
-    font-weight: bold;
-  }
-  .columns  {
-    columns: 3;
-    page-break-after: always;
-  }
-  table {
-      width: 100%;
-      border-collapse: collapse;
-  }
-
-  .timecol {
-    font-size: .9em;
-    width: 8ch;
-  }
-  .meetings {
-    font-size: .8em;
-  }
-
-  .meetname {
-    font-weight: bold;
-  }
-
-  table td{
-    vertical-align: top;
-      border-bottom: 1px solid lightgrey;
-      padding-bottom: 3px;
-  }
-  .innertable {
-    border-collapse: collapse;
-  border-style: hidden;
-  }
-  .innertable td {
-     page-break-inside: avoid;
-  }
-  .ntable {
-    break-before: always;
-    page-break-inside: avoid;
-    height: 8.5in;
-  }
-</style>
-{% endblock %}
 
 {% block body %}
 <div class="columns">
@@ -118,39 +23,37 @@
       {% endfor %}
     </p>
   </section>
+  {% for name1, group1 in meetings.by_value('day', sort=True) %}
 
-{% for name1, group1 in meetings.by_value('day', sort=True) %}
-
-{% if config.group1_header %}
+  {% if config.group1_header %}
   <div class="group1header">
     <h4>{{ DAYS[name1|int] }}</h4>
   </div>
-{% endif %}
-<section>
-  <table>
-  {% for time, meets in group1.by_value('time').items()|sort %}
-    <tr >
-        <td class="timecol">{{ meets[0].time_display }}</td>
+  {% endif %}
+  <section>
+    <table>
+      {% for time, meets in group1.by_value('time').items()|sort %}
+      <tr class="meetrow">
+        <td class="timecol">{{ meets[0].time_display }} {{ meets[0].day_display[:2] }}</td>
         <td class="meetings">
-          <table class="innertable">
           {% for meet in meets %}
-          <tr ><td>
+          <div class="nobreak">
             <span class="meetname">{{ macros.title(meet) }}</span>
             <span class="meettypes">({{ macros.codes(meet, ', ') }})</span><br>
-            {% if meet.notes %}<span class="notes">{{ meet.notes_list|join('|') }}</span><br/>{% endif %}
+            {% if meet.notes %}<span class="notes">{{ meet.notes_list|join('|') }}</span><br />{% endif %}
             <span class="location">{% if meet.location %}{{ macros.location(meet) }}</span><br />{% endif %}
             <span class="address">{{ macros.address_link(meet) }}</span>
-          </td></tr>
+          </div>
+          {% if not loop.last %}<hr/>{% endif %}
           {% endfor %}
-        </table>
         </td>
       </tr>
+      {% endfor %}
+    </table>
+  </section>
   {% endfor %}
-</table>
-</section>
-{% endfor %}
-  <section class="ntable">
-    <table >
+  <section class="ntable nobreak">
+    <table>
       {% for i in range(32) %}
       <tr>
         <td>&nbsp;</td>
