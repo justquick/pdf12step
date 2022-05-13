@@ -8,7 +8,7 @@
   <section class="cover">
     <h1>{{ config.author }}</h1>
     <p>{{ config.address }}<br /><b>{{ now.strftime('%B %Y') }} Directory</b></p>
-    <p><i>Last updated: {{ now.strftime('%d/%m/%Y') }}</i></p>
+    <p><i>Last updated: {{ now.strftime('%m/%d/%Y') }}</i></p>
 
     <a href="{{ config.qrcode_url }}"><img src="{{ qrcode }}" /></a>
 
@@ -53,14 +53,18 @@
   </section>
   {% endfor %}
   <section class="ntable nobreak">
+    <h4>Notes</h4>
     <table>
-      {% for i in range(32) %}
+      {% for i in range(25) %}
       <tr>
         <td>&nbsp;</td>
       </tr>
       {% endfor %}
     </table>
   </section>
+  <section>
+        <img src="alcoholics-anonymous-logo2.png"/>
+    </section>
 </div>
 
 {% endblock %}

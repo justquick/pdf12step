@@ -18,17 +18,18 @@ hr {
     background-color: lightgrey;
     border: 0 none;
     color: lightgrey;
-    height: 1px;
+    height: 2px;
 }
 .cover {
   text-align: center;
+  break-after: always;
 }
 
 .group1header {
   text-align: center;
   background: {{ config.header_color }};
   color: {{ config.page_number_color }};
-    break-before: avoid-column;
+  break-before: avoid-column;
 }
 .contact {
   font-weight: bold;
@@ -43,10 +44,9 @@ table {
 }
 
 .timecol {
-  font-size: .9em;
   width: 6ch;
 }
-.meetings {
+.codes {
   font-size: .8em;
 }
 
@@ -55,7 +55,7 @@ table {
 }
 table td{
   vertical-align: top;
-    border-bottom: 1px solid lightgrey;
+    border-bottom: 2px solid lightgrey;
     padding-bottom: 3px;
     break-before: avoid-column;
 }
@@ -63,7 +63,7 @@ table td{
    page-break-inside: avoid;
 }
 .meetrow {
-  /* break-after: avoid-column; */
+  font-size: .7em;
 }
 .break {
    break-before: always;
