@@ -2,7 +2,7 @@ import json
 import re
 from datetime import datetime
 from collections import defaultdict
-from urllib.parse import unquote
+from urllib.parse import unquote, urlparse
 
 from pdf12step.adict import AttrDict
 from pdf12step.cached import cached_property
@@ -94,22 +94,27 @@ class Meeting(AttrDict):
     @cached_property
     def conference_id(self):
         """
-        Returns the Zoom conference ID from the URL
+        Returns the conference ID from the URL usually used for zoom
         """
         if not self.conference_url:
             return ''
-        return self.conference_url.split('/')[-1].split('?')[0]
+        confid = self.conference_url.split('/')[-1]
+        if self.conference_type == 'zoom':
+            return confid.split('?')[0]
+        return confid
 
     @cached_property
     def conference_id_formatted(self):
         """
-        Returns a Zoom formatted conference ID. Eg 000 000 0000
+        Returns a formatted conference ID. Eg 000 000 0000 for zoom
         """
         if not self.conference_id:
             return ''
-        zoom_id = self.conference_id
-        idx = 7 if len(zoom_id) == 11 else 6
-        return ' '.join([zoom_id[:3], zoom_id[3:idx], zoom_id[idx:]])
+        if self.conference_type == 'zoom':
+            zoom_id = self.conference_id
+            idx = 7 if len(zoom_id) == 11 else 6
+            return ' '.join([zoom_id[:3], zoom_id[3:idx], zoom_id[idx:]])
+        return self.conference_id
 
     @cached_property
     def conference_notes_display(self):
@@ -119,6 +124,23 @@ class Meeting(AttrDict):
         if self.conference_notes:
             return self.conference_notes
         return self.conference_url_notes
+
+    @cached_property
+    def conference_type(self):
+        """
+        Returns the type of conference URL by domain name (zoom/gotomeet/google)
+        Returns domain if nothing matches
+        """
+        if not self.conference_url:
+            return
+        domain = urlparse(self.conference_url).netloc.lower()
+        if domain.endswith('zoom.us'):
+            return 'zoom'
+        elif 'gotomeet' in domain:
+            return 'gotomeet'
+        elif domain.endswith('google.com'):
+            return 'google'
+        return domain
 
     @cached_property
     def notes_list(self):
@@ -226,7 +248,7 @@ class MeetingSet(object):
             counter[getattr(item, attr)] += 1
         return counter
 
-    def by_value(self, attr, sort=False, limit=None, cast=str):
+    def by_value(self, attr, sort=False, limit=None, cast=str, reverse=False):
         """
         Groups the results by the given attribute values.
         Returns a dict with the values as keys and filtered MeetingSet as values
@@ -246,7 +268,7 @@ class MeetingSet(object):
             else:
                 result[key].append(item)
         if sort:
-            return sorted([(cast(key), MeetingSet(items)) for key, items in result.items()])
+            return sorted([(cast(key), MeetingSet(items)) for key, items in result.items()], reverse=reverse)
         return {key: MeetingSet(items) for key, items in result.items()}
 
     def filter(self, **kwargs):
