@@ -26,12 +26,13 @@ class Client(object):
     sections = ('meetings',)  # 'locations', 'groups', 'regions') these arent necessary for now
     nonce_url = api_url = None
 
-    def __init__(self, site_url, api_url, nonce_url=None):
+    def __init__(self, site_url, api_url, nonce_url=None, api_key=None):
         if not site_url:
             raise ValueError('Site URL required, please set site_url in your config')
         if not api_url:
             raise ValueError('API URL required, please set api_url in your config')
         self.site_url = site_url = site_url.rstrip('/')
+        self.api_key = api_key
         if nonce_url:
             self.nonce_url = nonce_url if nonce_url.startswith('http') else f'{site_url}/{nonce_url}'
         if api_url:
@@ -94,6 +95,8 @@ class Client(object):
         """
         data = DEFAULTS.copy()
         data.update(params, action='meetings')
+        if self.api_key:
+            data['key'] = self.api_key
         if self.nonce_url:
             data['nonce'] = self.nonce
             return self.get(self.api_url, data)
