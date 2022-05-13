@@ -210,7 +210,7 @@ class Context(dict):
         if self.config.even_pages and len(document.pages) % 2 and len(document.pages) > 2:
             note = document.pages[-2]
             document.pages.insert(-1, note)
-        content = document.write_pdf()
+        content = document.write_pdf(zoom=self.config.zoom)
         logger.info(f'Generated {len(document.pages)} pages')
         logger.info(f'Generated {len(content)//1000}KB of PDF content')
         return content

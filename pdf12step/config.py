@@ -112,7 +112,8 @@ class Config(AttrDict):
         'notes_pages': 0,
         'even_pages': True,
         'date_fmt': datetime.now().strftime('%B %Y Directory'),
-        'sections': ['contact', 'codes', 'misc', 'regions', 'index', 'list_2sections', 'readings', 'notes']
+        'sections': ['contact', 'codes', 'misc', 'regions', 'index', 'list_2sections', 'readings', 'notes'],
+        'zoom': 1
     }
 
     @classmethod
