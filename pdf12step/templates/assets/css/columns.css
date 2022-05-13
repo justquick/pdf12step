@@ -35,7 +35,7 @@ hr {
   font-weight: bold;
 }
 .columns  {
-  columns: 3;
+  columns: {% if config.num_cols %}{{ config.num_cols }}{% else %}3{% endif %};
   page-break-after: always;
 }
 table {
@@ -67,8 +67,4 @@ table td{
 }
 .break {
    break-before: always;
-}
-.ntable {
-
-  height: 8.5in;
 }
