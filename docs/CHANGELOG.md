@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.4.0
+
+- added foldable column and  table formats
+- fixes for custom template dirs and css file locations
+- new config options for passing YAML and data/asset directories via cli
+- able to specify independent nonce and api urls
+- default meeting codes from spec
+- template config options
+- PDF zoom option
+- flask app updates and new config editing pages
+- updated conference meeting attrs to handle nonzoom urls/ids
+
 ## 1.3.0
 
 - using click groups for cli usage
@@ -8,7 +20,7 @@
 - added `MeetingSet.value_set(filter_none)` kwarg
 - added `latlon` and `is_conference` methods for `Meeting`
 - lots of work to the PDF layout
-- printing support 
+- printing support
 
 ## 1.2.0
 
