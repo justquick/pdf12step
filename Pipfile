@@ -21,6 +21,3 @@ Sphinx = "*"
 myst-parser = "*"
 karma-sphinx-theme = "*"
 sphinx-click = "*"
-
-[requires]
-python_version = "3.7"
