@@ -12,4 +12,4 @@ The config, CSS and HTML templates are extensible so you can customize the PDF o
 
 The app also contains a [Flask](https://flask.palletsprojects.com/) webapp that can render the live HTML and PDF content in your browser.
 
-To see what it can do, check out [this generated directory](./_static/December%202021%20Directory.pdf)
+To see what it can do, check out [Available Formats](formats)

@@ -9,9 +9,9 @@ install
 config
 usage
 features
+formats
 commands
 custom
-examples
 pdf12step
 CHANGELOG
 ```
