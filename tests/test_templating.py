@@ -12,7 +12,7 @@ def get_context(**kwargs):
     kwargs.update(data_dir=DATA_DIR,
                   config=[CONFIG_FILE],
                   template_dirs=[DATA_DIR],
-                  stylesheets=[path.join(DATA_DIR, 'blank.css')])
+                  stylesheets=['blank.css'])
     return Context(AttrDict(Config.load(kwargs)), kwargs)
 
 
@@ -61,7 +61,7 @@ def test_pdftemplate():
     ctx = get_context()
     contains_parts(ctx.render('layout.html'), [
         'Tuesday - Parkton',
-        '<link href="assets/css/style.css" rel="stylesheet">',
+        '<style>',
         '39.2912855,-76.5629126">100 S Haven St, Baltimore, MD 21224, USA',
         '<meta name="author" content="Test Author Intergroup" />',
         'D O ONL',
@@ -72,9 +72,9 @@ def test_pdftemplate():
 @mock.patch.dict(environ, ENV, clear=True)
 def test_methods():
     ctx = get_context()
-    assert ctx.stylesheets == ['assets/css/style.css', 'tests/data/blank.css']
+    assert ctx.stylesheets == ['blank.css']
     assert len(ctx.template_dirs) == 2
-    assert ctx.template_dirs[1] == DATA_DIR
+    assert ctx.template_dirs[0] == DATA_DIR
 
 
 @mock.patch.dict(environ, ENV, clear=True)

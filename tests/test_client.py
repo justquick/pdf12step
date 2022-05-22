@@ -35,7 +35,7 @@ def test_cilent(mocked_dump, mocked_get, mocked_post):
 
     args, kwargs = mocked_get.call_args
     assert args[0] == 'http://fakewordpress-site.us/api'
-    assert len(kwargs) == 0
+    assert 'headers' in kwargs
 
     client.download()
     calls = mocked_dump.call_args_list

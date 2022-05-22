@@ -12,10 +12,6 @@ attendance_options:
     - hybrid
     - in_person
     - online
-template_dirs:
-    - tests/data
-stylesheets:
-    - tests/data
 zipcodes:
     20705: College Park
     20707: Laurel
