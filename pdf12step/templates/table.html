@@ -13,7 +13,7 @@
         <td class="orgtitle">
 
           <h1>{{ config.author }}</h1>
-          <h3>{{ config.address }}<br />{{ now.strftime('%B %Y') }} Directory</h3>
+          <h3>{% if config.subtitle %}{{ config.subtitle }}<br/>{% endif %} {{ config.address }}<br />{{ now.strftime('%B %Y') }} Directory</h3>
         </td>
 
         <td class="orginfo">
