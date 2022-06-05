@@ -43,6 +43,7 @@ def do_download(ctx):
 
 
 @click.group('12step')
+@click.version_option()
 @click.option('--config', '-c', envvar='PDF12STEP_CONFIG', multiple=True,
               type=click.Path(file_okay=True, dir_okay=False),
               help='Config files or YAML strings to load for runtime vars. Can pass multiple to override options.')

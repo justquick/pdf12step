@@ -110,6 +110,8 @@ class Context(dict):
             if not options:
                 raise ValueError('No meetings found when filtered by attendance_option')
             meetings = reduce(lambda x, y: x + y, options)
+        if self.config.filter:
+            meetings = MeetingSet(meetings.filter(**self.config.filter))
         if self.config.filtercodes:
             meetings = MeetingSet(meetings.filter_types(self.config.filtercodes))
         limit = self.args.get('limit', 0)
