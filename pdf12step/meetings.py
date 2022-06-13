@@ -316,9 +316,8 @@ class MeetingSet(object):
         """
         meets = {}
         for item in self.items:
-            if item.zipcode:
-                meets.setdefault(item.name, {'zip': item.zipcode, 'region': item.region_display, 'days': {}})
-                meets[item.name]['days'][item.day] = item.id_display
+            meets.setdefault(item.name, {'zip': item.zipcode, 'region': item.region_display, 'days': {}})
+            meets[item.name]['days'][item.day] = item.id_display
         return sorted(meets.items(), key=lambda i: i[0])
 
     @cached_property
