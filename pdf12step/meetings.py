@@ -277,12 +277,15 @@ class MeetingSet(object):
         """
         query = kwargs.items()
         for item in self.items:
+            keeps = []
             for key, val in query:
                 attr = getattr(item, key)
                 if isinstance(val, list) and attr in val:
-                    yield item
+                    keeps.append(True)
                 elif attr == val:
-                    yield item
+                    keeps.append(True)
+            if len(keeps) == len(query):
+                yield item
 
     def filter_types(self, types):
         """
