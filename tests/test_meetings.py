@@ -84,7 +84,7 @@ class MeetingSetTest(TestCase):
             assert meeting.time == '19:00'
 
     def test_index(self):
-        assert len(self.meetings.index) == 10
+        assert len(self.meetings.index) == 12
         assert isinstance(self.meetings.index, list)
         assert len(self.meetings.index[0]) == 2
         assert len(self.meetings.index[0][1]) == 3
