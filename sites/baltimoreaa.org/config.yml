@@ -67,6 +67,11 @@ asset_dir: ./assets
 # Show links or not when rendering
 show_links: true
 
+# Hide meeting attributes from showing in PDFs
+hide:
+    # - conference_url_notes
+    - region_id
+
 # Codes to filter out from displaying
 # Removes them from PDF entirely
 filtercodes:
