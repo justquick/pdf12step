@@ -101,6 +101,7 @@ class Config(AttrDict):
         'email': '',
         'website': '',
         'show_links': True,
+        'hide': [],
         'filter': {},
         'filtercodes': {},
         'codemap': {},

@@ -19,7 +19,7 @@
     <hr />
     <p class="codes">
       {% for code, name in filtered_codes %}
-      <b>{{ code }}</b>={{ name }},
+      <b>{{ code }}</b>={{ name }}{% if not loop.last %},{% endif %}
       {% endfor %}
     </p>
   </section>
@@ -40,9 +40,16 @@
           <div class="nobreak">
             <span class="meetname">{{ macros.title(meet) }}</span>
             <span class="meettypes">({{ macros.codes(meet, ', ') }})</span><br>
-            {% if meet.notes %}<span class="notes">{{ meet.notes_list|join('|') }}</span><br />{% endif %}
-            <span class="location">{% if meet.location %}{{ macros.location(meet) }}</span><br />{% endif %}
-            <span class="address">{{ macros.address_link(meet) }}</span>
+            {% if show(meet, 'notes') %}<span class="notes">{{ meet.notes_list|join('|') }}</span><br />{% endif %}
+            {% if show(meet, 'conference_url') %} 
+              <span class="notes">{{ meet.conference_url }}</span>
+              {% if show(meet, 'conference_url_notes') %}|<span class="notes">{{ meet.conference_url_notes }}</span>{% endif %}
+              <br />
+            {% endif %}
+            {% if show(meet, 'location') %} 
+              <span class="location">{% if meet.location %}{{ macros.location(meet) }}</span><br />{% endif %}
+              <span class="address">{{ macros.address_link(meet) }}</span>
+            {% endif %}
           </div>
           {% if not loop.last %}<hr/>{% endif %}
           {% endfor %}

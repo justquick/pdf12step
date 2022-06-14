@@ -11,7 +11,7 @@ from jinja2 import (Environment, FileSystemLoader, FileSystemBytecodeCache,
 from pdf12step.meetings import MeetingSet, DAYS
 from pdf12step.cached import cached_property
 from pdf12step.config import BASE_DIR, BASE_TEMPLATE
-from pdf12step.utils import slugify, link, codify, qrcode
+from pdf12step.utils import slugify, link, codify, qrcode, show
 from pdf12step.log import logger
 
 
@@ -27,7 +27,7 @@ def asset_join(asset_dir, *paths):
 
 class Context(dict):
     """
-    Context for jinja2 templating
+    Context for jinja2 templating 
 
     :param dict args: Runtime arguments to inject into template context
     """
@@ -48,6 +48,7 @@ class Context(dict):
             slugify=slugify,
             codify=codify(self.config.codemap, self.config.filtercodes),
             link=link(self.config.show_links),
+            show=show(self.config.hide),
             qrcode=self.qrcode,
             config=config
         )
