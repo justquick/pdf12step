@@ -277,12 +277,15 @@ class MeetingSet(object):
         """
         query = kwargs.items()
         for item in self.items:
+            keeps = []
             for key, val in query:
                 attr = getattr(item, key)
                 if isinstance(val, list) and attr in val:
-                    yield item
+                    keeps.append(True)
                 elif attr == val:
-                    yield item
+                    keeps.append(True)
+            if len(keeps) == len(query):
+                yield item
 
     def filter_types(self, types):
         """
@@ -316,9 +319,8 @@ class MeetingSet(object):
         """
         meets = {}
         for item in self.items:
-            if item.zipcode:
-                meets.setdefault(item.name, {'zip': item.zipcode, 'region': item.region_display, 'days': {}})
-                meets[item.name]['days'][item.day] = item.id_display
+            meets.setdefault(item.name, {'zip': item.zipcode, 'region': item.region_display, 'days': {}})
+            meets[item.name]['days'][item.day] = item.id_display
         return sorted(meets.items(), key=lambda i: i[0])
 
     @cached_property

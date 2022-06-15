@@ -1,4 +1,6 @@
 {{ slugify(config.title) }}
-{{ config.template_dirs }}
+{% for dir in config.template_dirs %}
+{{ dir }}
+{% endfor %}
 {{ codify(config.mycodes)|join(' ')  }}
 {{ config.author }}

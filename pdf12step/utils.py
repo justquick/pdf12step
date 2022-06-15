@@ -111,6 +111,15 @@ def link(show):
     return inner
 
 
+def show(hide):
+    """
+    Returns True if the Meeting attribute should be shown (not in config.hide)
+    """
+    def inner(meeting, attr):
+        return attr not in hide and getattr(meeting, attr)
+    return inner        
+
+
 def lister(value):
     """
     Returns a (comma separated) string value as a list
