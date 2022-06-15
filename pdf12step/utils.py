@@ -91,7 +91,7 @@ def codify(codemap, filtercodes):
     """
     def inner(values):
         codes = [str(codemap.get(code, code))
-                 for code in values if code and code not in filtercodes]
+                 for code in values if filtercodes and  code and code not in filtercodes]
         return filter(lambda c: len(c), codes)
     return inner
 

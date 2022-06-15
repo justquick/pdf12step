@@ -85,7 +85,7 @@ class Context(dict):
         """
         codes = []
         for code, name in self.config.meetingcodes.items():
-            if code in self.config.filtercodes or code not in self.meetings.types:
+            if self.config.filtercodes and code in self.config.filtercodes or code not in self.meetings.types:
                 continue
             code = self.config.codemap.get(code, code)
             codes.append((code, name))
