@@ -1,15 +1,24 @@
+{% import 'macros.html' as macros with context %}
 <article id="cover" class="mid">
 <div>
   <p>
     <span class="f36 b" style="color: white">
       {{ config.author.split()|join('<br/>')|safe }}
+      {% if config.aa_cover %}
       <span class="f18">of</span> <br />
       Alcoholics <br />Anonymous
+      {% endif %}
     </span>
   </p>
-  {% if config.subtitle %}<span class="f18 b" style="color: white">{{ config.subtitle }}</span>{% else %}<br /><br />{% endif %}
+  {% if config.subtitle %}
+  <p><span class="f19 b" style="color: white">{{ config.subtitle }}</span></p>
+  {% else %}<br /><br />{% endif %}
   <br /><br />
   <br /><br />
+  {% if not config.aa_cover %}
+  <br /><br />
+  <br /><br />
+  {% endif %}
   <p style="text-align: center;">
     <span class="f40 b">{{ now.strftime('%B %Y') }}</span><br />
     <span class="f36 b">Directory</span><br>
@@ -19,7 +28,7 @@
   <table class="f18">
     <tr>
       <td>
-        <a href="{{ config.qrcode_url }}"><img src="{{ qrcode }}" /></a>
+        {{ macros.qrcode_img() }}
       </td>
       <td>
         Scan this QR

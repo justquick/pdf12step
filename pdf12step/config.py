@@ -82,6 +82,7 @@ class Config(AttrDict):
     _defaults = {
         'config_file': CONFIG_FILE,
         'data_dir': DATA_DIR,
+        'aa_cover': True,
         'section_group1': 'day_display',
         'section_group2': 'region_display',
         'base_template': BASE_TEMPLATE,

@@ -10,7 +10,7 @@
     <p>{% if config.subtitle %}{{ config.subtitle }}<br/>{% endif %}{{ config.address }}<br /><b>{{ now.strftime('%B %Y') }} Directory</b></p>
     <p><i>Last updated: {{ now.strftime('%m/%d/%Y') }}</i></p>
 
-    <a href="{{ config.qrcode_url }}"><img src="{{ qrcode }}" /></a>
+    {{ macros.qrcode_img() }}
 
     <p class="contact">
       {{ config.email }}<br />
