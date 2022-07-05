@@ -157,7 +157,7 @@ class Meeting(AttrDict):
         if self.region:
             return f'{self.region}/{self.sub_region}' if self.sub_region else self.region
         elif self.regions:
-            return '/'.join(self.regions)
+            return '/'.join(map(str, self.regions))
 
     @cached_property
     def latlon(self):
