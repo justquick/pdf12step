@@ -114,9 +114,10 @@ class Config(AttrDict):
         'qrcode_url': None,
         'notes_pages': 0,
         'even_pages': True,
-        'date_fmt': datetime.now().strftime('%B %Y Directory'),
+        'date_fmt': '%B %Y Directory',
         'sections': ['contact', 'codes', 'misc', 'regions', 'index', 'list_2sections', 'readings', 'notes'],
-        'zoom': 1
+        'zoom': 1,
+        'qrcode_text': ''
     }
 
     @classmethod
@@ -145,4 +146,5 @@ class Config(AttrDict):
         meetingcodes = config['meetingcodes'].copy()
         meetingcodes.update(DEFAULT_CODES)
         config['meetingcodes'] = meetingcodes
+        config['date_str'] = datetime.now().strftime(config['date_fmt'])
         return config

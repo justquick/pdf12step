@@ -20,9 +20,8 @@
   <br /><br />
   {% endif %}
   <p style="text-align: center;">
-    <span class="f40 b">{{ now.strftime('%B %Y') }}</span><br />
-    <span class="f36 b">Directory</span><br>
-    <span class="f19 b">Last updated: {{ now.strftime('%d/%m/%Y') }}</span>
+    <span class="f40 b">{{ config.date_str|safe }}</span><br />
+    <span class="f19 b">Last updated: {{ macros.last_updated() }}</span><br />
   </p>
 
   <table class="f18">
@@ -36,6 +35,7 @@
         {{ config.qrcode_url }}<br/>
         for the most up-to-date
         meeting list.
+        {{ config.qrcode_text }}
       </td>
     </tr>
   </table>
@@ -46,8 +46,6 @@
     Email: {{ config.email }}<br />
     <b>{{ config.website }}</b><br />
     <b>This book may not be used as a mailing list.</b>
-    <p class="f8">
-      <br/>
   </p>
 
 </div>

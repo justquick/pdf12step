@@ -81,7 +81,7 @@ def html(ctx, **kwargs):
     content = context.render(kwargs['template'])
     outfile = ctx.obj.output
     if outfile is None:
-        outfile = open(f'{ctx.obj.configobj.date_fmt}.html', 'w')
+        outfile = open(f'{ctx.obj.configobj.date_str}.html', 'w')
     elif outfile == '-':
         outfile = sys.stdout.buffer
     else:
@@ -108,7 +108,7 @@ def pdf(ctx, **kwargs):
     content = context.pdf(kwargs['template'])
     outfile = ctx.obj.output
     if outfile is None:
-        outfile = open(f'{ctx.obj.configobj.date_fmt}.pdf', 'wb')
+        outfile = open(f'{ctx.obj.configobj.date_str}.pdf', 'wb')
     elif outfile == '-':
         outfile = sys.stdout.buffer
     else:

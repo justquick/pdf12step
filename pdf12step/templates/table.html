@@ -19,7 +19,7 @@
         <td class="orginfo">
           {{ config.email }}<br />
           {{ config.phone }}<br />
-          <b><i>Last updated: {{ now.strftime('%m/%d/%Y') }}</i></b>
+          <b><i>Last updated: {{ macros.last_updated() }}</i></b>
         </td>
       </tr>
     </table>

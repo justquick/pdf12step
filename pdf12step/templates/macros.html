@@ -29,3 +29,7 @@
 {%- set result = codify(meeting.types)|join(sep) -%}
 {%- if result %}{{ result }}{% endif -%}
 {%- endmacro -%}
+
+{% macro last_updated() %}
+{{ now.strftime('%m/%d/%Y') }}
+{%- endmacro %}

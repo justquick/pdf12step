@@ -8,7 +8,7 @@
   <section class="cover">
     <h1>{{ config.author }}</h1>
     <p>{% if config.subtitle %}{{ config.subtitle }}<br/>{% endif %}{{ config.address }}<br /><b>{{ now.strftime('%B %Y') }} Directory</b></p>
-    <p><i>Last updated: {{ now.strftime('%m/%d/%Y') }}</i></p>
+    <p><i>Last updated: {{ macros.last_updated() }}</i></p>
 
     {{ macros.qrcode_img() }}
 
