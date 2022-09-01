@@ -45,7 +45,7 @@ def csv_dump(data, outfile):
     with open(outfile, 'w') as csvfile:
         writer = DictWriter(csvfile, keys,  extrasaction='ignore')
         writer.writeheader()
-        writer.writerows([AttrDict({key: '|'.join(value) if isinstance(value, list) else value
+        writer.writerows([AttrDict({key: '|'.join(map(str, value)) if isinstance(value, list) else value
                                     for key, value in item.items()})
                           for item in data])
 
@@ -91,7 +91,7 @@ def codify(codemap, filtercodes):
     """
     def inner(values):
         codes = [str(codemap.get(code, code))
-                 for code in values if filtercodes and  code and code not in filtercodes]
+                 for code in values if filtercodes and code and code not in filtercodes]
         return filter(lambda c: len(c), codes)
     return inner
 
@@ -117,7 +117,7 @@ def show(hide):
     """
     def inner(meeting, attr):
         return attr not in hide and getattr(meeting, attr)
-    return inner        
+    return inner
 
 
 def lister(value):
