@@ -73,6 +73,20 @@ DEFAULT_CODES = {
     'Y': 'Young People'
 }
 
+def merge(dct, merge_dct):
+    """ Recursive dict merge. Inspired by :meth:``dict.update()``, instead of
+    updating only top-level keys, dict_merge recurses down into dicts nested
+    to an arbitrary depth, updating keys. The ``merge_dct`` is merged into
+    ``dct``.
+    :param dct: dict onto which the merge is executed
+    :param merge_dct: dct merged into dct
+    :return: None
+    """
+    for k, v in merge_dct.iteritems():
+        if (k in dct and isinstance(dct[k], dict) and isinstance(merge_dct[k], dict)):  # noqa
+            merge(dct[k], merge_dct[k])
+        else:
+            dct[k] = merge_dct[k]
 
 class Config(AttrDict):
     """
@@ -131,13 +145,13 @@ class Config(AttrDict):
         if not isinstance(args, dict):
             args = args.__dict__ if hasattr(args, '__dict__') else dict(args)
         setup_logging(args)
-        config.update(cls._defaults)  # load sane defaults
+        merge(config, cls._defaults)  # load sane defaults
         if 'config' not in args or args['config'] is None:
             args['config'] = [cls._defaults['config_file']]
         for config_opt in args['config']:
             logger.info(f'Loaded config option "{config_opt}"')
-            config.update(yaml_load(config_opt))
-        config.update(args)  # runtime
+            merge(config, yaml_load(config_opt))
+        merge(config, args)  # runtime
         logger.debug(f'Loaded runtime options {args}')
         for key, value in config.items():
             if value and isinstance(value, dict):
@@ -148,3 +162,6 @@ class Config(AttrDict):
         config['meetingcodes'] = meetingcodes
         config['date_str'] = datetime.now().strftime(config['date_fmt'])
         return config
+
+    def merge(self, other):
+        self = {**self, **other}
