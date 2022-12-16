@@ -73,6 +73,7 @@ DEFAULT_CODES = {
     'Y': 'Young People'
 }
 
+
 def merge(dct, merge_dct):
     """ Recursive dict merge. Inspired by :meth:``dict.update()``, instead of
     updating only top-level keys, dict_merge recurses down into dicts nested
@@ -82,11 +83,12 @@ def merge(dct, merge_dct):
     :param merge_dct: dct merged into dct
     :return: None
     """
-    for k, v in merge_dct.iteritems():
-        if (k in dct and isinstance(dct[k], dict) and isinstance(merge_dct[k], dict)):  # noqa
-            merge(dct[k], merge_dct[k])
+    for k, v in merge_dct.items():
+        if (k in dct and isinstance(dct[k], dict) and isinstance(v, dict)):  # noqa
+            merge(dct[k], v)
         else:
             dct[k] = merge_dct[k]
+
 
 class Config(AttrDict):
     """
