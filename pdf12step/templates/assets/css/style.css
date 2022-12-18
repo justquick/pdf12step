@@ -93,17 +93,7 @@ article {
     margin-right: 10%;
 }
 
-#cover {
-    align-content: space-between;
-    display: flex;
-    flex-wrap: wrap;
-    height: 297mm;
-}
 
-
-#contact section p {
-    text-align: center;
-}
 
 .columns section {
     columns: 2;
@@ -160,20 +150,22 @@ article {
 .f8 {
     font-size: 8pt;
 }
-
 .nobreak {
     page-break-inside: avoid;
 }
+.list h3 {
+    border-bottom: .05cm solid {{ config.color }};
+}
+.centered {
+    text-align: center;
+}
 
+
+/* Section specific rules */
 .meeting p {
     text-align: center;
     font-weight: bold;
 }
-
-.list h3 {
-    border-bottom: .05cm solid {{ config.color }};
-}
-
 #readings {
     page: narrow;
 }
@@ -209,4 +201,13 @@ article {
 #backcover div {
   margin-left: 2cm;
   margin-right: 2cm;
+}
+#cover {
+    align-content: space-between;
+    display: flex;
+    flex-wrap: wrap;
+    height: 297mm;
+}
+#contact section p {
+    text-align: center;
 }
