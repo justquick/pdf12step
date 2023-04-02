@@ -8,6 +8,7 @@ from pdf12step.adict import AttrDict
 from pdf12step.cached import cached_property
 
 
+UNKNOWN_DAY = 'Other'
 DAYS = {
     0: 'Sunday',
     1: 'Monday',
@@ -16,7 +17,6 @@ DAYS = {
     4: 'Thursday',
     5: 'Friday',
     6: 'Saturday',
-    12: 'Other'
 }
 US_ZIP_RE = re.compile(r'(\d{5})')
 CA_ZIP_RE = re.compile(r'([ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d)', re.I)
@@ -50,7 +50,7 @@ class Meeting(AttrDict):
     @cached_property
     def day_display(self):
         """Gets the weekday name (eg Thursday)"""
-        return DAYS.get(self.day, 'Other')
+        return DAYS.get(self.day, UNKNOWN_DAY)
 
     @cached_property
     def address_display(self):
@@ -58,6 +58,9 @@ class Meeting(AttrDict):
         Displays a long form address line
         """
         if self.formatted_address:
+            if '8420 Belair Rd' in self.formatted_address:
+                import ipdb
+                ipdb.set_trace()
             return self.formatted_address
         return f'{self.address}, {self.city} {self.state}, {self.zipcode}'
 
@@ -203,14 +206,15 @@ class MeetingSet(object):
         for item in self.items:
             yield item
 
-    def __len__(self):
-        return len(self.items)
-
     def __add__(self, other):
         return MeetingSet(self.items + other.items)
 
     def __getitem__(self, key):
         return self.items[key]
+
+    def count(self):
+        return len(self.items)
+    __len__ = count
 
     def limit(self, num):
         """
@@ -255,6 +259,7 @@ class MeetingSet(object):
         If sorted, it returns a sorted items list
         If limited, only returns up to X number of Meetings
         """
+        print(attr)
         result = defaultdict(list)
         count = 0
         for item in self.items:

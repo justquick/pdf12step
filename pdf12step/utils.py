@@ -1,16 +1,30 @@
 import re
 import os
 import json
+import calendar
 from csv import DictWriter
+from itertools import islice, cycle
 
 from markupsafe import Markup
 from qrcode import QRCode
-try:
-    from yaml import CLoader as Loader
-except ImportError:
-    from yaml import Loader
+from yaml import safe_load
 
 from pdf12step.adict import AttrDict
+
+
+class Week(dict):
+    def __init__(self, start=0):
+        self.start = start
+        self._days = list(calendar.day_name)
+        self._days.insert(0, self._days.pop())  # for TSML Sunday is first (0)
+        self.update(enumerate(self._days))
+
+    def __iter__(self):
+        start, stop = self.start, self.start + len(self)
+        return islice(cycle(sorted(self.items())), start, stop)
+
+    def __len__(self):
+        return 7
 
 
 def yaml_load(filename_or_string):
@@ -20,15 +34,9 @@ def yaml_load(filename_or_string):
     :param str filename: YAML filename to load
     :rtype: dict
     """
-    isfile = os.path.isfile(filename_or_string)
-    stream = open(filename_or_string) if isfile else filename_or_string
-    loader = Loader(stream)
-    try:
-        return loader.get_single_data()
-    finally:
-        if isfile:
-            stream.close()
-        loader.dispose()
+    if os.path.isfile(filename_or_string):
+        filename_or_string = open(filename_or_string).read()
+    return safe_load(filename_or_string)
 
 
 def csv_dump(data, outfile):

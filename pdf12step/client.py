@@ -12,6 +12,7 @@ DEFAULTS = {
     'mode': 'search',
 }
 NONCE_RE = re.compile('nonce":"([0-9a-fA-F]+)"')
+TSML_CACHE = re.compile('data-src="/(.+)/tsml-cache-([0-9a-fA-F]+).json')
 HEADERS = {
     'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36'
 }
@@ -37,6 +38,11 @@ class Client(object):
             self.nonce_url = nonce_url if nonce_url.startswith('http') else f'{site_url}/{nonce_url}'
         if api_url:
             self.api_url = api_url if api_url.startswith('http') else f'{site_url}/{api_url}'
+
+    @cached_property
+    def tsml_cache(self):
+        if not self.nonce_url:
+            return
 
     @cached_property
     def nonce(self):

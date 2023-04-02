@@ -5,13 +5,13 @@ from functools import reduce
 from pprint import pformat
 
 from weasyprint import HTML
-from jinja2 import (Environment, FileSystemLoader, FileSystemBytecodeCache,
+from jinja2 import (Environment, Template, FileSystemLoader, FileSystemBytecodeCache,
                     select_autoescape, PackageLoader, ChoiceLoader)
 
 from pdf12step.meetings import MeetingSet, DAYS
 from pdf12step.cached import cached_property
 from pdf12step.config import BASE_DIR, BASE_TEMPLATE
-from pdf12step.utils import slugify, link, codify, qrcode, show
+from pdf12step.utils import slugify, link, codify, qrcode, show, Week
 from pdf12step.log import logger
 
 
@@ -19,6 +19,10 @@ FSBC = FileSystemBytecodeCache()
 ASSET_TEMPLATES = {
     'assets/img/cover_background.svg': ('img', 'cover_background.svg'),
 }
+
+
+def filter_eval(context, value, **vars):
+    return Template(value).render(context, **vars)
 
 
 def asset_join(asset_dir, *paths):
@@ -40,7 +44,7 @@ class Context(dict):
         self.meetings = self.get_meetings()
         self.update(
             meetings=self.meetings,
-            DAYS=DAYS,
+            week=Week(self.config.start_day),
             now=datetime.now(),
             zipcodes_by_region=self.zipcodes_by_region,
             filtered_codes=self.filtered_codes,
@@ -50,7 +54,8 @@ class Context(dict):
             link=link(self.config.show_links),
             show=show(self.config.hide),
             qrcode=self.qrcode,
-            config=config
+            config=config,
+            DAYS=DAYS
         )
         logger.info('Loaded context config')
         logger.debug(pformat(dict(self)))
@@ -164,6 +169,7 @@ class Context(dict):
             autoescape=select_autoescape(),
             bytecode_cache=FSBC,
         )
+        environ.filters['eval'] = filter_eval
         logger.info('Loaded template env')
         return environ
 

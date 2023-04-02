@@ -221,4 +221,8 @@ def shell(ctx, **kwargs):
     context = Context(ctx.obj.configobj, ctx.obj)
     ctx = sys.modules['__main__'].__dict__
     ctx.update(context=context, config=context.config, meetings=context.get_meetings())
-    embed(colors='linux', module=sys.modules['__main__'], user_ns=ctx)
+    embed(headers='''Running the following context:
+    
+    config = Configuration values loaded from the YAML file
+    meetings = List of meetings
+    ''', colors='linux', module=sys.modules['__main__'], user_ns=ctx)
