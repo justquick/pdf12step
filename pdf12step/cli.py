@@ -1,15 +1,15 @@
-import sys
 import os
+import sys
 
 import click
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from pdf12step.templating import Context
-from pdf12step.config import Config, ASSET_DIR, DATA_DIR, BASE_DIR
-from pdf12step.client import Client
 from pdf12step.adict import AttrDict
-from pdf12step.utils import booler, lister
+from pdf12step.client import Client
+from pdf12step.config import ASSET_DIR, BASE_DIR, DATA_DIR, Config
 from pdf12step.log import logger
+from pdf12step.templating import Context
+from pdf12step.utils import booler, lister
 
 
 def prompt(name, title, default=None, cast=str):

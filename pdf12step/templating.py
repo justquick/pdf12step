@@ -8,7 +8,7 @@ from weasyprint import HTML
 from jinja2 import (Environment, FileSystemLoader, FileSystemBytecodeCache,
                     select_autoescape, PackageLoader, ChoiceLoader)
 
-from pdf12step.meetings import MeetingSet, DAYS
+from pdf12step.meetings import MeetingSet, Calendar
 from pdf12step.cached import cached_property
 from pdf12step.config import BASE_DIR, BASE_TEMPLATE
 from pdf12step.utils import slugify, link, codify, qrcode, show
@@ -38,17 +38,20 @@ class Context(dict):
         self.args = args = args if isinstance(args, dict) else args.__dict__
         self.is_flask = args.get('flask', False)
         self.meetings = self.get_meetings()
+        self.calendar = Calendar(config.start_day)
         self.update(
             meetings=self.meetings,
-            DAYS=DAYS,
+            DAYS=Calendar.DAYS,
+            calendar=self.calendar,
+            by_value=self.by_value,
             now=datetime.now(),
             zipcodes_by_region=self.zipcodes_by_region,
             filtered_codes=self.filtered_codes,
             stylesheets=self.stylesheets,
             slugify=slugify,
-            codify=codify(self.config.codemap, self.config.filtercodes),
-            link=link(self.config.show_links),
-            show=show(self.config.hide),
+            codify=codify(config.codemap, config.filtercodes),
+            link=link(config.show_links),
+            show=show(config.hide),
             qrcode=self.qrcode,
             config=config
         )
@@ -105,7 +108,7 @@ class Context(dict):
         meetings = MeetingSet(meetings_file)
         logger.info(f'Loaded {len(meetings)} meetings from {meetings_file}')
         if getattr(self.config, 'attendance_options', []):
-            meetings = meetings.by_value('attendance_option').items()
+            meetings = meetings.by_value('attendance_option')
             options = [meeting_set for attendance_option, meeting_set in meetings
                        if attendance_option in self.config.attendance_options]
             if not options:
@@ -166,6 +169,24 @@ class Context(dict):
         )
         logger.info('Loaded template env')
         return environ
+
+    def by_value(self, meetings, key):
+        """
+        This function sorts a list of meetings either by day or by a specified key.
+
+        :param meetings: It is a variable that represents a collection of meetings. The data type of
+        this variable is not specified in the code snippet, but it is likely a list or a dictionary
+        :param key: The "key" parameter is a string that specifies how the "meetings" parameter should
+        be sorted. If the value of "key" is 'day', then the "meetings" parameter should be sorted by day
+        using the "by_day" method of the "calendar" object. Otherwise,
+        :return: either the result of calling the `by_day` method of the `calendar` object with the
+        `meetings` parameter as argument if the `key` parameter is equal to the string `'day'`, or the
+        result of calling the `by_value` method of the `meetings` object with the `key` parameter as
+        argument if `key` is not equal to `'
+        """
+        if key == 'day':
+            return self.calendar.by_day(meetings)
+        return meetings.by_value(key)
 
     def render(self, template=None):
         """

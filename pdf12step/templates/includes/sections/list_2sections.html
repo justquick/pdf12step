@@ -1,10 +1,7 @@
-{% for name1, group1 in meetings.by_value(config.section_group1).items() %}
+{% for name1, group1 in by_value(meetings, config.section_group1) %}
 <article class="list">
     <h2>{{ name1 }}</h2>
-    {% for name2, group2 in group1.by_value(config.section_group2, sort=True) %}
-    {% if config.section_group2 == 'day' %}
-      {% set name2 = DAYS[name2] %}
-    {% endif %}
+    {% for name2, group2 in by_value(group1, config.section_group2) %}
     {% if config.section_group1 == 'region_display' %}
       {% set rkey = name1 %}
     {% else %}

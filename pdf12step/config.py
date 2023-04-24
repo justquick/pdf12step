@@ -133,7 +133,8 @@ class Config(AttrDict):
         'date_fmt': '%B %Y Directory',
         'sections': ['contact', 'codes', 'misc', 'regions', 'index', 'list_2sections', 'readings', 'notes'],
         'zoom': 1,
-        'qrcode_text': ''
+        'qrcode_text': '',
+        'start_day': 0,
     }
 
     @classmethod

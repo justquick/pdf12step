@@ -1,14 +1,14 @@
-{% for name1, group1 in meetings.by_value(config.section_group1).items() %}
+{% for name1, group1 in by_value(meetings, config.section_group1) %}
 <article class="list">
-    <h2>{{ name1 }}</h2>
-    <article class="meeting">
-      {% if zips|length > 40 %}<p class="ziplist">{{ zips }}</p>{% endif %}
+  <h2>{{ name1 }}</h2>
+  <article class="meeting">
+    {% if zips|length > 40 %}<p class="ziplist">{{ zips }}</p>{% endif %}
     <table class="mtable">
-    {% for meeting in group1.sort('time') %}
-        {% include 'includes/info.html' %}
-    {% endfor %}
+      {% for meeting in group1.sort('time') %}
+      {% include 'includes/info.html' %}
+      {% endfor %}
     </table>
-    </article>
-    <br/>
+  </article>
+  <br />
 </article>
 {% endfor %}

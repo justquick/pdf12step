@@ -1,12 +1,20 @@
 from unittest import TestCase
 
-from pdf12step.meetings import MeetingSet, Meeting
+from pdf12step.meetings import MeetingSet, Meeting, Calendar
 
 from .base import MEETINGS_FILE
 
 
 def item(**kwargs):
     return Meeting(kwargs, default='')
+
+
+def test_cal():
+    cal = Calendar(3)
+    week = list(cal)
+    assert len(week) == 7
+    assert week[0] == (3, 'Wednesday')
+    assert week[-1] == (2, 'Tuesday')
 
 
 def test_day_display():
@@ -68,10 +76,10 @@ class MeetingSetTest(TestCase):
         assert len(self.meetings.by_value('id', limit=3)) == 3
 
         options = self.meetings.by_value('attendance_option')
-        assert set(options) == self.attendance_options
-        assert all([isinstance(meets, MeetingSet) for meets in options.values()])
+        assert set([i[0] for i in options]) == self.attendance_options
+        assert all([isinstance(i[1], MeetingSet) for i in options])
 
-        online_locations = options['online'].by_value('location', sort=True)
+        online_locations = dict(options)['online'].by_value('location')
         assert isinstance(online_locations, list)
         assert isinstance(online_locations[0], tuple)
         assert online_locations[0][0] == ''

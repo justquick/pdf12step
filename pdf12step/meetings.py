@@ -3,21 +3,11 @@ import re
 from datetime import datetime
 from collections import defaultdict
 from urllib.parse import unquote, urlparse
+from itertools import islice, cycle
 
 from pdf12step.adict import AttrDict
 from pdf12step.cached import cached_property
 
-
-DAYS = {
-    0: 'Sunday',
-    1: 'Monday',
-    2: 'Tuesday',
-    3: 'Wednesday',
-    4: 'Thursday',
-    5: 'Friday',
-    6: 'Saturday',
-    12: 'Other'
-}
 US_ZIP_RE = re.compile(r'(\d{5})')
 CA_ZIP_RE = re.compile(r'([ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d)', re.I)
 
@@ -32,6 +22,41 @@ def clean_url(url):
     if url.count('://') == 2:
         url = '://'.join(url.split('://')[:2])
     return unquote(url).strip()
+
+
+class Calendar:
+    DAYS = {
+        0: 'Sunday',
+        1: 'Monday',
+        2: 'Tuesday',
+        3: 'Wednesday',
+        4: 'Thursday',
+        5: 'Friday',
+        6: 'Saturday',
+        12: 'Other'
+    }
+    DAYS_LOOKUP = {v: k for k, v in DAYS.items()}
+
+    def __init__(self, start_day=0):
+        self.start_day = start_day
+
+    def __iter__(self):
+        days = self.DAYS.copy()
+        del days[12]
+        days = islice(cycle(days.items()), self.start_day, None)
+        return (next(days) for _ in range(7))
+
+    def __getitem__(self, key):
+        if isinstance(key, int):
+            return self.DAYS.get(key)
+        elif isinstance(key, str):
+            if key.isdigit():
+                return self.DAYS.get(int(key))
+            return self.DAYS.get(self.DAYS_LOOKUP.get(key))
+
+    def by_day(self, meetings):
+        items = meetings.by_value('day')
+        return [(name, MeetingSet(items[day])) for name, day in self]
 
 
 class Meeting(AttrDict):
@@ -50,7 +75,7 @@ class Meeting(AttrDict):
     @cached_property
     def day_display(self):
         """Gets the weekday name (eg Thursday)"""
-        return DAYS.get(self.day, 'Other')
+        return Calendar.DAYS.get(self.day, 'Other')
 
     @cached_property
     def address_display(self):
@@ -248,11 +273,10 @@ class MeetingSet(object):
             counter[getattr(item, attr)] += 1
         return counter
 
-    def by_value(self, attr, sort=False, limit=None, cast=str, reverse=False):
+    def by_value(self, attr, sort=True, limit=None, cast=str, reverse=False):
         """
         Groups the results by the given attribute values.
-        Returns a dict with the values as keys and filtered MeetingSet as values
-        If sorted, it returns a sorted items list
+        Returns a sorted items list of 2 tuples of (value, filtered MeetingSet)
         If limited, only returns up to X number of Meetings
         """
         result = defaultdict(list)
@@ -267,9 +291,7 @@ class MeetingSet(object):
                     result[value].append(item)
             else:
                 result[key].append(item)
-        if sort:
-            return sorted([(cast(key), MeetingSet(items)) for key, items in result.items()], reverse=reverse)
-        return {key: MeetingSet(items) for key, items in result.items()}
+        return sorted([(cast(key), MeetingSet(items)) for key, items in result.items()], reverse=reverse)
 
     def filter(self, **kwargs):
         """
