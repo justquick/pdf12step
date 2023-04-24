@@ -7,7 +7,8 @@
 
   <section class="cover">
     <h1>{{ config.author }}</h1>
-    <p>{% if config.subtitle %}{{ config.subtitle }}<br/>{% endif %}{{ config.address }}<br /><b>{{ now.strftime('%B %Y') }} Directory</b></p>
+    <p>{% if config.subtitle %}{{ config.subtitle }}<br />{% endif %}{{ config.address }}<br /><b>{{ now.strftime('%B
+        %Y') }} Directory</b></p>
     <p><i>Last updated: {{ macros.last_updated() }}</i></p>
 
     {{ macros.qrcode_img() }}
@@ -32,7 +33,7 @@
   {% endif %}
   <section>
     <table>
-      {% for time, meets in group1.by_value('time').items()|sort %}
+      {% for time, meets in group1.by_value('time') %}
       <tr class="meetrow">
         <td class="timecol">{{ meets[0].time_display }} {{ meets[0].day_display[:2] }}</td>
         <td class="meetings">
@@ -41,17 +42,19 @@
             <span class="meetname">{{ macros.title(meet) }}</span>
             <span class="meettypes">({{ macros.codes(meet, ', ') }})</span><br>
             {% if show(meet, 'notes') %}<span class="notes">{{ meet.notes_list|join('|') }}</span><br />{% endif %}
-            {% if show(meet, 'conference_url') %} 
-              <span class="notes">{{ meet.conference_url }}</span>
-              {% if show(meet, 'conference_url_notes') %}|<span class="notes">{{ meet.conference_url_notes }}</span>{% endif %}
-              <br />
+            {% if show(meet, 'conference_url') %}
+            <span class="notes">{{ meet.conference_url }}</span>
+            {% if show(meet, 'conference_url_notes') %}|<span class="notes">{{ meet.conference_url_notes }}</span>{%
+            endif %}
+            <br />
             {% endif %}
-            {% if show(meet, 'location') %} 
-              <span class="location">{% if meet.location %}{{ macros.location(meet) }}</span><br />{% endif %}
-              <span class="address">{{ macros.address_link(meet) }}</span>
+            {% if show(meet, 'location') %}
+            <span class="location">{% if meet.location %}{{ macros.location(meet) }}</span><br />{% endif %}
+            <span class="address">{{ macros.address_link(meet) }}</span>
             {% endif %}
           </div>
-          {% if not loop.last %}<hr/>{% endif %}
+          {% if not loop.last %}
+          <hr />{% endif %}
           {% endfor %}
         </td>
       </tr>
