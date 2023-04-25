@@ -16,10 +16,12 @@ jobs:
       fail-fast: false
       matrix:
         python-version:
-          - 3.6
-          - 3.7
-          - 3.8
-          - 3.9
+          - "3.6"
+          - "3.7"
+          - "3.8"
+          - "3.9"
+          - "3.10"
+          - "3.11"
 
     steps:
       # check out revision to test
@@ -27,24 +29,17 @@ jobs:
 
       # install python
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+          cache: "pipenv"
 
       # upgrade pip
       - name: Update pip/pipenv
         run: python -m pip install --upgrade pip pipenv wheel
 
-      - id: cache-pipenv
-        uses: actions/cache@v1
-        with:
-          path: ~/.local/share/virtualenvs
-          key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
-
-
       # install environment specific dependencies
       - name: Install dependencies
-        if: steps.cache-pipenv.outputs.cache-hit != 'true'
         run: pipenv install --dev --deploy --python python${{ matrix.python-version }}
 
       # install our package
