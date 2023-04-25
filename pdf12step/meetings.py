@@ -43,7 +43,7 @@ class Calendar:
     def __iter__(self):
         days = self.DAYS.copy()
         del days[12]
-        days = islice(cycle(days.items()), self.start_day, None)
+        days = islice(cycle(sorted(days.items())), self.start_day, None)
         return (next(days) for _ in range(7))
 
     def __getitem__(self, key):
@@ -55,8 +55,8 @@ class Calendar:
             return self.DAYS.get(self.DAYS_LOOKUP.get(key))
 
     def by_day(self, meetings):
-        items = meetings.by_value('day')
-        return [(name, MeetingSet(items[day])) for name, day in self]
+        items = {int(day): meets for day, meets in meetings.by_value('day')}
+        return [(name, MeetingSet(items[day])) for day, name in self if day in items]
 
 
 class Meeting(AttrDict):
