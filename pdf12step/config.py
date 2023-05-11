@@ -99,7 +99,7 @@ class Config(AttrDict):
         'config_file': CONFIG_FILE,
         'data_dir': DATA_DIR,
         'aa_cover': True,
-        'section_group1': 'day_display',
+        'section_group1': 'day',
         'section_group2': 'region_display',
         'base_template': BASE_TEMPLATE,
         'list_template': LIST_TEMPLATE,
@@ -165,6 +165,3 @@ class Config(AttrDict):
         config['meetingcodes'] = meetingcodes
         config['date_str'] = datetime.now().strftime(config['date_fmt'])
         return config
-
-    def merge(self, other):
-        self = {**self, **other}
