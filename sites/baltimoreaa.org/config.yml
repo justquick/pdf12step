@@ -40,14 +40,14 @@ website: www.baltimoreaa.org
 # Sections to use on the PDF. If they are removed they will not show
 # See the templates/includes/sections for details of each
 sections:
-  - contact
-  - codes
-  - misc
-  # - regions
-  - index
-  - list_2sections
-  - readings
-  - notes
+    - contact
+    - codes
+    - misc
+    # - regions
+    - index
+    - list_2sections
+    - readings
+    - notes
 
 # Template directories.
 # Create your own directory and add it here to override default emplates

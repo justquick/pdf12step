@@ -7,10 +7,11 @@
 
   <section class="cover">
     <h1>{{ config.author }}</h1>
-    <p>{% if config.subtitle %}{{ config.subtitle }}<br />{% endif %}{{ config.address }}<br /><b>{{ now.strftime('%B
-        %Y') }} Directory</b></p>
+    <p>{% if config.subtitle %}{{ config.subtitle }}<br />{% endif %}{{ config.address }}<br /><b>{{ now.strftime('%B %Y') }} Directory</b>
+    </p>
     <p><i>Last updated: {{ macros.last_updated() }}</i></p>
 
+    {% if config.qrcode_label %}<p>{{ config.qrcode_label }}</p>{% endif %}
     {{ macros.qrcode_img() }}
 
     <p class="contact">
@@ -24,6 +25,12 @@
       {% endfor %}
     </p>
   </section>
+  {% if 'misc' in config.sections %}
+  <section>
+    {% include "includes/sections/misc.html" %}
+  </section>
+  {% endif %}
+
   {% for name1, group1 in meetings.by_value('day', sort=True) %}
 
   {% if config.group1_header %}
@@ -37,7 +44,7 @@
       <tr class="meetrow">
         <td class="timecol">{{ meets[0].time_display }} {{ meets[0].day_display[:2] }}</td>
         <td class="meetings">
-          {% for meet in meets %}
+          {% for meet in meets.sort('name') %}
           <div class="nobreak">
             <span class="meetname">{{ macros.title(meet) }}</span>
             <span class="meettypes">({{ macros.codes(meet, ', ') }})</span><br>

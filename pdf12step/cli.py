@@ -3,6 +3,7 @@ import sys
 
 import click
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from yaml import safe_dump
 
 from pdf12step.adict import AttrDict
 from pdf12step.client import Client
@@ -44,24 +45,46 @@ def do_download(ctx):
 
 @click.group('12step')
 @click.version_option()
-@click.option('--config', '-c', envvar='PDF12STEP_CONFIG', multiple=True,
-              type=click.Path(file_okay=True, dir_okay=False),
-              help='Config files or YAML strings to load for runtime vars. Can pass multiple to override options.')
+@click.option(
+    '--config',
+    '-c',
+    envvar='PDF12STEP_CONFIG',
+    multiple=True,
+    type=click.Path(file_okay=True, dir_okay=False),
+    help='Config files or YAML strings to load for runtime vars. Can pass multiple to override options.',
+)
 @click.option('--verbose', '-v', count=True, default=0, help='More verbose logging')
-@click.option('--data-dir', '-D', default=DATA_DIR, envvar='PDF12STEP_DATA_DIR',
-              type=click.Path(file_okay=False, dir_okay=True, exists=False),
-              help='Data directory to download meeting data to')
-@click.option('--asset-dir', '-A', default=ASSET_DIR, envvar='PDF12STEP_ASSET_DIR',
-              type=click.Path(file_okay=False, resolve_path=True, dir_okay=True, exists=False),
-              help='Asset directory to render static assets to')
-@click.option('--logfile',  default=None, help='Optional log file to wrie to')
+@click.option(
+    '--data-dir',
+    '-D',
+    default=DATA_DIR,
+    envvar='PDF12STEP_DATA_DIR',
+    type=click.Path(file_okay=False, dir_okay=True, exists=False),
+    help='Data directory to download meeting data to',
+)
+@click.option(
+    '--asset-dir',
+    '-A',
+    default=ASSET_DIR,
+    envvar='PDF12STEP_ASSET_DIR',
+    type=click.Path(file_okay=False, resolve_path=True, dir_okay=True, exists=False),
+    help='Asset directory to render static assets to',
+)
+@click.option('--logfile', default=None, help='Optional log file to wrie to')
 @click.pass_context
 def cli(ctx, config, verbose, data_dir, asset_dir, logfile):
     ctx.ensure_object(dict)
-    ctx.obj.update(config=config, data_dir=data_dir, asset_dir=asset_dir,
-                   verbose=verbose, logfile=logfile)
+    ctx.obj.update(config=config, data_dir=data_dir, asset_dir=asset_dir, verbose=verbose, logfile=logfile)
     ctx.obj = AttrDict(ctx.obj)
     ctx.obj.configobj = AttrDict(Config.load(ctx.obj))
+
+
+@cli.command()
+@click.pass_context
+def config(ctx):
+    """Prints the merged YAML config"""
+    cnf = {key: dict(value) if isinstance(value, AttrDict) else value for key, value in ctx.obj.configobj.items()}
+    print(safe_dump(cnf))
 
 
 @cli.command()
@@ -139,7 +162,7 @@ def flask(ctx, **kwargs):
 
 @cli.command()
 @click.option('-f', '--format', default='json', type=click.Choice(('json', 'csv')), help='Format of downloaded meeting data')
-@click.option('-s', '--sections',  default=','.join(Client.sections), help='Comma separated list of sections to download')
+@click.option('-s', '--sections', default=','.join(Client.sections), help='Comma separated list of sections to download')
 @click.pass_context
 def download(ctx, **kwargs):
     """
@@ -152,7 +175,7 @@ def download(ctx, **kwargs):
 
 
 @cli.command()
-@click.option('-o', '--output',  default='config.yaml', help='Filename to output your config to')
+@click.option('-o', '--output', default='config.yaml', help='Filename to output your config to')
 @click.pass_context
 def init(ctx, **kwargs):
     """
@@ -161,31 +184,38 @@ def init(ctx, **kwargs):
     """
     ctx.obj.update(kwargs)
     sections = [
-        ('Data Gathering', [
-            ('site_url', 'Site URL running 12 Step Meeting WordPress plugin'),
-        ],),
-        ('Metadata', [
-            ('author', 'Document author', 'empty'),
-            ('description', 'Document description', 'empty'),
-            ('website', 'Contact website display', 'empty'),
-            ('email', 'Contact email address', 'empty'),
-            ('address', 'Contact street address', 'empty'),
-            ('phone', 'Contact phone number', 'empty'),
-            ('fax', 'Contact fax number', 'empty'),
-        ],),
-        ('Formatting', [
-            ('size', 'Page size to print', 'Letter'),
-            ('color', 'Cover background and header color', 'lightblue'),
-            ('show_links', 'Display links on pages', True, booler),
-            ('qrcode_url', 'URL to tie to QR code on cover', 'empty')
-        ],),
-        ('Customizations', [
-            ('template_dirs', 'Directories to search for templates (comma separated)', [], lister),
-            ('stylesheets', 'CSS files to add to modify page styles (comma separated)', [], lister),
-            ('asset_dir', 'Asset directory to look for static files', './assets'),
-            ('attendance_options', 'Only display these comma separated attendance_options (eg in_person/hybrid/online)', [], lister),
-            ('filtercodes', 'Do not display meetings that have these codes (comma separated)', [], lister)
-        ])
+        ('Data Gathering', [('site_url', 'Site URL running 12 Step Meeting WordPress plugin')]),
+        (
+            'Metadata',
+            [
+                ('author', 'Document author', 'empty'),
+                ('description', 'Document description', 'empty'),
+                ('website', 'Contact website display', 'empty'),
+                ('email', 'Contact email address', 'empty'),
+                ('address', 'Contact street address', 'empty'),
+                ('phone', 'Contact phone number', 'empty'),
+                ('fax', 'Contact fax number', 'empty'),
+            ],
+        ),
+        (
+            'Formatting',
+            [
+                ('size', 'Page size to print', 'Letter'),
+                ('color', 'Cover background and header color', 'lightblue'),
+                ('show_links', 'Display links on pages', True, booler),
+                ('qrcode_url', 'URL to tie to QR code on cover', 'empty'),
+            ],
+        ),
+        (
+            'Customizations',
+            [
+                ('template_dirs', 'Directories to search for templates (comma separated)', [], lister),
+                ('stylesheets', 'CSS files to add to modify page styles (comma separated)', [], lister),
+                ('asset_dir', 'Asset directory to look for static files', './assets'),
+                ('attendance_options', 'Only display these comma separated attendance_options (eg in_person/hybrid/online)', [], lister),
+                ('filtercodes', 'Do not display meetings that have these codes (comma separated)', [], lister),
+            ],
+        ),
     ]
     ctx = {}
     for section, fields in sections:
@@ -216,6 +246,7 @@ def shell(ctx, **kwargs):
     Contains the context, config and meetings instances
     """
     from IPython import embed
+
     ensure_config(ctx.obj)
     ctx.obj.update(kwargs)
     context = Context(ctx.obj.configobj, ctx.obj)

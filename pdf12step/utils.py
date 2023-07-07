@@ -5,6 +5,7 @@ from csv import DictWriter
 
 from markupsafe import Markup
 from qrcode import QRCode
+
 try:
     from yaml import CLoader as Loader
 except ImportError:
@@ -43,11 +44,14 @@ def csv_dump(data, outfile):
     if 'id' in keys:
         keys = ['id'] + list(keys.difference({'id'}))
     with open(outfile, 'w') as csvfile:
-        writer = DictWriter(csvfile, keys,  extrasaction='ignore')
+        writer = DictWriter(csvfile, keys, extrasaction='ignore')
         writer.writeheader()
-        writer.writerows([AttrDict({key: '|'.join(map(str, value)) if isinstance(value, list) else value
-                                    for key, value in item.items()})
-                          for item in data])
+        writer.writerows(
+            [
+                AttrDict({key: '|'.join(map(str, value)) if isinstance(value, list) else value for key, value in item.items()})
+                for item in data
+            ]
+        )
 
 
 def json_dump(data, outfile):
@@ -89,10 +93,11 @@ def codify(codemap, filtercodes):
     :param dict codemap: Mapping of codes to names to use in display
     :param list filtercodes: List of codes to ignore
     """
+
     def inner(values):
-        codes = [str(codemap.get(code, code))
-                 for code in values if filtercodes and code and code not in filtercodes]
+        codes = [str(codemap.get(code, code)) for code in values if filtercodes and code and code not in filtercodes]
         return filter(lambda c: len(c), codes)
+
     return inner
 
 
@@ -103,11 +108,13 @@ def link(show):
 
     :param bool show: True if to display <a> tags
     """
+
     def inner(url, name, id=None):
         if show:
             id = f' id="{id}"' if id is not None else ''
             return Markup(f'<a{id} href="{url}">{name}</a>')
         return name
+
     return inner
 
 
@@ -115,8 +122,10 @@ def show(hide):
     """
     Returns True if the Meeting attribute should be shown (not in config.hide)
     """
+
     def inner(meeting, attr):
         return attr not in hide and getattr(meeting, attr)
+
     return inner
 
 
